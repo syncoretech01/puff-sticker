@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "policyVersion": 1,
+  "scope": "public-only-no-pii",
+  "tablePolicy": {
+    "included": [
+      "posts (published post/page/product and public published variations; referenced public attachments only)",
+      "postmeta (strict public product/media/SEO allowlist only)",
+      "terms, term_taxonomy, term_relationships and allowlisted termmeta (public content graph only)",
+      "yoast_indexable (public selected object fields only, when present)",
+      "redirection_items/rank_math_redirections (enabled public redirect rules only, when present)",
+      "options (siteurl, home, blogname and permalink_structure only)"
+    ],
+    "neverParsed": [
+      {
+        "category": "identity-and-authentication",
+        "patterns": [
+          "users",
+          "usermeta",
+          "sessions"
+        ],
+        "reason": "Users, password hashes, sessions and identity metadata are prohibited."
+      },
+      {
+        "category": "commerce-and-customers",
+        "patterns": [
+          "orders",
+          "order_items",
+          "customer",
+          "woocommerce_sessions"
+        ],
+        "reason": "Orders, customer records, addresses and commerce sessions are prohibited."
+      },
+      {
+        "category": "forms-and-messages",
+        "patterns": [
+          "form",
+          "submission",
+          "inbox",
+          "contact"
+        ],
+        "reason": "Quote/contact submissions and message payloads are prohibited."
+      },
+      {
+        "category": "logs-and-analytics",
+        "patterns": [
+          "log",
+          "404",
+          "analytics",
+          "statistics"
+        ],
+        "reason": "Logs, visitor data, IPs, referrers and analytics records are prohibited."
+      },
+      {
+        "category": "secrets-and-configuration",
+        "patterns": [
+          "all options except four public values",
+          "API credentials",
+          "tokens",
+          "nonces"
+        ],
+        "reason": "Secrets and non-public configuration are prohibited."
+      },
+      {
+        "category": "private-content",
+        "patterns": [
+          "draft",
+          "pending",
+          "private",
+          "trash",
+          "password-protected"
+        ],
+        "reason": "Only published, non-password-protected public content is in scope."
+      },
+      {
+        "category": "unreferenced-media",
+        "patterns": [
+          "attachments outside the selected public graph"
+        ],
+        "reason": "Unreferenced uploads can contain private form/customer material and are prohibited."
+      }
+    ]
+  },
+  "excludedFields": {
+    "posts": [
+      "post_author",
+      "post_password",
+      "to_ping",
+      "pinged",
+      "post_content_filtered",
+      "comment_count"
+    ],
+    "postmeta": [
+      "all keys outside the explicit public product/media/SEO/page-template allowlist"
+    ],
+    "redirects": [
+      "access counts/timestamps are read only to recognize shape and are not emitted"
+    ],
+    "options": [
+      "all values except siteurl, home, blogname and permalink_structure"
+    ]
+  },
+  "counts": {
+    "unsupportedPostType": 1480,
+    "postMetaNotAllowlisted": 14888,
+    "termMetaNotAllowlisted": 10,
+    "unpublishedOrPasswordProtectedContent": 74,
+    "orphanOrUnpublishedVariations": 46,
+    "unreferencedAttachments": 191,
+    "taxonomyRowsOutsidePublicGraph": 45,
+    "postMetaOutsidePublicGraph": 3880,
+    "termMetaOutsidePublicGraph": 5,
+    "indexablesOutsidePublicGraph": 162,
+    "redirectRowsNotActivePublicRules": 0,
+    "selectedAllowlistedPostMetaRows": 1388
+  },
+  "privacyStatement": "No user, credential, order, customer, quote/form submission, log, session, secret or unreferenced-upload record is represented in the normalized artifact."
+}
