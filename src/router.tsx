@@ -8,25 +8,63 @@ export type LocationState = {
 
 type RouterValue = LocationState & {
   revision: number
+  renderPathname: string
+  nextMode: boolean
   navigate: (to: string, options?: { replace?: boolean }) => void
 }
 
-const currentLocation = (): LocationState => ({
-  pathname: window.location.pathname.replace(/\/+$/, '') || '/',
-  search: window.location.search,
-  hash: window.location.hash,
-})
+type RouterProviderProps = {
+  children: ReactNode
+  initialLocation?: Partial<LocationState>
+  renderPathname?: string
+  nextMode?: boolean
+}
+
+function normalizePathname(pathname: string | undefined): string {
+  if (!pathname) return '/'
+  return pathname.replace(/\/+$/, '') || '/'
+}
+
+function normalizeLocation(location: Partial<LocationState> | undefined): LocationState {
+  return {
+    pathname: normalizePathname(location?.pathname),
+    search: location?.search ?? '',
+    hash: location?.hash ?? '',
+  }
+}
+
+const currentLocation = (fallback?: Partial<LocationState>): LocationState => {
+  if (typeof window === 'undefined') return normalizeLocation(fallback)
+  return {
+    pathname: normalizePathname(window.location.pathname),
+    search: window.location.search,
+    hash: window.location.hash,
+  }
+}
 
 const RouterContext = createContext<RouterValue | null>(null)
 
-export function RouterProvider({ children }: { children: ReactNode }) {
-  const [location, setLocation] = useState<LocationState>(currentLocation)
+export function RouterProvider({ children, initialLocation, renderPathname, nextMode = false }: RouterProviderProps) {
+  const initialPathname = initialLocation?.pathname
+  const initialSearch = initialLocation?.search
+  const initialHash = initialLocation?.hash
+  const hasInitialLocation = initialLocation !== undefined
+  const [location, setLocation] = useState<LocationState>(() => initialLocation
+    ? normalizeLocation(initialLocation)
+    : currentLocation())
   const [revision, setRevision] = useState(0)
 
   useEffect(() => {
     const update = () => {
       setLocation(currentLocation())
       setRevision((value) => value + 1)
+    }
+    // Next supplies a deterministic path to the server and the first client
+    // render. Query/hash state is then reconciled from the real browser URL.
+    if (hasInitialLocation) {
+      const initial = normalizeLocation({ pathname: initialPathname, search: initialSearch, hash: initialHash })
+      const browser = currentLocation()
+      if (browser.pathname !== initial.pathname || browser.search !== initial.search || browser.hash !== initial.hash) update()
     }
     window.addEventListener('popstate', update)
     window.addEventListener('hashchange', update)
@@ -36,13 +74,20 @@ export function RouterProvider({ children }: { children: ReactNode }) {
       window.removeEventListener('hashchange', update)
       window.removeEventListener('puff:navigate', update)
     }
-  }, [])
+  }, [hasInitialLocation, initialHash, initialPathname, initialSearch])
 
   const value = useMemo<RouterValue>(
     () => ({
       ...location,
       revision,
+      renderPathname: normalizePathname(renderPathname ?? location.pathname),
+      nextMode,
       navigate: (to, options) => {
+        if (nextMode) {
+          if (options?.replace) window.location.replace(to)
+          else window.location.assign(to)
+          return
+        }
         const target = new URL(to, window.location.origin)
         const next = `${target.pathname}${target.search}${target.hash}`
         const current = `${window.location.pathname}${window.location.search}${window.location.hash}`
@@ -51,7 +96,7 @@ export function RouterProvider({ children }: { children: ReactNode }) {
         window.dispatchEvent(new Event('puff:navigate'))
       },
     }),
-    [location, revision],
+    [location, nextMode, renderPathname, revision],
   )
 
   return <RouterContext.Provider value={value}>{children}</RouterContext.Provider>
@@ -69,10 +114,11 @@ let liveBlogPrefetch: Promise<unknown> | null = null
 let livePagePrefetch: Promise<unknown> | null = null
 
 function prefetchRoute(to: string) {
+  if (typeof window === 'undefined') return
   if (!to.startsWith('/') || to.startsWith('/#')) return
   const parts = new URL(to, window.location.origin).pathname.split('/').filter(Boolean)
   if (!parts.length) return
-  sitePagesPrefetch ??= import('./pages/SitePages')
+  sitePagesPrefetch ??= import('./site/SitePages')
   if ((parts.length === 2 && ['puffy-labels-stickers', 'flat-labels-stickers', 'promotional-items', 'product'].includes(parts[0])) || parts[0] === 'product') {
     liveProductPrefetch ??= import('./content/liveProductContent')
   } else if (parts[0] === 'blog' && parts.length === 2) {
@@ -101,9 +147,13 @@ export const SiteLink = forwardRef<HTMLAnchorElement, {
   'aria-label': ariaLabel,
   'data-cursor': cursor,
 }, ref) {
-  const { navigate } = useRouter()
+  const { navigate, nextMode } = useRouter()
   const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+    if (nextMode) {
+      onClick?.()
+      return
+    }
     event.preventDefault()
     onClick?.()
     navigate(to)

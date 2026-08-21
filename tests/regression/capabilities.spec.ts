@@ -24,7 +24,9 @@ test.describe('coarse-pointer contract', () => {
   test('hides the custom cursor and retains touch navigation', async ({ page }) => {
     await page.addInitScript(() => window.sessionStorage.setItem('puff-intro-seen', '1'))
     await gotoReady(page, '/')
-    await expect(page.locator('.cursor-ring')).toHaveCSS('display', 'none')
+    const cursor = page.locator('.cursor-ring')
+    if (await cursor.count()) await expect(cursor).toHaveCSS('display', 'none')
+    else await expect(cursor).toHaveCount(0)
     await page.locator('.menu-toggle').click()
     await expect(page.locator('#mobile-menu')).toHaveAttribute('aria-hidden', 'false')
     await expect(page.locator('.menu-toggle')).toHaveAttribute('aria-expanded', 'true')

@@ -11,18 +11,6 @@ const requestedQuality = Number(process.argv.find((argument) => argument.startsW
 if (!Number.isFinite(requestedQuality)) throw new Error('WebP quality must be a number between 50 and 100.')
 const quality = Math.min(100, Math.max(50, requestedQuality)) / 100
 
-const browserCandidates = [
-  process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
-  process.env.CHROME_PATH,
-  'C:/Program Files/Google/Chrome/Application/chrome.exe',
-  'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe',
-  'C:/Program Files/Microsoft/Edge/Application/msedge.exe',
-  'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
-  '/usr/bin/google-chrome',
-  '/usr/bin/chromium',
-  '/usr/bin/chromium-browser',
-].filter(Boolean)
-
 async function exists(filePath) {
   try {
     await access(filePath)
@@ -30,11 +18,6 @@ async function exists(filePath) {
   } catch {
     return false
   }
-}
-
-async function findBrowserExecutable() {
-  for (const candidate of browserCandidates) if (await exists(candidate)) return candidate
-  throw new Error('No local Chromium browser was found. Set PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH and run again.')
 }
 
 async function walkFiles(directory) {
@@ -86,8 +69,11 @@ let page
 
 async function browserPage() {
   if (page) return page
-  const executablePath = await findBrowserExecutable()
-  browser = await chromium.launch({ executablePath, headless: true })
+  const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+  browser = await chromium.launch({
+    ...(executablePath ? { executablePath } : {}),
+    headless: true,
+  })
   page = await browser.newPage()
   return page
 }

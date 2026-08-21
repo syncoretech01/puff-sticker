@@ -1,6 +1,6 @@
 const CANONICAL_ORIGIN = 'https://puffsticker.com'
 const DEFAULT_TARGET_ORIGIN = 'http://127.0.0.1:4173'
-const DEFAULT_SERVER_COMMAND = 'npm run preview -- --host 127.0.0.1 --port 4173'
+const DEFAULT_SERVER_COMMAND = 'npm run preview:vite -- --host 127.0.0.1 --port 4173'
 
 export type RegressionProfile = 'vite' | 'next'
 

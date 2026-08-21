@@ -14,8 +14,8 @@ Open `http://127.0.0.1:5173/`.
 ## Production build
 
 ```bash
-npm run build
-npm run preview
+npm run build:vite
+npm run preview:vite
 ```
 
 The build prerenders 51 canonical routes plus the local shop, resources and shipping pages, then verifies route HTML, metadata, exact source content and mirrored assets.

@@ -8,6 +8,7 @@ import {
 } from './evidence'
 import { productionPageEvidence } from './production-evidence-fixture'
 import { SHOP_CANONICAL_TARGET_EVIDENCE, type ShopCanonicalTargetEvidence } from './shop-canonical-evidence'
+import { EXPLICIT_TRAILING_SLASH_PATHS } from './slash-redirects'
 
 export const SITE_ORIGIN = 'https://puffsticker.com' as const
 
@@ -522,7 +523,22 @@ function makeLocalRoute(
     contentParity: 'migrated',
     metadata: {
       ...coreMetadata,
-      openGraph: { title, description, url: canonical, image: null, imageAlt: null, type: 'website' },
+      openGraph: {
+        title,
+        description,
+        url: canonical,
+        image: null,
+        imageAlt: null,
+        type: 'website',
+        // Target-authored ordering for the two approved noindex pages. These
+        // are intentionally not described as captured production tags.
+        tags: [
+          { key: 'og:title', content: title },
+          { key: 'og:description', content: description },
+          { key: 'og:url', content: canonical },
+          { key: 'og:type', content: 'website' },
+        ],
+      },
       twitter: {
         card: 'summary',
         title,
@@ -531,6 +547,12 @@ function makeLocalRoute(
         imageAlt: null,
         site: null,
         creator: null,
+        // Target-authored ordering; production returned 404 for this URL.
+        tags: [
+          { key: 'twitter:card', content: 'summary' },
+          { key: 'twitter:title', content: title },
+          { key: 'twitter:description', content: description },
+        ],
       },
     },
     structuredData: [],
@@ -646,28 +668,28 @@ const pageByPath = new Map(
   [...PRIMARY_ROUTE_CONTRACTS, ...CANONICALIZING_ALIAS_CONTRACTS].map((route) => [route.path, route]),
 )
 
-export const TRAILING_SLASH_REDIRECTS: readonly RedirectRouteContract[] = [
-  ...PRIMARY_ROUTE_CONTRACTS,
-  ...CANONICALIZING_ALIAS_CONTRACTS,
-]
-  .filter((route) => route.path !== '/')
-  .map((route) => ({
-    disposition: 'redirect',
-    path: route.path,
-    status: 301,
-    destination: route.publicPath,
-    evidence: {
-      crawl: route.evidence.crawl === 'approved-target-override'
-        ? 'approved-target-override'
-        : 'derived-from-observed-policy',
-      sitemap: 'not-applicable',
-      liveStatus: route.evidence.crawl === 'approved-target-override'
-        ? 404
-        : 'not-individually-verified',
-      targetStatus: 301,
-      ...EXTERNAL_EVIDENCE_UNAVAILABLE,
-    },
-  }))
+export const TRAILING_SLASH_REDIRECTS: readonly RedirectRouteContract[] = EXPLICIT_TRAILING_SLASH_PATHS
+  .map((path) => {
+    const route = pageByPath.get(path)
+    if (!route) throw new Error(`Explicit slash redirect has no page contract: ${path}`)
+    return {
+      disposition: 'redirect',
+      path,
+      status: 301,
+      destination: route.publicPath,
+      evidence: {
+        crawl: route.evidence.crawl === 'approved-target-override'
+          ? 'approved-target-override'
+          : 'derived-from-observed-policy',
+        sitemap: 'not-applicable',
+        liveStatus: route.evidence.crawl === 'approved-target-override'
+          ? 404
+          : 'not-individually-verified',
+        targetStatus: 301,
+        ...EXTERNAL_EVIDENCE_UNAVAILABLE,
+      },
+    }
+  })
 
 const redirectByPath = new Map(TRAILING_SLASH_REDIRECTS.map((route) => [route.path, route]))
 

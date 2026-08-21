@@ -33,9 +33,19 @@ import {
   type CategorySlug,
 } from '../content/catalog'
 import { getProductDetails } from '../content/productDetails'
+import { liveProductContent } from '../content/liveProductContent'
+import { liveBlogContent } from '../content/liveBlogContent'
+import { livePageContent } from '../content/livePageContent'
+import { exactFaqByPath } from '../content/liveFaqSchema'
+import { getArchiveContent } from '../content/archiveContent'
+import { productionDeltaBlogContent, productionDeltaFeaturedImage } from '../content/productionDeltaContent'
+import { extractPublishedFaqs, splitPublishedProductFaqs as splitProductFaqsWithoutDom, stripPricomDemoImages } from '../content/publishedHtml'
 import { faqs as homeFaqs } from '../data'
-import { SiteLink } from '../router'
-import { BackToTop } from '../components/BackToTop'
+import { SiteLink, useRouter } from '../router'
+import { NotFoundPage } from './NotFoundPage'
+import { SiteFooter } from './SiteFooter'
+
+export { NotFoundPage, SiteFooter }
 
 const categoryOrder: CategorySlug[] = ['puffy-labels-stickers', 'flat-labels-stickers', 'promotional-items']
 const categoryProductOrder: Record<CategorySlug, string[]> = {
@@ -65,99 +75,24 @@ const categoryGuides: Record<CategorySlug, { title: string; body: string[]; poin
   },
 }
 
-type LiveProductEntry = (typeof import('../content/liveProductContent'))['liveProductContent'][keyof (typeof import('../content/liveProductContent'))['liveProductContent']]
-type LiveBlogEntry = (typeof import('../content/liveBlogContent'))['liveBlogContent'][keyof (typeof import('../content/liveBlogContent'))['liveBlogContent']]
-type LivePageEntry = (typeof import('../content/livePageContent'))['livePageContent'][keyof (typeof import('../content/livePageContent'))['livePageContent']]
-
-function useLiveProductEntry(slug: string) {
-  const [entry, setEntry] = useState<LiveProductEntry | null>(null)
-  useEffect(() => {
-    let active = true
-    void import('../content/liveProductContent').then(({ liveProductContent }) => {
-      const value = liveProductContent[slug as keyof typeof liveProductContent]
-      if (active) setEntry(value ?? null)
-    })
-    return () => { active = false }
-  }, [slug])
-  return entry
+function getLiveProductEntry(slug: string) {
+  return liveProductContent[slug as keyof typeof liveProductContent] ?? null
 }
 
-function useLiveBlogEntry(slug: string) {
-  const [entry, setEntry] = useState<LiveBlogEntry | null>(null)
-  useEffect(() => {
-    let active = true
-    void import('../content/liveBlogContent').then(({ liveBlogContent }) => {
-      const value = liveBlogContent[slug as keyof typeof liveBlogContent]
-      if (active) setEntry(value ?? null)
-    })
-    return () => { active = false }
-  }, [slug])
-  return entry
+function getLiveBlogEntry(slug: string) {
+  return liveBlogContent[slug as keyof typeof liveBlogContent]
+    ?? productionDeltaBlogContent[slug as keyof typeof productionDeltaBlogContent]
+    ?? null
 }
 
-function useLivePageEntry(slug: string) {
-  const [entry, setEntry] = useState<LivePageEntry | null>(null)
-  useEffect(() => {
-    let active = true
-    void import('../content/livePageContent').then(({ livePageContent }) => {
-      const value = livePageContent[slug as keyof typeof livePageContent]
-      if (active) setEntry(value ?? null)
-    })
-    return () => { active = false }
-  }, [slug])
-  return entry
-}
-
-function splitPublishedProductFaqs(html: string | undefined) {
-  if (!html || typeof DOMParser === 'undefined') return { guideHtml: html ?? '', faqs: [] as Array<{ question: string; answerHtml: string }> }
-  const document = new DOMParser().parseFromString(html, 'text/html')
-  const root = document.body
-  const headings = Array.from(root.querySelectorAll('h1, h2, h3, h4, h5, h6'))
-  const reverseHeadings = [...headings].reverse()
-  const faqHeading = reverseHeadings.find((heading) => /check out our frequently asked questions/i.test(heading.textContent ?? ''))
-    ?? reverseHeadings.find((heading) => /frequently asked questions/i.test(heading.textContent ?? ''))
-  if (!faqHeading) return { guideHtml: html, faqs: [] as Array<{ question: string; answerHtml: string }> }
-
-  const nodes = Array.from(root.children)
-  const headingIndex = nodes.indexOf(faqHeading)
-  const isQuestionNode = (node: Element) => {
-    if (!node.matches('p')) return false
-    const anchor = node.querySelector(':scope > a')
-    const fullText = node.textContent?.replace(/^\s*[.·-]\s*/, '').replace(/\s+/g, ' ').trim()
-    const anchorText = anchor?.textContent?.replace(/^\s*[.·-]\s*/, '').replace(/\s+/g, ' ').trim()
-    return Boolean(anchorText && fullText === anchorText)
-  }
-  const questionNodes = nodes.slice(headingIndex + 1).filter(isQuestionNode)
-  const faqs = questionNodes.flatMap((questionNode) => {
-    const question = questionNode.querySelector('a')?.textContent?.replace(/^\s*[.·-]\s*/, '').replace(/\s+/g, ' ').trim()
-    if (!question) return []
-    const answerNodes: Element[] = []
-    let cursor = questionNode.nextElementSibling
-    while (cursor && !isQuestionNode(cursor)) {
-      if (/^H[1-6]$/.test(cursor.tagName)) break
-      answerNodes.push(cursor)
-      cursor = cursor.nextElementSibling
-    }
-    if (!answerNodes.length) return []
-    return [{ question, answerHtml: answerNodes.map((node) => node.outerHTML).join('') }]
-  })
-
-  if (!faqs.length) return { guideHtml: html, faqs }
-  let boundary: Element = faqHeading
-  while (boundary.previousElementSibling && /^H[1-6]$/.test(boundary.previousElementSibling.tagName) && /frequently asked questions|faqs?/i.test(boundary.previousElementSibling.textContent ?? '')) {
-    boundary = boundary.previousElementSibling
-  }
-  let removable: Element | null = boundary
-  while (removable) {
-    const next: Element | null = removable.nextElementSibling
-    removable.remove()
-    removable = next
-  }
-  return { guideHtml: root.innerHTML, faqs }
+function getLivePageEntry(slug: string) {
+  return livePageContent[slug as keyof typeof livePageContent] ?? null
 }
 
 function OfficialPageSection({ slug, label }: { slug: string; label: string }) {
-  const page = useLivePageEntry(slug)
+  const { nextMode } = useRouter()
+  const page = getLivePageEntry(slug)
+  const publishedHtml = page && nextMode && slug === 'about-us' ? stripPricomDemoImages(page.html) : page?.html
   return (
     <section className="official-page-source">
       <div className="page-shell official-page-source__grid">
@@ -169,7 +104,7 @@ function OfficialPageSection({ slug, label }: { slug: string; label: string }) {
         {page
           ? <details className="official-page-source__disclosure reveal-block" data-live-loaded={`page-${slug}`}>
             <summary><span><small>More information</small><strong>Open the complete guide</strong></span><i><ChevronDown /></i></summary>
-            <div className="official-page-source__content" dangerouslySetInnerHTML={{ __html: page.html }} />
+            <div className="official-page-source__content" dangerouslySetInnerHTML={{ __html: publishedHtml ?? '' }} />
           </details>
           : <div className="official-page-source__pending" data-live-pending={`page-${slug}`} aria-label={`Loading ${label} copy`}><span /></div>}
       </div>
@@ -178,6 +113,7 @@ function OfficialPageSection({ slug, label }: { slug: string; label: string }) {
 }
 
 const blogPosts = [
+  { slug: 'custom-puffy-stickers-guide', title: 'The Complete Guide to Custom Puffy Stickers', date: 'August 20, 2026', category: 'Custom Puffy Stickers', categories: ['Custom Puffy Stickers', 'Sticker Psychology'], excerpt: 'A complete guide to custom puffy stickers, covering material choice, ideal dome thickness, waterproof versus water resistant, die cut versus kiss cut, and printing methods.', image: productionDeltaFeaturedImage, imageAlt: 'Flat sticker proof beside a raised puffy sticker proof on a light table, showing the difference in profile' },
   { slug: 'when-3d-stickers-become-collectibles', title: 'When 3D Stickers Become Collectibles', date: 'July 29, 2026', category: 'Custom Puffy Stickers', categories: ['Custom Puffy Stickers', 'Sticker Psychology'], excerpt: 'How texture, context and the feeling of an object can move a sticker from decoration into something people keep.', image: '/assets/blog-collectibles.webp' },
   { slug: 'why-sticker-books-never-really-disappeared', title: 'Why Sticker Books Never Really Disappeared', date: 'July 3, 2026', category: 'Custom Puffy Stickers', categories: ['Custom Puffy Stickers', 'Sticker Psychology'], excerpt: 'Why collecting, arranging and saving stickers continues to feel personal across generations.', image: '/assets/blog-sticker-books.webp' },
   { slug: 'why-we-save-stickers-we-never-use', title: 'Why We Save Stickers We Never Use: The Psychology Behind Unused Stickers', date: 'June 23, 2026', category: 'Custom Puffy Stickers', categories: ['Custom Puffy Stickers', 'Sticker Psychology'], excerpt: 'The psychology behind keeping the perfect sticker untouched—and what that says about attachment, identity and value.', image: '/assets/blog-unused-stickers.png' },
@@ -190,6 +126,11 @@ const blogPosts = [
   { slug: 'custom-jute-tote-bags-the-perfect-blend-of-sustainability', title: 'Custom Jute Tote Bags – The Perfect Blend of Sustainability and Style', date: 'August 26, 2025', category: 'Custom Jute Tote Bags', categories: ['Custom Jute Tote Bags'], excerpt: 'A practical material guide to natural woven carry, repeated use and visible everyday branding.', image: '/assets/blog-jute.webp' },
   { slug: 'puffy-stickers-are-trending-2025', title: 'Why Puffy Stickers Are Trending in 2025 (And Why You Shouldn’t Settle for Flat)', date: 'August 22, 2025', category: 'Custom Puffy Stickers', categories: ['Custom Puffy Stickers'], excerpt: 'Why dimensional print re-emerged across packaging, personal expression, merchandise and brand campaigns.', image: '/assets/blog-trending.webp' },
 ]
+
+// The new production-delta article has its own canonical route and captured
+// archive relationships. The protected framework-migration baseline keeps the
+// existing blog index composition until content-source reconciliation.
+const baselineBlogPosts = blogPosts.filter((post) => post.slug !== 'custom-puffy-stickers-guide')
 
 const articleSections: Record<string, Array<{ title: string; body: string }>> = {
   'when-3d-stickers-become-collectibles': [
@@ -258,55 +199,6 @@ const articleSections: Record<string, Array<{ title: string; body: string }>> = 
     { title: 'Raised logos add physical weight.', body: 'On packaging or merchandise, a dimensional mark can make a logo feel more substantial. The tactile cue adds emphasis without requiring a larger printed footprint.' },
     { title: 'The result starts with a clear specification.', body: 'Artwork, sheet composition, finish and run size shape the final object. Puffy stickers, dome decals and resin-coated labels should be selected as distinct constructions rather than treated as interchangeable names.' },
   ],
-}
-
-export function SiteFooter() {
-  return (
-    <footer className="site-footer">
-      <div className="page-shell site-footer__lead">
-        <SiteLink to="/" className="site-footer__logo" aria-label="Puff Sticker home">
-          <img src="/assets/puff-logo.webp" alt="Puff Sticker" />
-        </SiteLink>
-        <h2>Make the next touchpoint <em>feel</em> different.</h2>
-        <SiteLink to="/request-a-quote" className="site-footer__project" data-cursor="START">
-          Start a project <ArrowUpRight />
-        </SiteLink>
-      </div>
-      <div className="page-shell site-footer__grid">
-        <div>
-          <span>Products</span>
-          <SiteLink to="/shop">All products</SiteLink>
-          {categoryOrder.map((slug) => <SiteLink to={categories[slug].href} key={slug}>{categories[slug].shortName}</SiteLink>)}
-        </div>
-        <div>
-          <span>Company</span>
-          <SiteLink to="/about-us">About Puff</SiteLink>
-          <SiteLink to="/blog">The Puff Blog</SiteLink>
-          <SiteLink to="/contact-us">Contact</SiteLink>
-          <SiteLink to="/request-a-quote">Request a quote</SiteLink>
-        </div>
-        <div>
-          <span>Resources</span>
-          <SiteLink to="/faqs">Frequently asked</SiteLink>
-          <SiteLink to="/shipping-delivery">Shipping & delivery</SiteLink>
-          <SiteLink to="/reprint-policy">Refund & reprint</SiteLink>
-          <SiteLink to="/privacy-policy">Privacy</SiteLink>
-          <SiteLink to="/terms-of-service">Terms</SiteLink>
-        </div>
-        <div>
-          <span>Sales & support</span>
-          <a href="mailto:sales@puffsticker.com">sales@puffsticker.com</a>
-          <a href="tel:+14079234382">(407) 923-4382</a>
-          <p>Mon–Fri · 09:00–17:00 EST<br />Orlando, Florida</p>
-        </div>
-      </div>
-      <div className="page-shell site-footer__bottom">
-        <span>A Project by ATZ Technology INC. © 2026 PuffSticker.com</span>
-        <span>Custom made · Shipped worldwide</span>
-        <BackToTop />
-      </div>
-    </footer>
-  )
 }
 
 function PageHero({
@@ -483,13 +375,13 @@ export function CategoryPage({ slug }: { slug: string }) {
 export function ProductPage({ slug, category }: { slug: string; category?: string }) {
   const product = getProduct(slug)
   const details = getProductDetails(slug)
-  const liveProduct = useLiveProductEntry(slug)
+  const liveProduct = getLiveProductEntry(slug)
   const media = useRef<HTMLDivElement>(null)
   const mediaImage = useRef<HTMLImageElement>(null)
   const mediaBounds = useRef<DOMRect | null>(null)
   const mediaMotion = useRef<Array<ReturnType<typeof gsap.quickTo>>>([])
   const [openFaq, setOpenFaq] = useState(0)
-  const publishedProductContent = useMemo(() => splitPublishedProductFaqs(liveProduct?.descriptionHtml), [liveProduct?.descriptionHtml])
+  const publishedProductContent = useMemo(() => splitProductFaqsWithoutDom(liveProduct?.descriptionHtml), [liveProduct?.descriptionHtml])
   if (!product || !details || (category && product.category !== category)) return <NotFoundPage />
   const related = catalogProducts.filter((item) => item.category === product.category && item.slug !== product.slug).slice(0, 3)
   const heroImage = liveProduct?.gallery[0]?.src ?? product.image
@@ -741,20 +633,11 @@ const extendedFaqs = [
 
 export function FullFaqPage() {
   const [open, setOpen] = useState(0)
-  const liveFaq = useLivePageEntry('faqs')
-  const publishedFaqs = useMemo(() => {
-    if (!liveFaq || typeof DOMParser === 'undefined') return []
-    const document = new DOMParser().parseFromString(liveFaq.html, 'text/html')
-    return Array.from(document.body.querySelectorAll('a')).flatMap((anchor) => {
-      const answer = anchor.nextElementSibling
-      const question = anchor.textContent?.replace(/\s+/g, ' ').trim()
-      if (!question || !answer || !['P', 'UL', 'OL'].includes(answer.tagName)) return []
-      return [{ question, answerHtml: answer.outerHTML }]
-    })
-  }, [liveFaq])
+  const liveFaq = getLivePageEntry('faqs')
+  const publishedFaqs = useMemo(() => extractPublishedFaqs(liveFaq?.html), [liveFaq?.html])
   const faqEntries = publishedFaqs.length
     ? publishedFaqs
-    : extendedFaqs.map(({ question, answer }) => ({ question, answerHtml: `<p>${answer}</p>` }))
+    : (exactFaqByPath['/faqs'] ?? extendedFaqs).map(({ question, answer }) => ({ question, answerHtml: `<p>${answer}</p>` }))
   return (
     <>
       <PageHero eyebrow="Printing made easy" title={<>Frequently asked<br /><em>questions.</em></>} text="Artwork, materials, quantities, proofing, delivery and aftercare—organized for an easier B2B decision." meta={`${faqEntries.length} answers`} />
@@ -873,7 +756,8 @@ type QuoteState = {
 }
 
 export function QuotePage() {
-  const preselectedSlug = new URLSearchParams(window.location.search).get('product') ?? ''
+  const { search } = useRouter()
+  const preselectedSlug = new URLSearchParams(search).get('product') ?? ''
   const preselected = getProduct(preselectedSlug)?.name ?? (preselectedSlug === 'sample-pack' ? 'Puffy sticker sample pack' : preselectedSlug)
   const [step, setStep] = useState(0)
   const [artwork, setArtwork] = useState<File | null>(null)
@@ -1003,25 +887,25 @@ export function QuotePage() {
 }
 
 export function BlogPage({ categorySlug }: { categorySlug?: string } = {}) {
-  const filters = ['All', ...Array.from(new Set(blogPosts.flatMap((post) => post.categories)))]
+  const filters = ['All', ...Array.from(new Set(baselineBlogPosts.flatMap((post) => post.categories)))]
   const requestedFilter = filters.find((filter) => filter.toLowerCase().replaceAll(/[^a-z0-9]+/g, '-') === categorySlug) ?? 'All'
   const [active, setActive] = useState(requestedFilter)
-  const visible = active === 'All' ? blogPosts : blogPosts.filter((post) => post.categories.includes(active))
+  const visible = active === 'All' ? baselineBlogPosts : baselineBlogPosts.filter((post) => post.categories.includes(active))
   return (
     <>
-      <PageHero eyebrow="The Puff Blog" title={<>Material, memory<br />and <em>things that stick.</em></>} text="Field notes on tactile design, sticker psychology, packaging and the small material choices that change how a brand is perceived." meta={`${blogPosts.length} stories`} />
+      <PageHero eyebrow="The Puff Blog" title={<>Material, memory<br />and <em>things that stick.</em></>} text="Field notes on tactile design, sticker psychology, packaging and the small material choices that change how a brand is perceived." meta={`${baselineBlogPosts.length} stories`} />
       <section className="blog-page">
         <div className="page-shell blog-filter" role="group" aria-label="Filter stories">{filters.map((filter) => <button type="button" onClick={() => setActive(filter)} className={active === filter ? 'is-active' : ''} key={filter}>{filter}</button>)}</div>
         {active === 'All' && (
           <article className="page-shell blog-feature reveal-block">
-            <SiteLink to={`/blog/${blogPosts[0].slug}`} className="blog-feature__media"><img src={blogPosts[0].image} alt="" /></SiteLink>
-            <div className="blog-feature__copy"><span>{blogPosts[0].categories.join(' · ')} · {blogPosts[0].date}</span><SiteLink to={`/blog/${blogPosts[0].slug}`}><h2>{blogPosts[0].title}</h2></SiteLink><p>{blogPosts[0].excerpt}</p><SiteLink to={`/blog/${blogPosts[0].slug}`} className="page-text-link">Read the field note <ArrowRight /></SiteLink></div>
+            <SiteLink to={`/blog/${baselineBlogPosts[0].slug}`} className="blog-feature__media"><img src={baselineBlogPosts[0].image} alt={baselineBlogPosts[0].imageAlt ?? ''} /></SiteLink>
+            <div className="blog-feature__copy"><span>{baselineBlogPosts[0].categories.join(' · ')} · {baselineBlogPosts[0].date}</span><SiteLink to={`/blog/${baselineBlogPosts[0].slug}`}><h2>{baselineBlogPosts[0].title}</h2></SiteLink><p>{baselineBlogPosts[0].excerpt}</p><SiteLink to={`/blog/${baselineBlogPosts[0].slug}`} className="page-text-link">Read the field note <ArrowRight /></SiteLink></div>
           </article>
         )}
         <div className="page-shell blog-grid">
           {visible.slice(active === 'All' ? 1 : 0).map((post) => (
             <article className="blog-card reveal-block" key={post.slug}>
-              <SiteLink to={`/blog/${post.slug}`} className="blog-card__media" data-cursor="READ"><img src={post.image} alt="" loading="lazy" /><i><ArrowUpRight /></i></SiteLink>
+              <SiteLink to={`/blog/${post.slug}`} className="blog-card__media" data-cursor="READ"><img src={post.image} alt={post.imageAlt ?? ''} loading="lazy" /><i><ArrowUpRight /></i></SiteLink>
               <div><span>{post.categories.join(' · ')} · {post.date}</span><SiteLink to={`/blog/${post.slug}`}><h3>{post.title}</h3></SiteLink><p>{post.excerpt}</p></div>
             </article>
           ))}
@@ -1032,17 +916,62 @@ export function BlogPage({ categorySlug }: { categorySlug?: string } = {}) {
   )
 }
 
+export function ArchivePage({ pathname }: { pathname: string }) {
+  const archive = getArchiveContent(pathname)
+  if (!archive) return <NotFoundPage />
+  const articles = archive.articleSlugs.flatMap((slug) => {
+    const post = blogPosts.find((item) => item.slug === slug)
+    return post ? [post] : []
+  })
+  const archiveProducts = archive.productSlugs.flatMap((slug) => {
+    const product = getProduct(slug)
+    return product ? [product] : []
+  })
+  const resultCount = articles.length + archiveProducts.length
+
+  return (
+    <>
+      <PageHero
+        eyebrow={pathname === '/blog/page/2' ? 'The Puff Blog' : 'Published archive'}
+        title={<>{archive.label}<br /><em>archive.</em></>}
+        text="Published PuffSticker articles and products grouped by their original archive relationship."
+        meta={`${resultCount} ${resultCount === 1 ? 'result' : 'results'}`}
+      />
+      {articles.length > 0 && (
+        <section className="blog-page">
+          <div className="page-shell blog-grid">
+            {articles.map((post) => (
+              <article className="blog-card reveal-block" key={post.slug}>
+                <SiteLink to={`/blog/${post.slug}`} className="blog-card__media" data-cursor="READ"><img src={post.image} alt={post.imageAlt ?? post.title} loading="lazy" /><i><ArrowUpRight /></i></SiteLink>
+                <div><span>{post.categories.join(' · ')} · {post.date}</span><SiteLink to={`/blog/${post.slug}`}><h2>{post.title}</h2></SiteLink><p>{post.excerpt}</p></div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+      {archiveProducts.length > 0 && (
+        <section className="catalog-section catalog-section--category">
+          <div className="page-shell catalog-grid">
+            {archiveProducts.map((product, index) => <ProductGridCard product={product} index={index} key={product.slug} />)}
+          </div>
+        </section>
+      )}
+      <SiteFooter />
+    </>
+  )
+}
+
 export function BlogArticlePage({ slug }: { slug: string }) {
   const post = blogPosts.find((item) => item.slug === slug)
-  const liveArticle = useLiveBlogEntry(slug)
+  const liveArticle = getLiveBlogEntry(slug)
   if (!post) return <NotFoundPage />
-  const related = blogPosts.filter((item) => item.slug !== slug).slice(0, 3)
+  const related = baselineBlogPosts.filter((item) => item.slug !== slug).slice(0, 3)
   const fallbackSections = articleSections[post.slug] ?? []
   return (
     <>
       <article className="article-page">
         <header className="article-page__header page-shell reveal-block"><SiteLink to="/blog" className="article-page__back"><ArrowLeft />All field notes</SiteLink><span>{post.categories.join(' · ')} · {post.date}</span><h1>{post.title}</h1><p>{post.excerpt}</p></header>
-        <div className="article-page__hero page-shell reveal-block"><img src={post.image} alt="" /><span>From the PuffSticker journal</span></div>
+        <div className="article-page__hero page-shell reveal-block"><img src={post.image} alt={post.imageAlt ?? ''} /><span>From the PuffSticker journal</span></div>
         <div className="article-page__body page-shell">
           <aside><span>In this note</span><p>{post.categories.join(' · ')}</p><SiteLink to="/blog">All field notes <ArrowLeft /></SiteLink></aside>
           <div className="reveal-block">
@@ -1053,7 +982,7 @@ export function BlogArticlePage({ slug }: { slug: string }) {
           </div>
         </div>
       </article>
-      <section className="more-notes"><div className="page-shell related-products__heading"><div><span className="eyebrow">Continue reading</span><h2>More field notes</h2></div></div><div className="page-shell blog-grid">{related.map((item) => <article className="blog-card" key={item.slug}><SiteLink to={`/blog/${item.slug}`} className="blog-card__media"><img src={item.image} alt="" /><i><ArrowUpRight /></i></SiteLink><div><span>{item.categories.join(' · ')} · {item.date}</span><SiteLink to={`/blog/${item.slug}`}><h3>{item.title}</h3></SiteLink></div></article>)}</div></section>
+      <section className="more-notes"><div className="page-shell related-products__heading"><div><span className="eyebrow">Continue reading</span><h2>More field notes</h2></div></div><div className="page-shell blog-grid">{related.map((item) => <article className="blog-card" key={item.slug}><SiteLink to={`/blog/${item.slug}`} className="blog-card__media"><img src={item.image} alt={item.imageAlt ?? ''} /><i><ArrowUpRight /></i></SiteLink><div><span>{item.categories.join(' · ')} · {item.date}</span><SiteLink to={`/blog/${item.slug}`}><h3>{item.title}</h3></SiteLink></div></article>)}</div></section>
       <SiteFooter />
     </>
   )
@@ -1148,7 +1077,7 @@ export function ResourcesPage() {
 
 export function PolicyPage({ slug }: { slug: string }) {
   const policy = policyPages[slug]
-  const livePage = useLivePageEntry(slug)
+  const livePage = getLivePageEntry(slug)
   if (!policy) return <NotFoundPage />
   return (
     <>
@@ -1161,15 +1090,6 @@ export function PolicyPage({ slug }: { slug: string }) {
             : <div data-live-pending={slug === 'shipping-delivery' ? undefined : 'policy'}>{policy.sections.map((section, index) => <section id={`policy-${index}`} className="reveal-block" key={section.title}><span>{String(index + 1).padStart(2, '0')}</span><h2>{section.title}</h2><p>{section.body}</p>{section.bullets && <ul>{section.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>}</section>)}</div>}
         </div>
       </section>
-      <SiteFooter />
-    </>
-  )
-}
-
-export function NotFoundPage() {
-  return (
-    <>
-      <section className="not-found"><div className="not-found__sticker"><span>404</span></div><div><span className="eyebrow eyebrow--light">This one did not stick</span><h1>Page not found.</h1><p>The route may have moved. The full catalog and project tools are still close by.</p><div><SiteLink to="/shop" className="page-button page-button--yellow">Explore products <ArrowRight /></SiteLink><SiteLink to="/" className="page-text-link page-text-link--light">Back home</SiteLink></div></div></section>
       <SiteFooter />
     </>
   )

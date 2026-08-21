@@ -5,6 +5,11 @@ import { gotoReady, installDeterministicBrowserState, observeRuntime } from './h
 import { canonicalRoutes, localExtensionContracts } from './route-contract'
 
 test.describe('canonical route contract', () => {
+  test.skip(
+    regressionEnvironment.profile !== 'vite',
+    'The legacy 51-route sitemap contract belongs to the protected Vite baseline; Next SEO parity is covered by next-seo-contract.spec.ts.',
+  )
+
   for (const route of canonicalRoutes) {
     test(`${route.path} renders its canonical document`, async ({ page }) => {
       await installDeterministicBrowserState(page)

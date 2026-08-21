@@ -5,7 +5,7 @@ The Playwright suite protects the current React/Vite redesign while its implemen
 ## Environments
 
 - `PUFF_REGRESSION_BASE_URL` selects the implementation under test. It defaults to `http://127.0.0.1:4173`.
-- `PUFF_REGRESSION_SERVER_COMMAND` selects the managed server command. It defaults to `npm run preview -- --host 127.0.0.1 --port 4173`.
+- `PUFF_REGRESSION_SERVER_COMMAND` selects the managed server command. It defaults to `npm run preview:vite -- --host 127.0.0.1 --port 4173`.
 - `PUFF_REGRESSION_EXTERNAL_SERVER=1` disables Playwright server management for an already-running Vite or Next server.
 - `PUFF_REGRESSION_PROFILE=vite|next` selects documented SEO expectations for the three local extension routes. It defaults to `vite` while recording the protected baseline.
 - Canonicals are deliberately fixed to `https://puffsticker.com`; the target server URL never changes the expected public origin.

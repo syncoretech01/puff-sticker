@@ -3,11 +3,13 @@ import { expect, test, type APIRequestContext, type Page } from '@playwright/tes
 import {
   CANONICALIZING_ALIAS_CONTRACTS,
   CANONICAL_SITEMAP_ROUTES,
+  EXACT_SEO_ENDPOINT_PATHS,
   EXPLICIT_NOT_FOUND_CONTRACTS,
   LEGACY_SITEMAP_PATHS,
   PRIMARY_ROUTE_CONTRACTS,
   PRODUCTION_ROBOTS_TXT,
   SITEMAP_GROUPS,
+  SHOP_CANONICAL_QUERY_REDIRECT,
   SITE_ORIGIN,
   TRAILING_SLASH_REDIRECTS,
   collectSchemaTypes,
@@ -18,6 +20,7 @@ import {
   type SitemapEntryContract,
   type SitemapGroup,
 } from '../../src/lib/seo/index'
+import { productionEndpointEvidence } from '../../src/lib/seo/production-evidence-fixture'
 import { regressionEnvironment } from './environment'
 import { gotoReady, installDeterministicBrowserState } from './helpers'
 
@@ -35,6 +38,74 @@ function normalizeXmlText(value: string) {
     .replaceAll('&quot;', '"')
     .replaceAll('&apos;', "'")
     .trim()
+}
+
+function decodeHtml(value: string) {
+  return value
+    .replace(/&#x([0-9a-f]+);/gi, (_match, hex: string) => String.fromCodePoint(Number.parseInt(hex, 16)))
+    .replace(/&#([0-9]+);/g, (_match, decimal: string) => String.fromCodePoint(Number.parseInt(decimal, 10)))
+    .replaceAll('&quot;', '"')
+    .replaceAll('&#39;', "'")
+    .replaceAll('&apos;', "'")
+    .replaceAll('&lt;', '<')
+    .replaceAll('&gt;', '>')
+    .replaceAll('&amp;', '&')
+}
+
+function tagAttributes(tag: string) {
+  const attributes: Record<string, string> = {}
+  for (const match of tag.matchAll(/([^\s=/>]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g)) {
+    attributes[match[1].toLowerCase()] = decodeHtml(match[2] ?? match[3] ?? '')
+  }
+  return attributes
+}
+
+function rawMetaValues(html: string, attribute: 'name' | 'property', key: string) {
+  return [...html.matchAll(/<meta\b[^>]*>/gi)]
+    .map((match) => tagAttributes(match[0]))
+    .filter((attributes) => attributes[attribute] === key)
+    .map((attributes) => attributes.content ?? '')
+}
+
+function rawLinkValues(html: string, rel: string) {
+  return [...html.matchAll(/<link\b[^>]*>/gi)]
+    .map((match) => tagAttributes(match[0]))
+    .filter((attributes) => attributes.rel === rel)
+    .map((attributes) => attributes.href ?? '')
+}
+
+function rawJsonLdGraphs(html: string) {
+  return [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
+    .filter((match) => tagAttributes(match[1]).type === 'application/ld+json')
+    // Script data is raw text in HTML; entity decoding would corrupt literal
+    // strings such as "&amp;" inside a captured JSON-LD value.
+    .map((match) => JSON.parse(match[2]) as Record<string, unknown>)
+}
+
+function rawMainText(html: string) {
+  const main = html.match(/<main\b[^>]*>[\s\S]*?<\/main>/i)?.[0] ?? ''
+  return decodeHtml(main
+    .replace(/<(?:script|style|template|noscript)\b[^>]*>[\s\S]*?<\/(?:script|style|template|noscript)>/gi, ' ')
+    .replace(/<!--([\s\S]*?)-->/g, ' ')
+    .replace(/<[^>]+>/g, ' '))
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function rawTitle(html: string) {
+  const titles = [...html.matchAll(/<title\b[^>]*>([\s\S]*?)<\/title>/gi)]
+  return titles.length ? decodeHtml(titles.at(-1)?.[1] ?? '').trim() : null
+}
+
+function wordCount(value: string) {
+  return value.match(/[\p{L}\p{N}]+(?:['’.-][\p{L}\p{N}]+)*/gu)?.length ?? 0
+}
+
+function expectNotFoundRobots(robots: readonly (string | null)[], expected: string) {
+  expect(robots.filter((value) => value === expected)).toHaveLength(1)
+  const frameworkRobots = robots.filter((value) => value !== expected)
+  expect(frameworkRobots.length).toBeLessThanOrEqual(1)
+  expect(frameworkRobots.every((value) => value === 'noindex')).toBe(true)
 }
 
 function xmlValues(xml: string, tag: string) {
@@ -124,6 +195,31 @@ async function assertRenderedPage(page: Page, route: PageRouteContract) {
   await installDeterministicBrowserState(page)
   const response = await gotoReady(page, route.publicPath)
   expect(response.status()).toBe(route.status)
+  const rawHtml = await response.text()
+
+  // These assertions operate on the HTTP response itself, before hydration.
+  // They prevent a visually correct client shell from hiding an empty or
+  // approximate server document from crawlers.
+  expect(rawTitle(rawHtml), `${route.path}: raw title`).toBe(route.metadata.title)
+  expect(rawMetaValues(rawHtml, 'name', 'description'), `${route.path}: raw description`).toEqual(
+    route.metadata.description === null ? [] : [route.metadata.description],
+  )
+  expect(rawLinkValues(rawHtml, 'canonical'), `${route.path}: raw canonical`).toEqual([route.metadata.canonical])
+  expect(rawMetaValues(rawHtml, 'name', 'robots'), `${route.path}: raw robots`).toEqual([route.metadata.robots])
+  expect(rawJsonLdGraphs(rawHtml), `${route.path}: raw exact JSON-LD graphs`).toEqual(route.structuredData)
+  expect(wordCount(rawMainText(rawHtml)), `${route.path}: raw meaningful server content`).toBeGreaterThanOrEqual(
+    route.audit.minimumMeaningfulWordCount,
+  )
+
+  const exactRawTags = exactSocialMetaTags(route)
+  for (const tag of exactRawTags) {
+    expect(
+      rawMetaValues(rawHtml, tag.attribute, tag.key),
+      `${route.path}: raw ${tag.attribute}=${tag.key}`,
+    ).toEqual(exactRawTags
+      .filter((candidate) => candidate.attribute === tag.attribute && candidate.key === tag.key)
+      .map((candidate) => candidate.content))
+  }
   await expectMetadata(page, route)
 
   const rendered = await page.evaluate(() => {
@@ -156,6 +252,7 @@ async function assertRenderedPage(page: Page, route: PageRouteContract) {
     expect(source.trim(), `${route.path}: JSON-LD script ${index + 1} is empty`).not.toBe('')
     return JSON.parse(source) as Record<string, unknown>
   })
+  expect(structuredData, `${route.path}: hydrated exact JSON-LD graphs`).toEqual(route.structuredData)
 
   const issues = validatePageSeoObservation(route, {
     path: route.path,
@@ -222,12 +319,46 @@ test.describe('Next rendered SEO contract', () => {
     })
   })
 
+  test('slash redirects preserve queries without creating wildcard aliases', async ({ request }) => {
+    const redirected = await request.get('/about-us?utm_source=parity-gate', { maxRedirects: 0 })
+    expect(redirected.status()).toBe(301)
+    const location = new URL(redirected.headers().location ?? '', regressionEnvironment.targetOrigin)
+    expect(location.pathname).toBe('/about-us/')
+    expect(location.search).toBe('?utm_source=parity-gate')
+
+    for (const path of ['/not-a-real-page', '/product/not-a-real-product', '/blog/tag/not-a-real-tag']) {
+      const response = await request.get(path, { maxRedirects: 0 })
+      expect(response.status(), path).toBe(404)
+      expect(response.headers().location, path).toBeUndefined()
+    }
+  })
+
+  test('/shop/ keeps its captured canonical target behavior', async ({ request }) => {
+    const response = await request.get(
+      `${SHOP_CANONICAL_QUERY_REDIRECT.pathname}${SHOP_CANONICAL_QUERY_REDIRECT.search}`,
+      { maxRedirects: 0 },
+    )
+    expect(response.status()).toBe(SHOP_CANONICAL_QUERY_REDIRECT.status)
+    const location = new URL(response.headers().location ?? '', regressionEnvironment.targetOrigin)
+    expect(location.pathname).toBe(SHOP_CANONICAL_QUERY_REDIRECT.destination)
+    expect(location.search).toBe('')
+  })
+
   for (const route of EXPLICIT_NOT_FOUND_CONTRACTS) {
     test(`explicit negative ${route.path} remains a noindex 404`, async ({ page }) => {
       const response = await page.goto(route.path, { waitUntil: 'domcontentloaded' })
       expect(response?.status()).toBe(route.status)
+      const rawHtml = await response!.text()
+      expect(rawTitle(rawHtml), `${route.path}: raw 404 title`).toBe('Page Not Found | PuffSticker.com')
+      expect(rawMainText(rawHtml), `${route.path}: raw 404 content`).toContain('Page not found.')
+      expectNotFoundRobots(rawMetaValues(rawHtml, 'name', 'robots'), route.robots)
+
       await expect(page.locator('main h1')).toHaveCount(1)
-      expect(await metaValues(page, 'meta[name="robots"]')).toEqual([route.robots])
+      const robots = await metaValues(page, 'meta[name="robots"]')
+      // `notFound()` injects a framework-owned `noindex` in addition to the
+      // exact route contract. Retain the explicit `noindex, follow` value and
+      // allow only that one semantically redundant Next directive.
+      expectNotFoundRobots(robots, route.robots)
     })
   }
 
@@ -243,6 +374,28 @@ test.describe('Next rendered SEO contract', () => {
       const xml = await getXml(request, path)
       expect(xmlValues(xml, 'loc'), path).toEqual(expectedLocations)
       expect(xmlValues(xml, 'lastmod'), path).toHaveLength(5)
+    }
+  })
+
+  test('all public SEO discovery endpoints match captured response bytes and MIME types', async ({ request }) => {
+    let imageRows = 0
+    for (const path of EXACT_SEO_ENDPOINT_PATHS) {
+      const expected = productionEndpointEvidence(path)
+      const response = await request.get(path)
+      expect(response.status(), path).toBe(expected.status)
+      expect(response.headers()['content-type'], path).toBe(expected.contentType)
+      const body = await response.text()
+      expect(body, path).toBe(expected.body)
+      if (path.endsWith('-sitemap.xml')) imageRows += body.match(/<image:image>/g)?.length ?? 0
+    }
+    expect(imageRows, 'captured child-sitemap image row count').toBe(173)
+  })
+
+  test('internal compatibility handlers do not create a duplicate crawl surface', async ({ request }) => {
+    for (const path of ['/seo-internal/robots.txt', '/seo-internal/sitemap.xml']) {
+      const response = await request.get(path, { maxRedirects: 0 })
+      expect(response.status(), path).toBe(404)
+      expect(response.headers()['x-robots-tag'], path).toBe('noindex, follow')
     }
   })
 

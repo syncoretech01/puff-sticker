@@ -54,6 +54,11 @@ export async function installDeterministicBrowserState(page: Page) {
         transition-duration: 0s !important;
       }
       .cursor-ring, .cursor-dot, .scroll-progress { visibility: hidden !important; }
+      .reveal-block {
+        opacity: 1 !important;
+        transform: none !important;
+        visibility: visible !important;
+      }
       `
       document.documentElement.appendChild(style)
     }
@@ -78,43 +83,95 @@ export async function gotoReady(page: Page, path: string): Promise<Response> {
 export async function prepareVisual(page: Page, path: string, selector: string) {
   await installDeterministicBrowserState(page)
   await gotoReady(page, path)
-  if (selector === '.finish-lab') {
+  const desktop = (page.viewportSize()?.width ?? 0) >= 901
+  const tallDesktopHomeSection = desktop && (selector === '.core-categories' || selector === '.collection')
+  const tallBlogSection = selector === '.blog-page'
+  if (selector === '.finish-lab' || tallDesktopHomeSection || tallBlogSection) {
     // This section is taller than the desktop viewport. Chromium tiles its
     // element screenshot and can paint the fixed header once per tile, which
     // makes the fixture depend on capture timing rather than page output.
     await page.addStyleTag({ content: `
       .site-header, .skip-link { visibility: hidden !important; }
-      .finish-lab .reveal-block {
+      ${selector} .reveal-block {
         opacity: 1 !important;
         transform: none !important;
         visibility: visible !important;
       }
     ` })
   }
+  if (tallBlogSection) {
+    // The journal section spans several viewports. Freeze its scroll-driven
+    // image layers and move the hidden cursor masks outside the capture so
+    // Chromium cannot cull non-composited copy while tiling the screenshot.
+    await page.addStyleTag({ content: `
+      .blog-page .blog-feature__media img,
+      .blog-page .blog-card__media img {
+        transform: none !important;
+      }
+      .cursor-ring,
+      .cursor-dot {
+        transform: translate(-10000px, -10000px) !important;
+      }
+    ` })
+  }
+  if (desktop && selector === '.collection') {
+    // The desktop product rail is pinned and scrubbed. Element screenshots
+    // are taller than the viewport, so Chromium's internal tiling otherwise
+    // advances ScrollTrigger and captures an arbitrary rail position. Collapse
+    // only the generated pin geometry and freeze a documented progress-0
+    // state for the screenshot; application motion and styles stay untouched.
+    await page.addStyleTag({ content: `
+      .collection .pin-spacer {
+        position: relative !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+        transform: none !important;
+      }
+      .collection .rail-wrap {
+        position: relative !important;
+        inset: auto !important;
+        width: 100% !important;
+        max-width: none !important;
+        transform: none !important;
+      }
+      .collection .product-rail,
+      .collection .product-card {
+        transform: none !important;
+      }
+      .collection .rail-progress span {
+        transform: scaleX(0) !important;
+      }
+    ` })
+  }
   const target = page.locator(selector).first()
   await expect(target).toBeVisible()
   await target.scrollIntoViewIfNeeded()
-  await page.evaluate(async () => {
+  await page.evaluate(async (targetSelector) => {
     document.querySelectorAll<HTMLImageElement>('img').forEach((image) => { image.loading = 'eager' })
-    const visibleImages = [...document.images].filter((image) => image.getClientRects().length > 0)
-    await Promise.all(visibleImages.map((image) => {
-      if (image.complete) return Promise.resolve()
-      return new Promise<void>((resolve) => {
-        const timeout = window.setTimeout(done, 5_000)
-        function done() {
-          window.clearTimeout(timeout)
-          image.removeEventListener('load', done)
-          image.removeEventListener('error', done)
-          resolve()
-        }
-        image.addEventListener('load', done, { once: true })
-        image.addEventListener('error', done, { once: true })
-        if (image.complete) done()
-      })
+    const targetElement = document.querySelector<HTMLElement>(targetSelector)
+    const targetImages = targetElement ? [...targetElement.querySelectorAll<HTMLImageElement>('img')] : []
+    await Promise.all(targetImages.map(async (image) => {
+      if (!image.complete) {
+        await new Promise<void>((resolve) => {
+          const timeout = window.setTimeout(done, 5_000)
+          function done() {
+            window.clearTimeout(timeout)
+            image.removeEventListener('load', done)
+            image.removeEventListener('error', done)
+            resolve()
+          }
+          image.addEventListener('load', done, { once: true })
+          image.addEventListener('error', done, { once: true })
+          if (image.complete) done()
+        })
+      }
+      try { await image.decode() } catch { /* Broken local images fail in the smoke gate. */ }
     }))
     await document.fonts.ready
     await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
-  })
+  }, selector)
   await page.evaluate((targetSelector) => {
     const targetElement = document.querySelector<HTMLElement>(targetSelector)
     if (!targetElement) return

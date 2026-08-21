@@ -5,7 +5,7 @@ import { preview } from 'vite'
 
 const root = process.cwd()
 const dist = path.join(root, 'dist')
-const edgePath = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'
+const browserExecutablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
 const port = 4174
 const baseUrl = `http://127.0.0.1:${port}`
 
@@ -19,7 +19,10 @@ const server = await preview({
   logLevel: 'error',
   preview: { host: '127.0.0.1', port, strictPort: true },
 })
-const browser = await chromium.launch({ executablePath: edgePath, headless: true })
+const browser = await chromium.launch({
+  ...(browserExecutablePath ? { executablePath: browserExecutablePath } : {}),
+  headless: true,
+})
 const context = await browser.newContext({ reducedMotion: 'reduce', viewport: { width: 1280, height: 900 } })
 await context.addInitScript(() => window.sessionStorage.setItem('puff-intro-seen', '1'))
 

@@ -1,7 +1,9 @@
 import { chromium } from 'playwright-core'
 
 const browser = await chromium.launch({
-  executablePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+  ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+    ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH }
+    : {}),
   headless: true,
   args: ['--disable-gpu'],
 })

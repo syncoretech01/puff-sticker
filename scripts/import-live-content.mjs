@@ -5,7 +5,7 @@ import { chromium } from 'playwright-core'
 
 const root = process.cwd()
 const sourceBase = 'https://puffsticker.com'
-const edgePath = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'
+const browserExecutablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
 const generatedAt = new Date().toISOString()
 
 const api = async (pathname) => {
@@ -14,7 +14,10 @@ const api = async (pathname) => {
   return response.json()
 }
 
-const browser = await chromium.launch({ executablePath: edgePath, headless: true })
+const browser = await chromium.launch({
+  ...(browserExecutablePath ? { executablePath: browserExecutablePath } : {}),
+  headless: true,
+})
 const parser = await browser.newPage()
 
 async function cleanHtml(rawHtml) {

@@ -1,5 +1,9 @@
 node_modules/
 dist/
+.next/
+out/
+.turbo/
+.vercel/
 *.log
 qa-*.png
 *.tsbuildinfo

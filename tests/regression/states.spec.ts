@@ -83,6 +83,25 @@ test('quote workflow advances through all four validated steps', async ({ page }
   await expect(page.getByRole('button', { name: /Prepare free quote/ })).toBeEnabled()
 })
 
+test('quote product query survives the deterministic Next hydration handoff', async ({ page }) => {
+  await gotoReady(page, '/request-a-quote/?product=puffy-stickers')
+  await expect(page.locator('.quote-summary').getByText('Puffy Stickers', { exact: true })).toBeVisible()
+})
+
+test('protected Vite SPA navigation resolves the lazy route boundary', async ({ page }) => {
+  test.skip(regressionEnvironment.profile !== 'vite', 'Next intentionally uses document navigation so server metadata stays authoritative.')
+  await gotoReady(page, '/')
+  await page.locator('.menu-toggle').click()
+  await page.locator('#mobile-menu nav a[href="/shop"]').click()
+  await expect(page).toHaveURL(/\/shop\/?$/)
+  await expect(page.locator('.route-fallback')).toHaveCount(0)
+  await expect(page.locator('main h1')).toContainText('Custom products')
+  await page.locator('.catalog-card__media').first().click()
+  await expect(page).toHaveURL(/\/(puffy-labels-stickers|flat-labels-stickers|promotional-items)\//)
+  await expect(page.locator('.route-fallback')).toHaveCount(0)
+  await expect(page.locator('main h1')).toBeVisible()
+})
+
 test('product gallery and FAQ retain content and interaction state', async ({ page }) => {
   await gotoReady(page, '/puffy-labels-stickers/puffy-stickers/')
   const gallery = page.locator('.product-gallery')
@@ -101,5 +120,8 @@ test('unknown paths return a true 404 in the Next profile', async ({ page }) => 
   const response = await page.goto('/definitely-not-a-real-puffsticker-route/', { waitUntil: 'domcontentloaded' })
   expect(response?.status()).toBe(404)
   await expect(page.locator('main h1')).toContainText('Page not found')
-  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/i)
+  const robots = await page.locator('meta[name="robots"]').evaluateAll((elements) =>
+    elements.map((element) => element.getAttribute('content') ?? '').join(', '),
+  )
+  expect(robots).toMatch(/noindex/i)
 })

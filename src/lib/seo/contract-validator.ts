@@ -215,7 +215,23 @@ export function validateSeoManifest(snapshot: SeoManifestSnapshot = SEO_MANIFEST
 
   if (snapshot === SEO_MANIFEST_SNAPSHOT) {
     if (CANONICAL_SITEMAP_ROUTES.length !== 43) failures.push(`expected 43 canonical sitemap routes, found ${CANONICAL_SITEMAP_ROUTES.length}`)
-    if (TRAILING_SLASH_REDIRECTS.length !== allPages.filter((route) => route.path !== '/').length) failures.push('slash redirect coverage mismatch')
+    const expectedSlashPaths = new Set(allPages.filter((route) => route.path !== '/').map((route) => route.path))
+    const actualSlashPaths = TRAILING_SLASH_REDIRECTS.map((route) => route.path)
+    const actualSlashPathSet = new Set(actualSlashPaths)
+    const missingSlashPaths = [...expectedSlashPaths].filter((path) => !actualSlashPathSet.has(path))
+    const unexpectedSlashPaths = [...actualSlashPathSet].filter((path) => !expectedSlashPaths.has(path))
+    if (
+      actualSlashPaths.length !== actualSlashPathSet.size
+      || missingSlashPaths.length
+      || unexpectedSlashPaths.length
+    ) {
+      failures.push([
+        'slash redirect coverage mismatch',
+        missingSlashPaths.length ? `missing=${missingSlashPaths.join(',')}` : '',
+        unexpectedSlashPaths.length ? `unexpected=${unexpectedSlashPaths.join(',')}` : '',
+        actualSlashPaths.length !== actualSlashPathSet.size ? 'duplicates=true' : '',
+      ].filter(Boolean).join(' '))
+    }
     if (EXPLICIT_NOT_FOUND_CONTRACTS.some((route) => route.evidence.crawl !== 'observed-live')) failures.push('explicit 404 lacks live crawl evidence')
   }
 

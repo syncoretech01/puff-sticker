@@ -26,25 +26,57 @@ import {
   X,
 } from 'lucide-react'
 import { faqs, finishOptions, products, type Product } from './data'
+import { livePageContent } from './content/livePageContent'
+import { sanitizePublishedHomeHtml } from './content/publishedHtml'
 import { SiteLink, useRouter } from './router'
 import { BackToTop } from './components/BackToTop'
+import { NotFoundPage } from './site/NotFoundPage'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 
 const PuffWorld = lazy(() => import('./components/PuffWorld'))
-const lazyPage = <T extends keyof typeof import('./pages/SitePages')>(name: T) => lazy(() => import('./pages/SitePages').then((module) => ({ default: module[name] as React.ComponentType<any> })))
+const lazyPage = <T extends keyof typeof import('./site/SitePages')>(name: T) => lazy(() => import('./site/SitePages').then((module) => ({ default: module[name] as React.ComponentType<any> })))
 const AboutPage = lazyPage('AboutPage')
+const ArchivePage = lazyPage('ArchivePage')
 const BlogArticlePage = lazyPage('BlogArticlePage')
 const BlogPage = lazyPage('BlogPage')
 const CategoryPage = lazyPage('CategoryPage')
 const ContactPage = lazyPage('ContactPage')
 const FullFaqPage = lazyPage('FullFaqPage')
-const NotFoundPage = lazyPage('NotFoundPage')
 const PolicyPage = lazyPage('PolicyPage')
 const ProductPage = lazyPage('ProductPage')
 const QuotePage = lazyPage('QuotePage')
 const ResourcesPage = lazyPage('ResourcesPage')
 const ShopPage = lazyPage('ShopPage')
+export type AppPageComponents = Record<
+  | 'AboutPage'
+  | 'ArchivePage'
+  | 'BlogArticlePage'
+  | 'BlogPage'
+  | 'CategoryPage'
+  | 'ContactPage'
+  | 'FullFaqPage'
+  | 'PolicyPage'
+  | 'ProductPage'
+  | 'QuotePage'
+  | 'ResourcesPage'
+  | 'ShopPage',
+  React.ComponentType<any>
+>
+const vitePageComponents: AppPageComponents = {
+  AboutPage,
+  ArchivePage,
+  BlogArticlePage,
+  BlogPage,
+  CategoryPage,
+  ContactPage,
+  FullFaqPage,
+  PolicyPage,
+  ProductPage,
+  QuotePage,
+  ResourcesPage,
+  ShopPage,
+}
 const categoryPaths = new Set(['puffy-labels-stickers', 'flat-labels-stickers', 'promotional-items'])
 
 const productTicker = [
@@ -935,31 +967,10 @@ function Faq() {
   )
 }
 
-type LiveHomeEntry = (typeof import('./content/livePageContent'))['livePageContent']['home']
-
 function PublishedHomeArchive() {
-  const [page, setPage] = useState<LiveHomeEntry | null>(null)
-
-  useEffect(() => {
-    let active = true
-    void import('./content/livePageContent').then(({ livePageContent }) => {
-      if (active) setPage(livePageContent.home ?? null)
-    })
-    return () => { active = false }
-  }, [])
-
-  const publishedHtml = useMemo(() => {
-    if (!page) return ''
-    const documentCopy = new DOMParser().parseFromString(page.html, 'text/html')
-    documentCopy.querySelectorAll('img').forEach((image) => image.remove())
-    documentCopy.body.childNodes.forEach((node) => {
-      if (node.nodeType !== Node.TEXT_NODE || !node.textContent?.trim()) return
-      const paragraph = documentCopy.createElement('p')
-      paragraph.textContent = node.textContent.replace(/\s+/g, ' ').trim()
-      node.replaceWith(paragraph)
-    })
-    return documentCopy.body.innerHTML
-  }, [page])
+  const { nextMode } = useRouter()
+  const page = livePageContent.home ?? null
+  const publishedHtml = useMemo(() => page ? sanitizePublishedHomeHtml(page.html, nextMode) : '', [nextMode, page])
 
   return (
     <section className="official-page-source home-published-source">
@@ -1038,35 +1049,53 @@ function HomePage() {
   )
 }
 
-function RouteContent({ pathname }: { pathname: string }) {
+function RouteContent({ pathname, pages }: { pathname: string; pages: AppPageComponents }) {
   const parts = pathname.split('/').filter(Boolean)
   const first = parts[0]
   if (!first) return <HomePage />
-  if (first === 'shop') return <ShopPage />
-  if (first === 'category' && parts[1]) return <CategoryPage slug={parts[1]} />
-  if (first === 'product' && parts[1]) return <ProductPage slug={parts[1]} />
-  if (first && categoryPaths.has(first)) return parts[1] ? <ProductPage slug={parts[1]} category={first} /> : <CategoryPage slug={first} />
-  if (first === 'about-us' || first === 'about') return <AboutPage />
-  if (first === 'faqs' || first === 'faq') return <FullFaqPage />
-  if (first === 'contact-us' || first === 'contact') return <ContactPage />
-  if (first === 'request-a-quote' || first === 'quote') return <QuotePage />
-  if (first === 'blog') return parts[1] === 'category' && parts[2]
-    ? <BlogPage key={parts[2]} categorySlug={parts[2]} />
-    : parts[1] ? <BlogArticlePage slug={parts[1]} /> : <BlogPage key="all" />
-  if (first === 'resources') return <ResourcesPage />
-  if (['reprint-policy', 'privacy-policy', 'terms-of-service', 'shipping-delivery'].includes(first)) return <PolicyPage slug={first} />
+  if (first === 'shop') return <pages.ShopPage />
+  if (first === 'category' && parts[1]) return <pages.CategoryPage slug={parts[1]} />
+  if (first === 'product' && parts[1]) return <pages.ProductPage slug={parts[1]} />
+  if (first && categoryPaths.has(first)) return parts[1] ? <pages.ProductPage slug={parts[1]} category={first} /> : <pages.CategoryPage slug={first} />
+  if (first === 'about-us' || first === 'about') return <pages.AboutPage />
+  if (first === 'faqs' || first === 'faq') return <pages.FullFaqPage />
+  if (first === 'contact-us' || first === 'contact') return <pages.ContactPage />
+  if (first === 'request-a-quote' || first === 'quote') return <pages.QuotePage />
+  if (first === 'blog') {
+    if ((parts[1] === 'tag' && parts[2]) || (parts[1] === 'page' && parts[2])) return <pages.ArchivePage pathname={pathname} />
+    return parts[1] === 'category' && parts[2]
+      ? <pages.BlogPage key={parts[2]} categorySlug={parts[2]} />
+      : parts[1] ? <pages.BlogArticlePage slug={parts[1]} /> : <pages.BlogPage key="all" />
+  }
+  if (first === 'product-tag' && parts[1]) return <pages.ArchivePage pathname={pathname} />
+  if (first === 'resources') return <pages.ResourcesPage />
+  if (['reprint-policy', 'privacy-policy', 'terms-of-service', 'shipping-delivery'].includes(first)) return <pages.PolicyPage slug={first} />
   return <NotFoundPage />
 }
 
-function App() {
+function App({ pageComponents = vitePageComponents }: { pageComponents?: AppPageComponents }) {
   const app = useRef<HTMLDivElement>(null)
-  const { pathname, search, hash, revision } = useRouter()
-  const [saveData, setSaveData] = useState(() => Boolean((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData))
+  const { pathname, search, hash, revision, renderPathname, nextMode } = useRouter()
+  const [saveData, setSaveData] = useState(() => !nextMode && typeof navigator !== 'undefined'
+    ? Boolean((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData)
+    : false)
+  const [cursorEnabled, setCursorEnabled] = useState(() => !nextMode && typeof window !== 'undefined'
+    ? window.matchMedia('(pointer: fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    : false)
   const [showIntro, setShowIntro] = useState(() => {
+    if (nextMode) return true
+    if (typeof window === 'undefined') return true
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const seen = window.sessionStorage.getItem('puff-intro-seen') === '1'
     return !reduce && !seen
   })
+
+  useEffect(() => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const seen = window.sessionStorage.getItem('puff-intro-seen') === '1'
+    if (nextMode && (reduce || seen)) setShowIntro(false)
+    setCursorEnabled(window.matchMedia('(pointer: fine)').matches && !reduce)
+  }, [nextMode])
 
   useEffect(() => {
     const connection = (navigator as Navigator & { connection?: { saveData?: boolean; addEventListener?: (type: string, listener: () => void) => void; removeEventListener?: (type: string, listener: () => void) => void } }).connection
@@ -1122,7 +1151,7 @@ function App() {
 
   useEffect(() => {
     let active = true
-    void import('./content/siteSeo').then(({ resolveRouteSeo }) => {
+    if (!nextMode) void import('./content/siteSeo').then(({ resolveRouteSeo }) => {
       if (!active) return
       const seo = resolveRouteSeo(pathname)
       document.title = seo.title
@@ -1189,7 +1218,7 @@ function App() {
       active = false
       window.clearTimeout(scroll)
     }
-  }, [pathname, hash, revision])
+  }, [pathname, hash, nextMode, revision])
 
   useGSAP(
     () => {
@@ -1236,7 +1265,7 @@ function App() {
         })
       })
 
-      if (pathname !== '/') return
+      if (renderPathname !== '/') return
 
       const clipImage = document.querySelector('.clip-reveal img')
       if (clipImage) gsap.fromTo(clipImage, { scale: 1.18 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: '.clip-reveal', start: 'top bottom', end: 'bottom top', scrub: 1 } })
@@ -1285,19 +1314,21 @@ function App() {
 
       return () => mm.revert()
     },
-    { scope: app, dependencies: [pathname], revertOnUpdate: true },
+    { scope: app, dependencies: [renderPathname], revertOnUpdate: true },
   )
 
   return (
     <div className="app" ref={app}>
       {showIntro && <Loader onComplete={() => setShowIntro(false)} />}
-      {!saveData && !window.matchMedia('(prefers-reduced-motion: reduce)').matches && <Cursor />}
+      {!saveData && cursorEnabled && <Cursor />}
       <div className="scroll-progress" aria-hidden="true"><span /></div>
       <Header />
       <main id="main-content" tabIndex={-1}>
-        <Suspense fallback={<div className="route-fallback" aria-label="Loading page"><span /></div>}>
-          <RouteContent key={`${pathname}${search}`} pathname={pathname} />
-        </Suspense>
+        {nextMode
+          ? <RouteContent key={`${renderPathname}${search}`} pathname={renderPathname} pages={pageComponents} />
+          : <Suspense fallback={<div className="route-fallback" aria-label="Loading page"><span /></div>}>
+            <RouteContent key={`${renderPathname}${search}`} pathname={renderPathname} pages={pageComponents} />
+          </Suspense>}
       </main>
     </div>
   )
