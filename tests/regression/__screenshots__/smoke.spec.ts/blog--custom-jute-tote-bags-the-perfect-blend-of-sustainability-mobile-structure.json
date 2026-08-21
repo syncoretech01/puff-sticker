@@ -1,0 +1,37 @@
+{
+  "headings": [
+    {
+      "text": "Custom Jute Tote Bags – The Perfect Blend of Sustainability and Style",
+      "x": 20,
+      "y": 282,
+      "width": 351,
+      "height": 297
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "article",
+      "id": null,
+      "className": "article-page",
+      "y": 0,
+      "width": 390,
+      "height": 10963
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "more-notes",
+      "y": 10963,
+      "width": 390,
+      "height": 1704
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 12667,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

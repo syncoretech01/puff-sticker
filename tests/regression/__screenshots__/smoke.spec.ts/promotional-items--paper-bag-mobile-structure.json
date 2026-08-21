@@ -1,0 +1,85 @@
+{
+  "headings": [
+    {
+      "text": "Paper Bag",
+      "x": 20,
+      "y": 657,
+      "width": 351,
+      "height": 47
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-detail",
+      "y": 0,
+      "width": 390,
+      "height": 1831
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-proof",
+      "y": 1831,
+      "width": 390,
+      "height": 1288
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-content",
+      "y": 3119,
+      "width": 390,
+      "height": 2477
+    },
+    {
+      "element": "section",
+      "id": "product-specifications",
+      "className": "product-specs",
+      "y": 5596,
+      "width": 390,
+      "height": 1356
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-applications",
+      "y": 6952,
+      "width": 390,
+      "height": 989
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "faq product-page-faq",
+      "y": 7941,
+      "width": 390,
+      "height": 1233
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "related-products",
+      "y": 9174,
+      "width": 390,
+      "height": 1716
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "inline-quote",
+      "y": 10890,
+      "width": 390,
+      "height": 465
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 11355,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

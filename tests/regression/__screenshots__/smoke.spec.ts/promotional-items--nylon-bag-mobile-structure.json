@@ -1,0 +1,85 @@
+{
+  "headings": [
+    {
+      "text": "Nylon Bag",
+      "x": 20,
+      "y": 657,
+      "width": 351,
+      "height": 47
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-detail",
+      "y": 0,
+      "width": 390,
+      "height": 1857
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-proof",
+      "y": 1857,
+      "width": 390,
+      "height": 1214
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-content",
+      "y": 3072,
+      "width": 390,
+      "height": 2834
+    },
+    {
+      "element": "section",
+      "id": "product-specifications",
+      "className": "product-specs",
+      "y": 5906,
+      "width": 390,
+      "height": 1739
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-applications",
+      "y": 7644,
+      "width": 390,
+      "height": 989
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "faq product-page-faq",
+      "y": 8634,
+      "width": 390,
+      "height": 1259
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "related-products",
+      "y": 9893,
+      "width": 390,
+      "height": 1716
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "inline-quote",
+      "y": 11609,
+      "width": 390,
+      "height": 465
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 12074,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

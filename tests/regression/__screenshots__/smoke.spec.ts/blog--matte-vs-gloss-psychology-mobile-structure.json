@@ -1,0 +1,37 @@
+{
+  "headings": [
+    {
+      "text": "The Psychology of Quiet Surfaces",
+      "x": 20,
+      "y": 282,
+      "width": 351,
+      "height": 149
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "article",
+      "id": null,
+      "className": "article-page",
+      "y": 0,
+      "width": 390,
+      "height": 21547
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "more-notes",
+      "y": 21547,
+      "width": 390,
+      "height": 1704
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 23252,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

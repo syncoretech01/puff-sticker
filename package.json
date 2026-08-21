@@ -8,7 +8,11 @@
     "build": "tsc -b && vite build && node scripts/prerender.mjs && node scripts/verify-build.mjs",
     "preview": "vite preview",
     "optimize:live-blog-images": "node scripts/optimize-live-blog-images.mjs",
-    "verify": "node scripts/verify-build.mjs"
+    "verify": "node scripts/verify-build.mjs",
+    "test:regression": "node scripts/run-regression.mjs",
+    "test:regression:update": "node scripts/run-regression.mjs --update-snapshots=all",
+    "test:regression:headed": "node scripts/run-regression.mjs --headed",
+    "test:regression:install": "playwright install chromium"
   },
   "dependencies": {
     "@fontsource-variable/archivo": "^5.3.0",
@@ -28,7 +32,8 @@
     "@types/react-dom": "latest",
     "@types/three": "latest",
     "@vitejs/plugin-react": "latest",
-    "playwright-core": "^1.62.1",
+    "@playwright/test": "1.62.1",
+    "playwright-core": "1.62.1",
     "typescript": "latest",
     "vite": "latest"
   }

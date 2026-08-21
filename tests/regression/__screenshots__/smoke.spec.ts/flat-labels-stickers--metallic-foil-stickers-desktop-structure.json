@@ -1,0 +1,85 @@
+{
+  "headings": [
+    {
+      "text": "Metallic Foil Stickers",
+      "x": 844,
+      "y": 284,
+      "width": 539,
+      "height": 157
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-detail",
+      "y": 0,
+      "width": 1440,
+      "height": 1550
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-proof",
+      "y": 1550,
+      "width": 1440,
+      "height": 791
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-content",
+      "y": 2341,
+      "width": 1440,
+      "height": 1541
+    },
+    {
+      "element": "section",
+      "id": "product-specifications",
+      "className": "product-specs",
+      "y": 3882,
+      "width": 1440,
+      "height": 697
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-applications",
+      "y": 4578,
+      "width": 1440,
+      "height": 850
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "faq product-page-faq",
+      "y": 5428,
+      "width": 1440,
+      "height": 1026
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "related-products",
+      "y": 6455,
+      "width": 1440,
+      "height": 941
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "inline-quote",
+      "y": 7396,
+      "width": 1440,
+      "height": 365
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 7761,
+      "width": 1440,
+      "height": 754
+    }
+  ]
+}

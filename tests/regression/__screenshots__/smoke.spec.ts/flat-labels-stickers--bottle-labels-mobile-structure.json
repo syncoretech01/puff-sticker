@@ -1,0 +1,85 @@
+{
+  "headings": [
+    {
+      "text": "Bottle Labels",
+      "x": 20,
+      "y": 657,
+      "width": 351,
+      "height": 47
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-detail",
+      "y": 0,
+      "width": 390,
+      "height": 1857
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-proof",
+      "y": 1857,
+      "width": 390,
+      "height": 1263
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-content",
+      "y": 3121,
+      "width": 390,
+      "height": 3868
+    },
+    {
+      "element": "section",
+      "id": "product-specifications",
+      "className": "product-specs",
+      "y": 6989,
+      "width": 390,
+      "height": 1109
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-applications",
+      "y": 8097,
+      "width": 390,
+      "height": 989
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "faq product-page-faq",
+      "y": 9087,
+      "width": 390,
+      "height": 1449
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "related-products",
+      "y": 10536,
+      "width": 390,
+      "height": 1716
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "inline-quote",
+      "y": 12252,
+      "width": 390,
+      "height": 465
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 12717,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

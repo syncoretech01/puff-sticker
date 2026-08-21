@@ -1,0 +1,85 @@
+{
+  "headings": [
+    {
+      "text": "Dome Decals",
+      "x": 20,
+      "y": 657,
+      "width": 351,
+      "height": 47
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-detail",
+      "y": 0,
+      "width": 390,
+      "height": 1831
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-proof",
+      "y": 1831,
+      "width": 390,
+      "height": 1288
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-content",
+      "y": 3119,
+      "width": 390,
+      "height": 3079
+    },
+    {
+      "element": "section",
+      "id": "product-specifications",
+      "className": "product-specs",
+      "y": 6198,
+      "width": 390,
+      "height": 1200
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-applications",
+      "y": 7398,
+      "width": 390,
+      "height": 989
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "faq product-page-faq",
+      "y": 8387,
+      "width": 390,
+      "height": 1255
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "related-products",
+      "y": 9642,
+      "width": 390,
+      "height": 1692
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "inline-quote",
+      "y": 11334,
+      "width": 390,
+      "height": 465
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 11799,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "headings": [
+    {
+      "text": "A direct line to the people who make it.",
+      "x": 58,
+      "y": 246,
+      "width": 1130,
+      "height": 205
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "page-hero page-hero--dark",
+      "y": 0,
+      "width": 1440,
+      "height": 780
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "contact-page",
+      "y": 780,
+      "width": 1440,
+      "height": 1005
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "official-page-source",
+      "y": 1785,
+      "width": 1440,
+      "height": 577
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "sample-band",
+      "y": 2363,
+      "width": 1440,
+      "height": 306
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 2669,
+      "width": 1440,
+      "height": 754
+    }
+  ]
+}

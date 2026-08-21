@@ -1,0 +1,85 @@
+{
+  "headings": [
+    {
+      "text": "Cheap Stickers",
+      "x": 20,
+      "y": 657,
+      "width": 351,
+      "height": 47
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-detail",
+      "y": 0,
+      "width": 390,
+      "height": 1857
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-proof",
+      "y": 1857,
+      "width": 390,
+      "height": 1239
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-content",
+      "y": 3096,
+      "width": 390,
+      "height": 2309
+    },
+    {
+      "element": "section",
+      "id": "product-specifications",
+      "className": "product-specs",
+      "y": 5405,
+      "width": 390,
+      "height": 1034
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-applications",
+      "y": 6440,
+      "width": 390,
+      "height": 989
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "faq product-page-faq",
+      "y": 7429,
+      "width": 390,
+      "height": 1281
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "related-products",
+      "y": 8710,
+      "width": 390,
+      "height": 1716
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "inline-quote",
+      "y": 10427,
+      "width": 390,
+      "height": 465
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 10892,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

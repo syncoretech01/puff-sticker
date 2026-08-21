@@ -1,0 +1,45 @@
+{
+  "headings": [
+    {
+      "text": "Everything neededto move a job forward.",
+      "x": 20,
+      "y": 196,
+      "width": 351,
+      "height": 192
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "page-hero ",
+      "y": 0,
+      "width": 390,
+      "height": 683
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "resources-page",
+      "y": 683,
+      "width": 390,
+      "height": 1986
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "artwork-guide",
+      "y": 2669,
+      "width": 390,
+      "height": 954
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 3623,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

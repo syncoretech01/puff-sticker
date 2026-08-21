@@ -1,0 +1,85 @@
+{
+  "headings": [
+    {
+      "text": "Clear Vinyl Labels",
+      "x": 20,
+      "y": 657,
+      "width": 351,
+      "height": 95
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-detail",
+      "y": 0,
+      "width": 390,
+      "height": 1878
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-proof",
+      "y": 1878,
+      "width": 390,
+      "height": 1239
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-content",
+      "y": 3117,
+      "width": 390,
+      "height": 2663
+    },
+    {
+      "element": "section",
+      "id": "product-specifications",
+      "className": "product-specs",
+      "y": 5781,
+      "width": 390,
+      "height": 1109
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-applications",
+      "y": 6889,
+      "width": 390,
+      "height": 989
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "faq product-page-faq",
+      "y": 7879,
+      "width": 390,
+      "height": 1285
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "related-products",
+      "y": 9164,
+      "width": 390,
+      "height": 1716
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "inline-quote",
+      "y": 10880,
+      "width": 390,
+      "height": 465
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 11345,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

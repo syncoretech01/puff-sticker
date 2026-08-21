@@ -1,0 +1,92 @@
+{
+  "headings": [
+    {
+      "text": "Mylar Bags",
+      "x": 20,
+      "y": 657,
+      "width": 351,
+      "height": 47
+    },
+    {
+      "text": "Preserve, Protect & Present with Premium Mylar Bags",
+      "x": 20,
+      "y": 4166,
+      "width": 351,
+      "height": 132
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-detail",
+      "y": 0,
+      "width": 390,
+      "height": 1908
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-proof",
+      "y": 1908,
+      "width": 390,
+      "height": 1263
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-content",
+      "y": 3171,
+      "width": 390,
+      "height": 7947
+    },
+    {
+      "element": "section",
+      "id": "product-specifications",
+      "className": "product-specs",
+      "y": 11118,
+      "width": 390,
+      "height": 1180
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-applications",
+      "y": 12298,
+      "width": 390,
+      "height": 989
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "faq product-page-faq",
+      "y": 13287,
+      "width": 390,
+      "height": 1255
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "related-products",
+      "y": 14542,
+      "width": 390,
+      "height": 1716
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "inline-quote",
+      "y": 16258,
+      "width": 390,
+      "height": 465
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 16723,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

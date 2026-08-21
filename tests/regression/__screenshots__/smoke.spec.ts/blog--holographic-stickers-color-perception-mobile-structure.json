@@ -1,0 +1,37 @@
+{
+  "headings": [
+    {
+      "text": "Color That Doesn’t Exist Until You Move: Understanding Holographic Stickers",
+      "x": 20,
+      "y": 282,
+      "width": 351,
+      "height": 347
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "article",
+      "id": null,
+      "className": "article-page",
+      "y": 0,
+      "width": 390,
+      "height": 16652
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "more-notes",
+      "y": 16652,
+      "width": 390,
+      "height": 1704
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 18356,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

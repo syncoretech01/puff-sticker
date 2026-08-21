@@ -1,0 +1,85 @@
+{
+  "headings": [
+    {
+      "text": "Bumper Stickers",
+      "x": 20,
+      "y": 657,
+      "width": 351,
+      "height": 95
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-detail",
+      "y": 0,
+      "width": 390,
+      "height": 1853
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-proof",
+      "y": 1853,
+      "width": 390,
+      "height": 1288
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-content",
+      "y": 3141,
+      "width": 390,
+      "height": 2334
+    },
+    {
+      "element": "section",
+      "id": "product-specifications",
+      "className": "product-specs",
+      "y": 5475,
+      "width": 390,
+      "height": 1127
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-applications",
+      "y": 6602,
+      "width": 390,
+      "height": 989
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "faq product-page-faq",
+      "y": 7592,
+      "width": 390,
+      "height": 1255
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "related-products",
+      "y": 8847,
+      "width": 390,
+      "height": 1716
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "inline-quote",
+      "y": 10563,
+      "width": 390,
+      "height": 465
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 11028,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

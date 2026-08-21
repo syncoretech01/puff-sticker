@@ -1,0 +1,141 @@
+{
+  "headings": [
+    {
+      "text": "MAKE YOURMARKTOUCHABLE.",
+      "x": 20,
+      "y": 195,
+      "width": 363,
+      "height": 166
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": "top",
+      "className": "hero",
+      "y": 0,
+      "width": 390,
+      "height": 920
+    },
+    {
+      "element": "div",
+      "id": null,
+      "className": "marquee",
+      "y": 915,
+      "width": 399,
+      "height": 59
+    },
+    {
+      "element": "section",
+      "id": "story",
+      "className": "story",
+      "y": 970,
+      "width": 390,
+      "height": 1707
+    },
+    {
+      "element": "section",
+      "id": "categories",
+      "className": "core-categories",
+      "y": 2677,
+      "width": 390,
+      "height": 1934
+    },
+    {
+      "element": "section",
+      "id": "collection",
+      "className": "collection",
+      "y": 4610,
+      "width": 390,
+      "height": 1395
+    },
+    {
+      "element": "section",
+      "id": "anatomy",
+      "className": "anatomy",
+      "y": 6005,
+      "width": 390,
+      "height": 1165
+    },
+    {
+      "element": "section",
+      "id": "finish-lab",
+      "className": "finish-lab",
+      "y": 7170,
+      "width": 390,
+      "height": 1717
+    },
+    {
+      "element": "section",
+      "id": "sample-pack",
+      "className": "sample-pack",
+      "y": 8888,
+      "width": 390,
+      "height": 1691
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "manufacturer-direct",
+      "y": 10578,
+      "width": 390,
+      "height": 1172
+    },
+    {
+      "element": "section",
+      "id": "process",
+      "className": "process",
+      "y": 11750,
+      "width": 390,
+      "height": 1555
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "gallery-columns",
+      "y": 13305,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "element": "section",
+      "id": "journal",
+      "className": "home-journal",
+      "y": 14149,
+      "width": 390,
+      "height": 1790
+    },
+    {
+      "element": "section",
+      "id": "faq",
+      "className": "faq",
+      "y": 15939,
+      "width": 390,
+      "height": 1144
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "official-page-source home-published-source",
+      "y": 17083,
+      "width": 390,
+      "height": 624
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "closing",
+      "y": 17707,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "footer",
+      "y": 18551,
+      "width": 390,
+      "height": 905
+    }
+  ]
+}

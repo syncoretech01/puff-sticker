@@ -1,0 +1,53 @@
+{
+  "headings": [
+    {
+      "text": "Promotional Items",
+      "x": 20,
+      "y": 196,
+      "width": 351,
+      "height": 104
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "category-hero",
+      "y": 0,
+      "width": 390,
+      "height": 962
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "category-guide",
+      "y": 962,
+      "width": 390,
+      "height": 603
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "catalog-section catalog-section--category",
+      "y": 1565,
+      "width": 390,
+      "height": 3473
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "procurement-band",
+      "y": 5038,
+      "width": 390,
+      "height": 899
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 5937,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "headings": [
+    {
+      "text": "Washable Paper Bags",
+      "x": 38,
+      "y": 792,
+      "width": 691,
+      "height": 47
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-detail",
+      "y": 0,
+      "width": 768,
+      "height": 1797
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-proof",
+      "y": 1797,
+      "width": 768,
+      "height": 1222
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-content",
+      "y": 3020,
+      "width": 768,
+      "height": 1814
+    },
+    {
+      "element": "section",
+      "id": "product-specifications",
+      "className": "product-specs",
+      "y": 4834,
+      "width": 768,
+      "height": 1556
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-applications",
+      "y": 6390,
+      "width": 768,
+      "height": 1268
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "faq product-page-faq",
+      "y": 7658,
+      "width": 768,
+      "height": 1231
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "related-products",
+      "y": 8890,
+      "width": 768,
+      "height": 1318
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "inline-quote",
+      "y": 10208,
+      "width": 768,
+      "height": 389
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 10597,
+      "width": 768,
+      "height": 968
+    }
+  ]
+}

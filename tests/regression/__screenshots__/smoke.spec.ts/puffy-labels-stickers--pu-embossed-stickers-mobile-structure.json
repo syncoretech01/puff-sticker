@@ -1,0 +1,85 @@
+{
+  "headings": [
+    {
+      "text": "PU Embossed Stickers",
+      "x": 20,
+      "y": 657,
+      "width": 351,
+      "height": 95
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-detail",
+      "y": 0,
+      "width": 390,
+      "height": 1905
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-proof",
+      "y": 1905,
+      "width": 390,
+      "height": 1263
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-content",
+      "y": 3168,
+      "width": 390,
+      "height": 6542
+    },
+    {
+      "element": "section",
+      "id": "product-specifications",
+      "className": "product-specs",
+      "y": 9710,
+      "width": 390,
+      "height": 1294
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-applications",
+      "y": 11004,
+      "width": 390,
+      "height": 989
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "faq product-page-faq",
+      "y": 11994,
+      "width": 390,
+      "height": 1340
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "related-products",
+      "y": 13333,
+      "width": 390,
+      "height": 1692
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "inline-quote",
+      "y": 15026,
+      "width": 390,
+      "height": 465
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 15491,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "platform": "win32",
+  "architecture": "x64",
+  "playwrightVersion": "1.62.1",
+  "browserName": "chromium",
+  "browserVersion": "151.0.7922.34",
+  "deviceScaleFactor": 1
+}

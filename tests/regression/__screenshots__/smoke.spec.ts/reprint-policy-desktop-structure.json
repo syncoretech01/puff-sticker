@@ -1,0 +1,37 @@
+{
+  "headings": [
+    {
+      "text": "A clear path when production is not right.",
+      "x": 58,
+      "y": 246,
+      "width": 1130,
+      "height": 205
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "page-hero ",
+      "y": 0,
+      "width": 1440,
+      "height": 780
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "policy-page",
+      "y": 780,
+      "width": 1440,
+      "height": 1842
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 2622,
+      "width": 1440,
+      "height": 754
+    }
+  ]
+}

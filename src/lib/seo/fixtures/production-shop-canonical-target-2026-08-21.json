@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "source": "production-query-sensitive-capture",
+  "capturedOn": "2026-08-21",
+  "requestedUrl": "https://puffsticker.com/?page_id=9",
+  "redirectChain": [
+    {
+      "url": "https://puffsticker.com/?page_id=9",
+      "status": 301,
+      "location": "https://puffsticker.com/puffy-labels-stickers/puffy-stickers/"
+    },
+    {
+      "url": "https://puffsticker.com/puffy-labels-stickers/puffy-stickers/",
+      "status": 200,
+      "location": null
+    }
+  ],
+  "finalUrl": "https://puffsticker.com/puffy-labels-stickers/puffy-stickers/",
+  "finalObservation": {
+    "title": "Custom Puffy Stickers – 3D Puffy Stickers | Puffsticker.com",
+    "description": "Order custom puffy stickers with soft 3D texture. Perfect for branding, giveaways, and gifts. Durable, fun, and fully customizable in bulk at PuffSticker.com",
+    "canonical": "https://puffsticker.com/puffy-labels-stickers/puffy-stickers/",
+    "robots": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+    "meaningfulTextHash": "e7c9fd2df8ceaa2940cda8f623abc6cb34679aafc5ff424fd62cd2bc2aa944c1",
+    "meaningfulWordCount": 1607,
+    "headingsHash": "fb21fe915f140e271d65d871ffafc45b95edb2bcd022864c16758e2917703eeb",
+    "headings": [
+      {
+        "level": 1,
+        "text": "Puffy Stickers"
+      },
+      {
+        "level": 3,
+        "text": "Custom Puffy Stickers – 3D Texture for Fun, Impactful Branding"
+      },
+      {
+        "level": 2,
+        "text": "Description"
+      },
+      {
+        "level": 4,
+        "text": "Make Every Moment Memorable with Custom Puffy Stickers"
+      },
+      {
+        "level": 2,
+        "text": "Frequently asked questions"
+      },
+      {
+        "level": 2,
+        "text": "Check out our frequently asked questions"
+      },
+      {
+        "level": 2,
+        "text": "Additional information"
+      },
+      {
+        "level": 2,
+        "text": "Reviews"
+      },
+      {
+        "level": 2,
+        "text": "Related Products"
+      },
+      {
+        "level": 2,
+        "text": "PU Embossed Stickers"
+      },
+      {
+        "level": 2,
+        "text": "Puffy Sticker Sheets"
+      },
+      {
+        "level": 4,
+        "text": "Custom Puffy Sticker Sheets – Fun, Bulk-Friendly & Fully Personalizable"
+      },
+      {
+        "level": 2,
+        "text": "Foam Stickers"
+      },
+      {
+        "level": 2,
+        "text": "Dome Decals"
+      },
+      {
+        "level": 2,
+        "text": "Epoxy Stickers"
+      },
+      {
+        "level": 2,
+        "text": "3D Labels"
+      }
+    ]
+  }
+}

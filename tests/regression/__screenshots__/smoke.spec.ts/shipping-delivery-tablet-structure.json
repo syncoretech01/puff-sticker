@@ -1,0 +1,37 @@
+{
+  "headings": [
+    {
+      "text": "Production first. Tracked delivery after.",
+      "x": 38,
+      "y": 196,
+      "width": 691,
+      "height": 222
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "page-hero ",
+      "y": 0,
+      "width": 768,
+      "height": 704
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "policy-page",
+      "y": 704,
+      "width": 768,
+      "height": 1629
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 2333,
+      "width": 768,
+      "height": 968
+    }
+  ]
+}
