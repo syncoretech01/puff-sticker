@@ -2,6 +2,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   Suspense,
   lazy,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -1089,13 +1090,19 @@ function App({ pageComponents = vitePageComponents }: { pageComponents?: AppPage
     const seen = window.sessionStorage.getItem('puff-intro-seen') === '1'
     return !reduce && !seen
   })
+  const completeIntro = useCallback(() => {
+    if (nextMode && typeof document !== 'undefined') {
+      document.documentElement.classList.add('puff-intro-skip')
+    }
+    setShowIntro(false)
+  }, [nextMode])
 
   useEffect(() => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const seen = window.sessionStorage.getItem('puff-intro-seen') === '1'
-    if (nextMode && (reduce || seen)) setShowIntro(false)
+    if (nextMode && (reduce || seen)) completeIntro()
     setCursorEnabled(window.matchMedia('(pointer: fine)').matches && !reduce)
-  }, [nextMode])
+  }, [completeIntro, nextMode])
 
   useEffect(() => {
     const connection = (navigator as Navigator & { connection?: { saveData?: boolean; addEventListener?: (type: string, listener: () => void) => void; removeEventListener?: (type: string, listener: () => void) => void } }).connection
@@ -1319,7 +1326,7 @@ function App({ pageComponents = vitePageComponents }: { pageComponents?: AppPage
 
   return (
     <div className="app" ref={app}>
-      {showIntro && <Loader onComplete={() => setShowIntro(false)} />}
+      {showIntro && <Loader onComplete={completeIntro} />}
       {!saveData && cursorEnabled && <Cursor />}
       <div className="scroll-progress" aria-hidden="true"><span /></div>
       <Header />

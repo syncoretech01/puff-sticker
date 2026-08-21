@@ -1,7 +1,10 @@
 'use client'
 
+import { useRouter as useNextRouter } from 'next/navigation'
+import { useMemo } from 'react'
+
 import App, { type AppPageComponents } from '../App'
-import { RouterProvider } from '../router'
+import { RouterProvider, type ClientNavigationAdapter } from '../router'
 import {
   AboutPage,
   ArchivePage,
@@ -32,6 +35,15 @@ const nextPageComponents: AppPageComponents = {
   ShopPage,
 }
 
+function publicNextHref(to: string): string {
+  const target = new URL(to, 'https://puffsticker.local')
+  const finalSegment = target.pathname.split('/').filter(Boolean).at(-1) ?? ''
+  if (target.pathname !== '/' && !target.pathname.endsWith('/') && !finalSegment.includes('.')) {
+    target.pathname = `${target.pathname}/`
+  }
+  return `${target.pathname}${target.search}${target.hash}`
+}
+
 export type ClientAppProps = {
   initialPathname: string
   initialSearch?: string
@@ -47,11 +59,19 @@ export default function ClientApp({
   renderPathname,
   nextMode = true,
 }: ClientAppProps) {
+  const nextRouter = useNextRouter()
+  const clientNavigation = useMemo<ClientNavigationAdapter>(() => ({
+    push: (to) => nextRouter.push(publicNextHref(to), { scroll: false }),
+    replace: (to) => nextRouter.replace(publicNextHref(to), { scroll: false }),
+    prefetch: (to) => nextRouter.prefetch(publicNextHref(to)),
+  }), [nextRouter])
+
   return (
     <RouterProvider
       initialLocation={{ pathname: initialPathname, search: initialSearch, hash: initialHash }}
       renderPathname={renderPathname}
       nextMode={nextMode}
+      clientNavigation={clientNavigation}
     >
       <App pageComponents={nextPageComponents} />
     </RouterProvider>
