@@ -1,5 +1,6 @@
 import { spawn, spawnSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
+import { createServer } from 'node:net'
 import { resolve } from 'node:path'
 
 const root = process.cwd()
@@ -39,7 +40,22 @@ function startServer() {
     'preview',
     '--host', target.hostname,
     '--port', target.port || '4173',
+    '--strictPort',
   ], { cwd: root, env: process.env, stdio: 'inherit' })
+}
+
+async function assertTargetPortAvailable() {
+  const target = new URL(targetOrigin)
+  const port = Number.parseInt(target.port || (target.protocol === 'https:' ? '443' : '80'), 10)
+  await new Promise((resolvePort, rejectPort) => {
+    const probe = createServer()
+    probe.once('error', (error) => rejectPort(new Error(
+      `Regression target ${targetOrigin} is unavailable: ${error.message}`,
+    )))
+    probe.listen(port, target.hostname, () => {
+      probe.close((error) => error ? rejectPort(error) : resolvePort())
+    })
+  })
 }
 
 async function waitForServer(server) {
@@ -94,6 +110,7 @@ let server
 let exitCode = 1
 try {
   if (!external) {
+    await assertTargetPortAvailable()
     server = startServer()
     await waitForServer(server)
   }
