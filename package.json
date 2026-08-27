@@ -18,7 +18,14 @@
     "test:regression": "node scripts/run-regression.mjs",
     "test:regression:update": "node scripts/run-regression.mjs --update-snapshots=all",
     "test:regression:headed": "node scripts/run-regression.mjs --headed",
-    "test:regression:install": "playwright install chromium"
+    "test:regression:install": "playwright install chromium",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:check": "drizzle-kit check",
+    "test:cms": "playwright test -c tests/cms/playwright.config.ts",
+    "test:cms:postgres": "node scripts/cms/run-postgres-integration.mjs",
+    "cms:import-wordpress": "tsx scripts/cms/import-wordpress-public.ts",
+    "admin:hash-password": "tsx scripts/cms/hash-admin-password.ts"
   },
   "dependencies": {
     "@fontsource-variable/archivo": "5.3.0",
@@ -26,12 +33,16 @@
     "@gsap/react": "2.1.2",
     "@react-three/drei": "10.7.7",
     "@react-three/fiber": "9.7.0",
+    "@vercel/blob": "2.8.0",
+    "drizzle-orm": "0.45.2",
     "gsap": "3.15.0",
     "lenis": "1.3.25",
     "lucide-react": "1.28.0",
     "next": "16.3.2",
+    "postgres": "3.4.9",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "server-only": "0.0.1",
     "three": "0.185.1"
   },
   "devDependencies": {
@@ -41,8 +52,13 @@
     "@types/react-dom": "19.2.4",
     "@types/three": "0.185.3",
     "@vitejs/plugin-react": "6.0.5",
+    "drizzle-kit": "0.31.10",
     "playwright-core": "1.62.1",
+    "tsx": "4.23.12",
     "typescript": "7.0.2",
     "vite": "8.2.0"
+  },
+  "overrides": {
+    "nanoid": "3.3.18"
   }
 }
