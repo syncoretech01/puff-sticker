@@ -1,0 +1,2 @@
+data/migration/wordpress-public/*.json text eol=lf
+tests/regression/__screenshots__/**/*.json text eol=lf

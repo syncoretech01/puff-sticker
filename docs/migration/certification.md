@@ -11,7 +11,8 @@ Status: certified against the explicitly approved SEO contract frozen through 20
 - Windows x64 visual baseline only; no cross-OS pixel comparison.
 - Node.js `24.16.0` and npm `11.13.0`.
 - Next.js `16.3.6`.
-- Playwright `1.62.1`, Chromium `151.0.7922.34`, device scale factor `1`.
+- Playwright `1.62.1`, Chromium `151.0.7922.34`, device scale factor `1`, one serial worker for identical local/CI rendering load.
+- Geometry snapshots and immutable migration JSON use repository-enforced LF endings, with separate CRLF portability coverage for the WordPress data validator.
 - Screenshot animations disabled with the committed strict geometry and pixel tolerances.
 - Vite and Next servers used isolated, preflight-checked local ports.
 - PostgreSQL integration used PostgreSQL `16.14` from the immutable image digest in `scripts/cms/run-postgres-integration.mjs`.

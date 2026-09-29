@@ -10,7 +10,9 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: inCi,
   retries: inCi ? 2 : 0,
-  workers: inCi ? 2 : 1,
+  // Screenshot and geometry baselines are certified serially so CI exercises
+  // the same rendering workload as the protected local baseline.
+  workers: 1,
   timeout: 45_000,
   expect: {
     timeout: 10_000,

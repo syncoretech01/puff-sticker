@@ -55,7 +55,7 @@ npm.cmd run test:regression
 Remove-Item Env:\PUFF_REGRESSION_PROFILE, Env:\PUFF_REGRESSION_BASE_URL, Env:\VERCEL_ENV
 ```
 
-`npm run test:cms:postgres` requires Docker and tests the migration against an ephemeral PostgreSQL image pinned by digest. GitHub Actions runs the build, SEO, data reconciliation, CMS, database, and both Playwright profiles. Pixel comparisons use pinned Playwright Chromium on `windows-2022`; the Linux PostgreSQL job never compares screenshots across operating systems.
+`npm run test:cms:postgres` requires Docker and tests the migration against an ephemeral PostgreSQL image pinned by digest. GitHub Actions runs the build, SEO, data reconciliation, CMS, database, and both Playwright profiles. Pixel comparisons use pinned Playwright Chromium serially on `windows-2022`, matching the protected local baseline; the Linux PostgreSQL job never compares screenshots across operating systems. Geometry snapshots and immutable migration JSON are checked out with canonical LF endings on every operating system.
 
 ## Server configuration
 
