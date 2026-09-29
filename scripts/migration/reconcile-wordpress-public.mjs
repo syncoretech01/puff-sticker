@@ -295,9 +295,10 @@ const [manifestRaw, contentRaw, exclusionsRaw] = await Promise.all([
 ])
 const [manifest, content, exclusions] = [manifestRaw, contentRaw, exclusionsRaw].map(JSON.parse)
 const sha256 = (value) => createHash('sha256').update(value).digest('hex')
+const artifactSha256 = (value) => sha256(value.replace(/\r\n?/g, '\n'))
 const inputHashes = {
-  content: sha256(contentRaw),
-  exclusions: sha256(exclusionsRaw),
+  content: artifactSha256(contentRaw),
+  exclusions: artifactSha256(exclusionsRaw),
 }
 
 const rawTerms = firstArray(content, ['terms', 'taxonomyTerms', 'content.terms', 'content.taxonomyTerms', 'taxonomy.terms', 'records.terms'])

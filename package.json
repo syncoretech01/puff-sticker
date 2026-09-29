@@ -30,7 +30,7 @@
     "test:cms": "playwright test -c tests/cms/playwright.config.ts",
     "test:cms:postgres": "node scripts/cms/run-postgres-integration.mjs",
     "test:seo": "node scripts/check-seo-evidence-gate.mjs && node scripts/validate-production-seo-evidence.mjs && node scripts/validate-seo-contract.mjs && node scripts/test-seo-contract-mutations.mjs",
-    "test:wordpress-data": "node scripts/migration/validate-wordpress-public.mjs",
+    "test:wordpress-data": "node scripts/migration/validate-wordpress-public.mjs && node scripts/migration/test-wordpress-public-portability.mjs",
     "cms:import-wordpress": "tsx scripts/cms/import-wordpress-public.ts",
     "admin:hash-password": "tsx scripts/cms/hash-admin-password.ts"
   },

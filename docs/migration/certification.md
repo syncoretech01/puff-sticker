@@ -23,6 +23,7 @@ Status: certified against the explicitly approved SEO contract frozen through 20
 - SEO evidence and mutation gates: 128 finite production pages/aliases, 96 primary routes, 94 indexable primary routes, 44 canonical sitemap routes, 34 canonicalizing aliases, 129 exact slash redirects, 40 route-owned legacy archives, 180 sitemap images, 2 immutable live-after-backup post deltas, and zero evidence blockers.
 - Published-content gates: complete committed bodies for all 13 articles; short/long copy, FAQ, and gallery sources for all 21 products; complete sources for 6 business/legal pages; and every committed FAQ question and answer.
 - WordPress snapshot validation: 11 posts, 9 pages, 21 products, 15 variations, 143 attachments, 52 terms, 114 term relationships, and 13 unindexed public-media records.
+- WordPress artifact integrity is verified with LF-canonical SHA-256 and a dedicated CRLF materialization test, so the same immutable JSON identity is enforced across Windows and Linux checkouts.
 - WordPress reconciliation: accepted with zero blockers; 125 known mismatches are explicitly classified and documented.
 - Fast CMS suite: 21 passed.
 - Real PostgreSQL suite: 7 passed, covering migration execution, constraints, rollback, immutable versions/audits, provenance refresh, redirect concurrency, global identity throttling, WordPress importer rollback/idempotency, configured admin cookies, and production public indexability.

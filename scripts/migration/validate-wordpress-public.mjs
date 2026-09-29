@@ -10,6 +10,10 @@ const outputDir = resolve(process.argv[2] ?? REPOSITORY_ROOT, process.argv[2] ? 
 const failures = []
 const check = (condition, message) => { if (!condition) failures.push(message) }
 const sha256 = (value) => createHash('sha256').update(value).digest('hex')
+// Git may materialize committed JSON with CRLF on Windows. The normalized
+// artifact identity is the UTF-8 JSON document with LF physical line endings;
+// escaped line breaks inside JSON string values remain unchanged.
+const artifactSha256 = (value) => sha256(value.replace(/\r\n?/g, '\n'))
 const EXPECTED_UNINDEXED_PUBLIC_MEDIA = new Set([
   '/wp-content/uploads/2022/02/payment-method-2.png',
   '/wp-content/uploads/2022/04/about-1-video-1.png',
@@ -50,8 +54,8 @@ check(!Number.isNaN(Date.parse(manifest.provenance?.databaseSnapshotAt ?? '')), 
 check(manifest.provenance?.tablePrefix === 'SERVMASK_PREFIX_', 'logical ServMask table token changed')
 check(manifest.outputs?.content?.path === 'content.json', 'manifest content path changed')
 check(manifest.outputs?.exclusions?.path === 'exclusions.json', 'manifest exclusions path changed')
-check(manifest.outputs?.content?.sha256 === sha256(contentText), 'content artifact hash mismatch')
-check(manifest.outputs?.exclusions?.sha256 === sha256(exclusionsText), 'exclusions artifact hash mismatch')
+check(manifest.outputs?.content?.sha256 === artifactSha256(contentText), 'content artifact hash mismatch')
+check(manifest.outputs?.exclusions?.sha256 === artifactSha256(exclusionsText), 'exclusions artifact hash mismatch')
 
 const arrays = {
   posts: content.posts,
