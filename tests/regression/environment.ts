@@ -14,8 +14,8 @@ function parseOrigin(value: string, variable: string) {
 
 function parsePixelEnvironment(value: string | undefined) {
   if (!value) return null
-  if (!/^[a-z0-9][a-z0-9.-]*$/.test(value)) {
-    throw new Error(`PUFF_REGRESSION_PIXEL_ENV must be a lowercase environment slug, received: ${value}`)
+  if (!/^[a-z0-9][a-z0-9-]*$/.test(value)) {
+    throw new Error(`PUFF_REGRESSION_PIXEL_ENV must be a lowercase hyphenated environment slug, received: ${value}`)
   }
   return value
 }
