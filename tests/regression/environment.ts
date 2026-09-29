@@ -12,6 +12,14 @@ function parseOrigin(value: string, variable: string) {
   return url.origin
 }
 
+function parsePixelEnvironment(value: string | undefined) {
+  if (!value) return null
+  if (!/^[a-z0-9][a-z0-9.-]*$/.test(value)) {
+    throw new Error(`PUFF_REGRESSION_PIXEL_ENV must be a lowercase environment slug, received: ${value}`)
+  }
+  return value
+}
+
 const profile = process.env.PUFF_REGRESSION_PROFILE ?? 'vite'
 if (profile !== 'vite' && profile !== 'next') {
   throw new Error(`PUFF_REGRESSION_PROFILE must be "vite" or "next", received: ${profile}`)
@@ -25,5 +33,6 @@ export const regressionEnvironment = Object.freeze({
   ),
   serverCommand: process.env.PUFF_REGRESSION_SERVER_COMMAND ?? DEFAULT_SERVER_COMMAND,
   manageServer: process.env.PUFF_REGRESSION_EXTERNAL_SERVER !== '1',
+  pixelEnvironment: parsePixelEnvironment(process.env.PUFF_REGRESSION_PIXEL_ENV),
   profile: profile as RegressionProfile,
 })

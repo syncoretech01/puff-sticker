@@ -61,6 +61,8 @@ jobs:
     name: Vite and Next Playwright parity (pinned Windows Chromium)
     runs-on: windows-2022
     timeout-minutes: 70
+    env:
+      PUFF_REGRESSION_PIXEL_ENV: windows-2022-20260920.314.1
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
@@ -75,6 +77,11 @@ jobs:
         run: |
           if ((node --version) -ne "v${{ env.NODE_VERSION }}") { throw "Unexpected Node version: $(node --version)" }
           if ((npm.cmd --version) -ne "${{ env.NPM_VERSION }}") { throw "Unexpected npm version: $(npm.cmd --version)" }
+      - name: Verify screenshot runner image
+        shell: pwsh
+        run: |
+          if ($env:ImageOS -ne "win22") { throw "Unexpected runner image OS: $env:ImageOS" }
+          if ($env:ImageVersion -ne "20260920.314.1") { throw "Unexpected runner image version: $env:ImageVersion" }
       - run: npm ci
       - name: Install Playwright-pinned Chromium
         run: npm run test:regression:install

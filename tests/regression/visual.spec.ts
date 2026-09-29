@@ -16,7 +16,11 @@ for (const breakpoint of breakpoints) {
         // surface whose published production inventory advanced after the
         // protected snapshot. Keep that content-only delta in its own strict,
         // same-browser baseline without replacing the Vite source of truth.
-        const snapshotName = currentBlogContent
+        const environmentSpecificFinishLab = visualCase.name === 'home-finish-lab'
+          && regressionEnvironment.pixelEnvironment
+        const snapshotName = environmentSpecificFinishLab
+          ? `${visualCase.name}-${breakpoint.name}-${regressionEnvironment.pixelEnvironment}.png`
+          : currentBlogContent
           ? `blog-next-current-${breakpoint.name}.png`
           : `${visualCase.name}-${breakpoint.name}.png`
         await expect(target).toHaveScreenshot(snapshotName, {

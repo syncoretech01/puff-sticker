@@ -8,11 +8,12 @@ Status: certified against the explicitly approved SEO contract frozen through 20
 
 ## Reproducible environment
 
-- Windows x64 visual baseline only; no cross-OS pixel comparison.
+- Windows x64 visual baselines only; no cross-OS pixel comparison. GitHub screenshots assert the `windows-2022` runner image version `20260920.314.1` before comparison.
 - Node.js `24.16.0` and npm `11.13.0`.
 - Next.js `16.3.6`.
 - Playwright `1.62.1`, Chromium `151.0.7922.34`, device scale factor `1`, one serial worker for identical local/CI rendering load.
 - Geometry snapshots and immutable migration JSON use repository-enforced LF endings, with separate CRLF portability coverage for the WordPress data validator.
+- Finish Lab uses separate, unchanged-tolerance baselines for local Windows and GitHub Windows Server because the two Windows rasterizers produce stable subpixel-only differences; Vite and Next share the same baseline inside each environment.
 - Screenshot animations disabled with the committed strict geometry and pixel tolerances.
 - Vite and Next servers used isolated, preflight-checked local ports.
 - PostgreSQL integration used PostgreSQL `16.14` from the immutable image digest in `scripts/cms/run-postgres-integration.mjs`.
