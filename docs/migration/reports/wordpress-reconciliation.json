@@ -26,7 +26,7 @@
   },
   "checks": {
     "articleSlugsAndDates": {
-      "expected": 12,
+      "expected": 13,
       "foundInArchive": 11
     },
     "dates": {
@@ -38,7 +38,7 @@
       "exactAltMetadata": 101,
       "indexedAttachmentMatches": 138,
       "liveReferencedExternal": 16,
-      "liveReferencedFirstParty": 157,
+      "liveReferencedFirstParty": 164,
       "matchedToBackupAttachment": 151,
       "renderedAltOverrides": 37,
       "totalArchiveVerified": 151,
@@ -61,7 +61,7 @@
       "found": 9
     },
     "publicTaxonomyTerms": {
-      "expected": 45,
+      "expected": 49,
       "found": 45
     },
     "seo": {
@@ -172,16 +172,16 @@
     "policy": "Public-only. Private/system records remain excluded; only aggregate type/count evidence is reported."
   },
   "expectedPublicInventory": {
-    "liveDeltaPosts": 1,
-    "liveReferencedUploadKeys": 157,
+    "liveDeltaPosts": 2,
+    "liveReferencedUploadKeys": 164,
     "productCategories": 3,
     "products": 21,
     "protectedBaselinePosts": 11,
     "protectedVariationRows": 15,
     "publicCorePages": 9,
-    "publicTaxonomyArchiveTerms": 45
+    "publicTaxonomyArchiveTerms": 49
   },
-  "explainedMismatchCount": 113,
+  "explainedMismatchCount": 125,
   "mismatchLedger": [
     {
       "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
@@ -699,6 +699,8 @@
           "/blog/tag/custom-mylar-bag",
           "/blog/tag/custom-puffy-sheets",
           "/blog/tag/custom-puffy-stickers",
+          "/blog/tag/dimensional-stickers",
+          "/blog/tag/embossed-stickers",
           "/blog/tag/foil-stickers",
           "/blog/tag/foil-stickers-printing",
           "/blog/tag/holographic-materials",
@@ -711,7 +713,9 @@
           "/blog/tag/nostalgia",
           "/blog/tag/packaging-psychology",
           "/blog/tag/personal-archives",
+          "/blog/tag/product-design",
           "/blog/tag/puffy-sheets",
+          "/blog/tag/raised-stickers",
           "/blog/tag/soft-touch-mylar",
           "/blog/tag/soft-touch-packaging",
           "/blog/tag/sticker-books",
@@ -723,6 +727,7 @@
           "/blog/tag/vintage-sticker-collecting",
           "/blog/tag/why-we-keep-stickers",
           "/blog/when-3d-stickers-become-collectibles",
+          "/blog/why-custom-stickers-feel-like-objects",
           "/blog/why-foil-stickers-feel-valuable",
           "/blog/why-sticker-books-never-really-disappeared",
           "/blog/why-we-save-stickers-we-never-use"
@@ -840,6 +845,8 @@
           "/blog/tag/custom-mylar-bag",
           "/blog/tag/custom-puffy-sheets",
           "/blog/tag/custom-puffy-stickers",
+          "/blog/tag/dimensional-stickers",
+          "/blog/tag/embossed-stickers",
           "/blog/tag/foil-stickers",
           "/blog/tag/foil-stickers-printing",
           "/blog/tag/holographic-materials",
@@ -852,7 +859,9 @@
           "/blog/tag/nostalgia",
           "/blog/tag/packaging-psychology",
           "/blog/tag/personal-archives",
+          "/blog/tag/product-design",
           "/blog/tag/puffy-sheets",
+          "/blog/tag/raised-stickers",
           "/blog/tag/soft-touch-mylar",
           "/blog/tag/soft-touch-packaging",
           "/blog/tag/sticker-books",
@@ -864,6 +873,7 @@
           "/blog/tag/vintage-sticker-collecting",
           "/blog/tag/why-we-keep-stickers",
           "/blog/when-3d-stickers-become-collectibles",
+          "/blog/why-custom-stickers-feel-like-objects",
           "/blog/why-foil-stickers-feel-valuable",
           "/blog/why-sticker-books-never-really-disappeared",
           "/blog/why-we-save-stickers-we-never-use"
@@ -966,7 +976,7 @@
       "field": "attachment",
       "identity": "/wp-content/uploads/2026/08/custom-puffy-sticker-flat-vs-domed-proof-scaled.webp",
       "observed": null,
-      "resolution": "Use the captured Aug 20 production-delta asset; its absence from the older archive is intentional and already isolated.",
+      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
       "scope": "media",
       "severity": "explained"
     },
@@ -984,7 +994,7 @@
       "field": "attachment",
       "identity": "/wp-content/uploads/2026/08/custom-puffy-sticker-packaging-insert-unboxing.webp",
       "observed": null,
-      "resolution": "Use the captured Aug 20 production-delta asset; its absence from the older archive is intentional and already isolated.",
+      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
       "scope": "media",
       "severity": "explained"
     },
@@ -1002,7 +1012,29 @@
       "field": "attachment",
       "identity": "/wp-content/uploads/2026/08/die-cut-vs-kiss-cut-sticker-diagram.webp",
       "observed": null,
-      "resolution": "Use the captured Aug 20 production-delta asset; its absence from the older archive is intentional and already isolated.",
+      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
+      "scope": "media",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-after-archive",
+      "code": "LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT",
+      "expected": {
+        "routes": [
+          "/blog/tag/dimensional-stickers",
+          "/blog/tag/embossed-stickers",
+          "/blog/tag/product-design",
+          "/blog/tag/raised-stickers",
+          "/blog/why-custom-stickers-feel-like-objects"
+        ],
+        "urls": [
+          "https://puffsticker.com/wp-content/uploads/2026/08/Featured-scaled.jpg"
+        ]
+      },
+      "field": "attachment",
+      "identity": "/wp-content/uploads/2026/08/featured-scaled.jpg",
+      "observed": null,
+      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
       "scope": "media",
       "severity": "explained"
     },
@@ -1020,7 +1052,115 @@
       "field": "attachment",
       "identity": "/wp-content/uploads/2026/08/fingertip-on-raised-puffy-sticker-dome.webp",
       "observed": null,
-      "resolution": "Use the captured Aug 20 production-delta asset; its absence from the older archive is intentional and already isolated.",
+      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
+      "scope": "media",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-after-archive",
+      "code": "LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT",
+      "expected": {
+        "routes": [
+          "/blog/why-custom-stickers-feel-like-objects"
+        ],
+        "urls": [
+          "https://puffsticker.com/wp-content/uploads/2026/08/image-1-1024x683.jpg"
+        ]
+      },
+      "field": "attachment",
+      "identity": "/wp-content/uploads/2026/08/image-1.jpg",
+      "observed": null,
+      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
+      "scope": "media",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-after-archive",
+      "code": "LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT",
+      "expected": {
+        "routes": [
+          "/blog/why-custom-stickers-feel-like-objects"
+        ],
+        "urls": [
+          "https://puffsticker.com/wp-content/uploads/2026/08/image-2-1024x576.jpg"
+        ]
+      },
+      "field": "attachment",
+      "identity": "/wp-content/uploads/2026/08/image-2.jpg",
+      "observed": null,
+      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
+      "scope": "media",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-after-archive",
+      "code": "LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT",
+      "expected": {
+        "routes": [
+          "/blog/why-custom-stickers-feel-like-objects"
+        ],
+        "urls": [
+          "https://puffsticker.com/wp-content/uploads/2026/08/image-3-1024x683.jpg"
+        ]
+      },
+      "field": "attachment",
+      "identity": "/wp-content/uploads/2026/08/image-3.jpg",
+      "observed": null,
+      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
+      "scope": "media",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-after-archive",
+      "code": "LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT",
+      "expected": {
+        "routes": [
+          "/blog/why-custom-stickers-feel-like-objects"
+        ],
+        "urls": [
+          "https://puffsticker.com/wp-content/uploads/2026/08/image-4-1024x683.jpg"
+        ]
+      },
+      "field": "attachment",
+      "identity": "/wp-content/uploads/2026/08/image-4.jpg",
+      "observed": null,
+      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
+      "scope": "media",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-after-archive",
+      "code": "LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT",
+      "expected": {
+        "routes": [
+          "/blog/why-custom-stickers-feel-like-objects"
+        ],
+        "urls": [
+          "https://puffsticker.com/wp-content/uploads/2026/08/image-5-1024x683.jpg"
+        ]
+      },
+      "field": "attachment",
+      "identity": "/wp-content/uploads/2026/08/image-5.jpg",
+      "observed": null,
+      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
+      "scope": "media",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-after-archive",
+      "code": "LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT",
+      "expected": {
+        "routes": [
+          "/blog/why-custom-stickers-feel-like-objects"
+        ],
+        "urls": [
+          "https://puffsticker.com/wp-content/uploads/2026/08/image-6-1024x683.jpg"
+        ]
+      },
+      "field": "attachment",
+      "identity": "/wp-content/uploads/2026/08/image-6.jpg",
+      "observed": null,
+      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
       "scope": "media",
       "severity": "explained"
     },
@@ -1038,7 +1178,7 @@
       "field": "attachment",
       "identity": "/wp-content/uploads/2026/08/puffy-sticker-domed-edge-macro-closeup.webp",
       "observed": null,
-      "resolution": "Use the captured Aug 20 production-delta asset; its absence from the older archive is intentional and already isolated.",
+      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
       "scope": "media",
       "severity": "explained"
     },
@@ -1056,7 +1196,7 @@
       "field": "attachment",
       "identity": "/wp-content/uploads/2026/08/puffy-sticker-vs-epoxy-sticker-water-bottle-laptop.webp",
       "observed": null,
-      "resolution": "Use the captured Aug 20 production-delta asset; its absence from the older archive is intentional and already isolated.",
+      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
       "scope": "media",
       "severity": "explained"
     },
@@ -1424,7 +1564,21 @@
       "field": "record",
       "identity": "custom-puffy-stickers-guide",
       "observed": null,
-      "resolution": "Keep the captured Aug 20 production article as the authoritative delta and inject it during normalization reconciliation; do not treat its absence from the older archive as data loss.",
+      "resolution": "Keep the captured production article as an authoritative live delta and inject it during normalization reconciliation; do not treat its absence from the older archive as data loss.",
+      "scope": "post",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-after-archive",
+      "code": "LIVE_POST_AFTER_ARCHIVE_SNAPSHOT",
+      "expected": {
+        "id": 19368,
+        "publishedAt": "2026-08-31T21:21:35+00:00"
+      },
+      "field": "record",
+      "identity": "why-custom-stickers-feel-like-objects",
+      "observed": null,
+      "resolution": "Keep the captured production article as an authoritative live delta and inject it during normalization reconciliation; do not treat its absence from the older archive as data loss.",
       "scope": "post",
       "severity": "explained"
     },
@@ -1867,6 +2021,66 @@
       "resolution": "Preserve the exact production SEO contract; do not let the older backup metadata override it during framework or data-source migration.",
       "scope": "seo",
       "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-public-route; wordpress-backup-for-term-identity",
+      "code": "LIVE_TAXONOMY_AFTER_ARCHIVE_SNAPSHOT",
+      "expected": {
+        "path": "/blog/tag/dimensional-stickers",
+        "slug": "dimensional-stickers",
+        "taxonomy": "post_tag"
+      },
+      "field": "term",
+      "identity": "post_tag:dimensional-stickers",
+      "observed": null,
+      "resolution": "Create this audited live-after-backup tag during normalization reconciliation before data-source cutover.",
+      "scope": "taxonomy",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-public-route; wordpress-backup-for-term-identity",
+      "code": "LIVE_TAXONOMY_AFTER_ARCHIVE_SNAPSHOT",
+      "expected": {
+        "path": "/blog/tag/embossed-stickers",
+        "slug": "embossed-stickers",
+        "taxonomy": "post_tag"
+      },
+      "field": "term",
+      "identity": "post_tag:embossed-stickers",
+      "observed": null,
+      "resolution": "Create this audited live-after-backup tag during normalization reconciliation before data-source cutover.",
+      "scope": "taxonomy",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-public-route; wordpress-backup-for-term-identity",
+      "code": "LIVE_TAXONOMY_AFTER_ARCHIVE_SNAPSHOT",
+      "expected": {
+        "path": "/blog/tag/product-design",
+        "slug": "product-design",
+        "taxonomy": "post_tag"
+      },
+      "field": "term",
+      "identity": "post_tag:product-design",
+      "observed": null,
+      "resolution": "Create this audited live-after-backup tag during normalization reconciliation before data-source cutover.",
+      "scope": "taxonomy",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-public-route; wordpress-backup-for-term-identity",
+      "code": "LIVE_TAXONOMY_AFTER_ARCHIVE_SNAPSHOT",
+      "expected": {
+        "path": "/blog/tag/raised-stickers",
+        "slug": "raised-stickers",
+        "taxonomy": "post_tag"
+      },
+      "field": "term",
+      "identity": "post_tag:raised-stickers",
+      "observed": null,
+      "resolution": "Create this audited live-after-backup tag during normalization reconciliation before data-source cutover.",
+      "scope": "taxonomy",
+      "severity": "explained"
     }
   ],
   "normalizedInventory": {
@@ -1881,21 +2095,35 @@
   },
   "purpose": "Read-only Phase 4 reconciliation; this report does not alter or wire public rendering.",
   "schemaVersion": 1,
-  "snapshotDelta": {
-    "archiveSnapshotAt": "2026-08-12T22:29:58.000Z",
-    "explicitlyDeclaredAbsentFromBackup": true,
-    "policy": "The captured Aug 20 live article and its media remain authoritative production deltas when absent from the archive. File mtime is provenance, not proof of the SQL content cutoff.",
-    "postId": 19341,
-    "publishedAfterArchiveSnapshot": true,
-    "publishedAt": "2026-08-20T20:39:34",
-    "slug": "custom-puffy-stickers-guide"
-  },
+  "snapshotDeltas": [
+    {
+      "archiveSnapshotAt": "2026-08-12T22:29:58.000Z",
+      "explicitlyDeclaredAbsentFromBackup": true,
+      "policy": "Captured live articles and their media remain authoritative production deltas when absent from the archive. File mtime is provenance, not proof of the SQL content cutoff.",
+      "postId": 19341,
+      "publishedAfterArchiveSnapshot": true,
+      "publishedAt": "2026-08-20T20:39:34",
+      "slug": "custom-puffy-stickers-guide"
+    },
+    {
+      "archiveSnapshotAt": "2026-08-12T22:29:58.000Z",
+      "explicitlyDeclaredAbsentFromBackup": false,
+      "policy": "Captured live articles and their media remain authoritative production deltas when absent from the archive. File mtime is provenance, not proof of the SQL content cutoff.",
+      "postId": 19368,
+      "publishedAfterArchiveSnapshot": true,
+      "publishedAt": "2026-08-31T21:21:35",
+      "slug": "why-custom-stickers-feel-like-objects"
+    }
+  ],
   "sources": {
     "archiveDatabaseSnapshotAt": "2026-08-12T22:29:58.000Z",
     "archiveSha256": "9faae116d4723390636a53bb0834879aa998c21ba2c42bc3c466647a9108b21d",
     "databaseSha256": "c23d278a02a591d91e14ce77c82b9a878503f104e05901c11572866ed85dbc3d",
-    "liveSeoCapturedOn": "2026-08-22",
-    "liveSeoEvidence": "src/lib/seo/fixtures/production-seo-2026-08-22.json",
+    "liveSeoCapturedOn": "2026-09-01",
+    "liveSeoEvidence": [
+      "src/lib/seo/fixtures/production-seo-2026-08-22.json",
+      "src/lib/seo/fixtures/production-seo-current-delta-2026-09-01.ts"
+    ],
     "normalizedManifestSchemaVersion": 1,
     "protectedContentSources": [
       "src/content/catalog.ts",

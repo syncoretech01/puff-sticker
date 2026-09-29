@@ -7,10 +7,11 @@ import {
 
 const INTERNAL_ENDPOINT_PREFIX = '/seo-internal/'
 const INTERNAL_REWRITE_HEADER = 'x-puff-seo-internal-rewrite'
+const INTERNAL_REWRITE_TOKEN = crypto.randomUUID()
 const INTERNAL_ENDPOINT_REWRITES: Readonly<Record<string, string>> = {
   '/robots.txt': `${INTERNAL_ENDPOINT_PREFIX}robots.txt`,
-  '/sitemap.xml': `${INTERNAL_ENDPOINT_PREFIX}sitemap.xml`,
 }
+const INTERNAL_ENDPOINT_TARGETS = new Set(Object.values(INTERNAL_ENDPOINT_REWRITES))
 
 function exactRedirect(request: NextRequest, pathname: string, preserveSearch: boolean) {
   const destination = new URL(request.url)
@@ -40,9 +41,14 @@ export function proxy(request: NextRequest) {
   }
 
   // Internal route-handler addresses are implementation details and must not
-  // become a second crawlable endpoint surface.
+  // become a second crawlable endpoint surface. A per-process capability is
+  // added only to finite rewrites; a client-provided marker cannot bypass the
+  // guard without the unexposed random value.
   if (pathname.startsWith(INTERNAL_ENDPOINT_PREFIX)) {
-    if (request.headers.get(INTERNAL_REWRITE_HEADER) === '1') {
+    if (
+      request.headers.get(INTERNAL_REWRITE_HEADER) === INTERNAL_REWRITE_TOKEN
+      && INTERNAL_ENDPOINT_TARGETS.has(pathname)
+    ) {
       return NextResponse.next()
     }
     return new NextResponse('Not Found', {
@@ -59,7 +65,7 @@ export function proxy(request: NextRequest) {
     const destination = request.nextUrl.clone()
     destination.pathname = internalEndpoint
     const requestHeaders = new Headers(request.headers)
-    requestHeaders.set(INTERNAL_REWRITE_HEADER, '1')
+    requestHeaders.set(INTERNAL_REWRITE_HEADER, INTERNAL_REWRITE_TOKEN)
     return NextResponse.rewrite(destination, {
       request: { headers: requestHeaders },
     })

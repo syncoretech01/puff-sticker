@@ -6,7 +6,7 @@ import {
   type ExactCoreMetadata,
   type PageProductionSignals,
 } from './evidence'
-import { productionPageEvidence } from './production-evidence-fixture'
+import { productionPageEvidence, productionPageEvidenceCapture } from './production-evidence-fixture'
 import { SHOP_CANONICAL_TARGET_EVIDENCE, type ShopCanonicalTargetEvidence } from './shop-canonical-evidence'
 import { EXPLICIT_TRAILING_SLASH_PATHS } from './slash-redirects'
 
@@ -49,13 +49,14 @@ function approvedLocalPageEvidence(): EvidenceProvenance {
 
 function productionSignals(path: string): PageProductionSignals {
   const page = productionPageEvidence(path)
+  const capture = productionPageEvidenceCapture(path)
   return {
     scope: 'production',
-    coreMetadata: capturedSignal(page.coreMetadata, 'production-crawl-2026-08-22', '2026-08-22'),
-    openGraph: capturedSignal(page.openGraph, 'production-crawl-2026-08-22', '2026-08-22'),
-    twitter: capturedSignal(page.twitter, 'production-crawl-2026-08-22', '2026-08-22'),
-    structuredData: capturedSignal(page.structuredData, 'production-crawl-2026-08-22', '2026-08-22'),
-    content: capturedSignal(page.content, 'production-crawl-2026-08-22', '2026-08-22'),
+    coreMetadata: capturedSignal(page.coreMetadata, capture.source, capture.capturedOn),
+    openGraph: capturedSignal(page.openGraph, capture.source, capture.capturedOn),
+    twitter: capturedSignal(page.twitter, capture.source, capture.capturedOn),
+    structuredData: capturedSignal(page.structuredData, capture.source, capture.capturedOn),
+    content: capturedSignal(page.content, capture.source, capture.capturedOn),
   }
 }
 
@@ -138,7 +139,7 @@ export type EvidenceProvenance = {
   searchConsole: ExternalEvidenceAvailability
   backlinks: ExternalEvidenceAvailability
   accessLogs: ExternalEvidenceAvailability
-  capturedOn: '2026-08-14' | '2026-08-22'
+  capturedOn: '2026-08-14' | '2026-08-22' | '2026-09-01'
 }
 
 export type StructuredDataEvidence =
@@ -235,6 +236,7 @@ const LIVE_SITEMAP_PATHS = new Set([
   '/about-us',
   '/blog',
   '/blog/custom-puffy-stickers-guide',
+  '/blog/why-custom-stickers-feel-like-objects',
   '/contact-us',
   '/faqs',
   '/privacy-policy',
@@ -287,6 +289,8 @@ const BLOG_TAG_TITLES = {
   'custom-mylar-bag': 'custom mylar bag',
   'custom-puffy-sheets': 'custom puffy sheets',
   'custom-puffy-stickers': 'custom puffy stickers',
+  'dimensional-stickers': 'dimensional stickers',
+  'embossed-stickers': 'embossed stickers',
   'foil-stickers-printing': 'foil stickers printing',
   'foil-stickers': 'Foil Stickers',
   'holographic-materials': 'holographic materials',
@@ -299,7 +303,9 @@ const BLOG_TAG_TITLES = {
   nostalgia: 'nostalgia',
   'packaging-psychology': 'Packaging Psychology',
   'personal-archives': 'personal archives',
+  'product-design': 'product design',
   'puffy-sheets': 'puffy sheets',
+  'raised-stickers': 'raised stickers',
   'soft-touch-mylar': 'soft touch mylar',
   'soft-touch-packaging': 'Soft Touch Packaging',
   'sticker-books': 'sticker books',
@@ -359,6 +365,7 @@ const ARCHIVE_DEFINITIONS: readonly ArchiveDefinition[] = [
 
 const BLOG_ARTICLE_SLUGS = new Set([
   'custom-puffy-stickers-guide',
+  'why-custom-stickers-feel-like-objects',
   'when-3d-stickers-become-collectibles',
   'why-sticker-books-never-really-disappeared',
   'why-we-save-stickers-we-never-use',
@@ -462,6 +469,7 @@ function makeExactRoute(
 
 function makeArchiveRoute(definition: ArchiveDefinition): PageRouteContract {
   const page = productionPageEvidence(definition.path)
+  const capture = productionPageEvidenceCapture(definition.path)
   const metadata = capturedRouteMetadata(definition.path)
   const expectedRobots = definition.kind === 'pagination' ? INDEX_ROBOTS : TAXONOMY_ROBOTS
   if (metadata.title !== definition.title || metadata.description !== (definition.description ?? null)) {
@@ -485,12 +493,12 @@ function makeArchiveRoute(definition: ArchiveDefinition): PageRouteContract {
     canonicalPath: definition.path,
     indexable: true,
     inSitemap: false,
-    contentParity: 'legacy-static-required',
+    contentParity: 'migrated',
     metadata,
     structuredData: page.structuredData.normalizedGraphs,
     expectedSchemaTypes: page.structuredData.types,
     audit: pageAudit('captured-production-fixture', 25),
-    evidence: observedPageEvidence(false),
+    evidence: observedPageEvidence(false, capture.capturedOn),
     productionSignals: productionSignals(definition.path),
   }
 }
@@ -567,11 +575,12 @@ const exactRoutes = Object.keys(liveSeo)
   .filter((path) => path !== '/shop')
   .map((path) => makeExactRoute(path))
 
-// Published after the protected Vite baseline and therefore preserved as a
-// production delta. Its public REST content is fixture-backed separately; it
-// must not be represented as already migrated visual content.
+// Published after the protected Vite baseline and therefore retained as a
+// separately evidenced production delta. The Next release candidate renders
+// its complete audited production content without changing the Vite baseline.
 const productionDeltaRoutes = [
-  makeExactRoute('/blog/custom-puffy-stickers-guide', 'legacy-static-required', '2026-08-22'),
+  makeExactRoute('/blog/custom-puffy-stickers-guide', 'migrated', '2026-08-22'),
+  makeExactRoute('/blog/why-custom-stickers-feel-like-objects', 'migrated', '2026-09-01'),
 ]
 
 const shopPage = productionPageEvidence('/shop')

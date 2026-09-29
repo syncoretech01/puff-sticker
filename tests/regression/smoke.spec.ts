@@ -37,8 +37,17 @@ function assertAboutLegacyAssets(path: string, externalImages: string[]) {
   expect(new Set(externalImages.map((url) => new URL(url).hostname))).toEqual(new Set([ABOUT_LEGACY_ASSET_HOST]))
 }
 
+const CURRENT_PRODUCTION_CONTENT_PATHS = new Set([
+  '/blog/',
+  '/blog/category/custom-puffy-stickers/',
+  '/blog/category/sticker-psychology/',
+])
+
 function baselineName(path: string, breakpoint: string) {
   const slug = path === '/' ? 'home' : path.split('/').filter(Boolean).join('--')
+  if (regressionEnvironment.profile === 'next' && CURRENT_PRODUCTION_CONTENT_PATHS.has(path)) {
+    return `${slug}-next-current-${breakpoint}-structure.json`
+  }
   return `${slug}-${breakpoint}-structure.json`
 }
 

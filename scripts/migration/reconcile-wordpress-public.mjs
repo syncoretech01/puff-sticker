@@ -31,16 +31,14 @@ const [
   { catalogProducts, categories },
   { editorialArticleList },
   { productDetails },
-  { productionDeltaBlogContent },
+  { productionDeltaBlogContent, productionDeltaPosts },
   { PRIMARY_ROUTE_CONTRACTS, TRAILING_SLASH_REDIRECTS },
-  deltaFixture,
 ] = await Promise.all([
   import('../../src/content/catalog.ts'),
   import('../../src/content/editorial.ts'),
   import('../../src/content/productDetails.ts'),
   import('../../src/content/productionDeltaContent.ts'),
   import('../../src/lib/seo/index.ts'),
-  import('../../src/lib/seo/fixtures/production-post-delta-custom-puffy-stickers-guide-2026-08-21.json', { with: { type: 'json' } }),
 ])
 
 const inputPaths = {
@@ -543,8 +541,7 @@ const expectedArticles = editorialArticleList.map((article) => ({
   categories: article.categories.map(slugify),
   isLiveDelta: false,
 }))
-const deltaPost = deltaFixture.default.post
-for (const slug of Object.keys(productionDeltaBlogContent)) {
+for (const [slug, deltaPost] of Object.entries(productionDeltaPosts)) {
   expectedArticles.push({
     slug,
     path: `/blog/${slug}`,
@@ -563,10 +560,9 @@ const archiveSnapshotValue = manifest.archive?.databaseSnapshotAt
   ?? manifest.snapshotAt
   ?? null
 const archiveSnapshotTime = parseDate(archiveSnapshotValue)
-const declaredLiveDelta = asArray(manifest.gaps).some((gap) =>
-  gap?.code === 'known-live-delta-absent-from-backup'
-  && (!gap.slug || gap.slug === deltaPost.slug),
-)
+const declaredLiveDeltaSlugs = new Set(asArray(manifest.gaps)
+  .filter((gap) => gap?.code === 'known-live-delta-absent-from-backup' && gap.slug)
+  .map((gap) => String(gap.slug)))
 const postBySlug = new Map(collections.posts.map((record) => [recordSlug(record), record]))
 
 for (const expected of expectedArticles) {
@@ -576,7 +572,7 @@ for (const expected of expectedArticles) {
   const publishedAfterSnapshot = Boolean(
     expected.isLiveDelta
     && (
-      declaredLiveDelta
+      declaredLiveDeltaSlugs.has(expected.slug)
       || (
         archiveSnapshotTime !== null
         && parseDate(productionDate) !== null
@@ -593,7 +589,7 @@ for (const expected of expectedArticles) {
       observed: null,
       authority: publishedAfterSnapshot ? 'live-production-after-archive' : 'live-production-and-protected-content',
       resolution: publishedAfterSnapshot
-        ? 'Keep the captured Aug 20 production article as the authoritative delta and inject it during normalization reconciliation; do not treat its absence from the older archive as data loss.'
+        ? 'Keep the captured production article as an authoritative live delta and inject it during normalization reconciliation; do not treat its absence from the older archive as data loss.'
         : 'Recover the published article from the backup before data-source cutover.',
     })
     continue
@@ -705,10 +701,20 @@ for (const expected of expectedTaxonomies) {
   const actual = termIndex.get(`${expected.taxonomy}:${expected.slug}`)
     ?? collections.terms.find((term) => recordSlug(term) === expected.slug && recordPath(term) === expected.path)
   if (!actual) {
+    const currentLiveDelta = new Set([
+      '/blog/tag/dimensional-stickers',
+      '/blog/tag/embossed-stickers',
+      '/blog/tag/product-design',
+      '/blog/tag/raised-stickers',
+    ]).has(expected.path)
     addMismatch({
-      code: 'PUBLIC_TAXONOMY_TERM_MISSING', scope: 'taxonomy', identity: `${expected.taxonomy}:${expected.slug}`, field: 'term',
+      code: currentLiveDelta ? 'LIVE_TAXONOMY_AFTER_ARCHIVE_SNAPSHOT' : 'PUBLIC_TAXONOMY_TERM_MISSING',
+      severity: currentLiveDelta ? 'explained' : 'blocker',
+      scope: 'taxonomy', identity: `${expected.taxonomy}:${expected.slug}`, field: 'term',
       expected, observed: null, authority: 'live-production-for-public-route; wordpress-backup-for-term-identity',
-      resolution: 'Recover or map this public archive term before data-source cutover.',
+      resolution: currentLiveDelta
+        ? 'Create this audited live-after-backup tag during normalization reconciliation before data-source cutover.'
+        : 'Recover or map this public archive term before data-source cutover.',
     })
   }
 }
@@ -869,11 +875,12 @@ for (const [key, entry] of unindexedMediaByKey) {
 for (const [key, observed] of liveMedia) {
   const attachment = attachmentByMediaKey.get(key)
   const unindexedEvidence = unindexedMediaByKey.get(key)
-  const isDeltaMedia = key.includes('/2026/08/') && [...observed.routes].includes('/blog/custom-puffy-stickers-guide')
+  const mediaDelta = Object.entries(productionDeltaPosts).find(([slug]) => observed.routes.has(`/blog/${slug}`))
+  const isDeltaMedia = key.includes('/2026/08/') && Boolean(mediaDelta)
   const deltaAfterSnapshot = isDeltaMedia
     && (
-      declaredLiveDelta
-      || (archiveSnapshotTime !== null && parseDate(deltaPost.date) > archiveSnapshotTime)
+      declaredLiveDeltaSlugs.has(mediaDelta?.[0])
+      || (archiveSnapshotTime !== null && parseDate(mediaDelta?.[1].date) > archiveSnapshotTime)
     )
   if (!attachment) {
     if (
@@ -897,7 +904,7 @@ for (const [key, observed] of liveMedia) {
       expected: { routes: [...observed.routes].sort(), urls: [...observed.urls].sort() }, observed: null,
       authority: deltaAfterSnapshot ? 'live-production-after-archive' : 'live-production-reference-and-wordpress-backup-metadata',
       resolution: deltaAfterSnapshot
-        ? 'Use the captured Aug 20 production-delta asset; its absence from the older archive is intentional and already isolated.'
+        ? 'Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.'
         : 'Recover the referenced public media metadata and binary mapping before cutover.',
     })
     continue
@@ -947,8 +954,11 @@ const report = stable({
     archiveDatabaseSnapshotAt: archiveSnapshotLabel,
     archiveSha256: manifest.archive?.sha256 ?? manifest.source?.archiveSha256 ?? manifest.provenance?.archiveSha256 ?? manifest.archiveSha256 ?? null,
     databaseSha256: manifest.database?.sha256 ?? manifest.source?.databaseSha256 ?? manifest.provenance?.databaseSha256 ?? manifest.databaseSha256 ?? null,
-    liveSeoEvidence: 'src/lib/seo/fixtures/production-seo-2026-08-22.json',
-    liveSeoCapturedOn: '2026-08-22',
+    liveSeoEvidence: [
+      'src/lib/seo/fixtures/production-seo-2026-08-22.json',
+      'src/lib/seo/fixtures/production-seo-current-delta-2026-09-01.ts',
+    ],
+    liveSeoCapturedOn: '2026-09-01',
     protectedContentSources: [
       'src/content/catalog.ts',
       'src/content/editorial.ts',
@@ -956,15 +966,15 @@ const report = stable({
       'src/content/productionDeltaContent.ts',
     ],
   },
-  snapshotDelta: {
-    slug: deltaPost.slug,
+  snapshotDeltas: Object.entries(productionDeltaPosts).map(([slug, deltaPost]) => ({
+    slug,
     postId: deltaPost.id,
     publishedAt: deltaPost.date,
     archiveSnapshotAt: archiveSnapshotLabel,
     publishedAfterArchiveSnapshot: archiveSnapshotTime === null ? null : parseDate(deltaPost.date) > archiveSnapshotTime,
-    explicitlyDeclaredAbsentFromBackup: declaredLiveDelta,
-    policy: 'The captured Aug 20 live article and its media remain authoritative production deltas when absent from the archive. File mtime is provenance, not proof of the SQL content cutoff.',
-  },
+    explicitlyDeclaredAbsentFromBackup: declaredLiveDeltaSlugs.has(slug),
+    policy: 'Captured live articles and their media remain authoritative production deltas when absent from the archive. File mtime is provenance, not proof of the SQL content cutoff.',
+  })),
   normalizedInventory: Object.fromEntries(Object.entries(collections).map(([key, values]) => [key, values.length])),
   expectedPublicInventory: {
     products: catalogProducts.length,
@@ -1021,8 +1031,11 @@ function buildMarkdown(value) {
   const exclusionsRows = value.exclusions.byType
     .map((entry) => `| ${entry.type} | ${entry.count ?? 'not parsed'} | ${entry.disposition} |`)
     .join('\n') || '| None declared | 0 |'
+  const deltaSummary = value.snapshotDeltas
+    .map((entry) => `\`${entry.slug}\` (post ${entry.postId}, published ${entry.publishedAt})`)
+    .join('; ')
 
-  return `# WordPress public-data reconciliation\n\nStatus: **${value.status.toUpperCase()}**\n\nThis is a read-only Phase 4 audit. The normalized WordPress data is not connected to public rendering, so the protected React/Vite-to-Next visual and SEO output remains unchanged.\n\n## Authority and snapshot boundary\n\n- Live production remains authoritative for URLs, status codes, canonicals, metadata, schema-facing SEO behavior, and rendered image alt text.\n- The protected React/Vite implementation remains authoritative for visual output and currently rendered content.\n- The WordPress backup remains authoritative for record IDs, relations, dates, and attachment metadata.\n- Archive database snapshot: **${markdownValue(value.sources.archiveDatabaseSnapshotAt)}**.\n- Live crawl evidence: **${value.sources.liveSeoCapturedOn}**.\n- The production delta \`${value.snapshotDelta.slug}\` (post ${value.snapshotDelta.postId}) was published at **${value.snapshotDelta.publishedAt}**. Published-after-snapshot absence is explicitly explained, not treated as archive data loss.\n\n## Deterministic inventory\n\n| Check | Expected | Found/matched |\n| --- | ---: | ---: |\n| Products | ${value.checks.productSlugsAndIds.expected} | ${value.checks.productSlugsAndIds.found} |\n| Baseline + Aug 20 posts | ${value.checks.articleSlugsAndDates.expected} | ${value.checks.articleSlugsAndDates.foundInArchive} |\n| Protected variation rows | ${value.checks.productVariations.expected} | ${value.checks.productVariations.found} |\n| Public taxonomy archive terms | ${value.checks.publicTaxonomyTerms.expected} | ${value.checks.publicTaxonomyTerms.found} |\n| Live referenced first-party upload keys | ${value.checks.media.liveReferencedFirstParty} | ${value.checks.media.matchedToBackupAttachment} |\n| Live referenced external media URLs | ${value.checks.media.liveReferencedExternal} | Preserved as explained dependencies |\n| SEO records with comparable backup fields | - | ${value.checks.seo.comparableRecords} |\n\n## Cutover blockers\n\nThe gate fails only for unexplained published-public mismatches or a privacy-boundary violation. Explained source-age differences and authority overrides remain visible below but do not fail the gate.\n\n| Code | Scope | Identity | Required resolution |\n| --- | --- | --- | --- |\n${blockerRows}\n\n## Explained mismatches and precedence decisions\n\n| Code | Scope | Identity | Authority |\n| --- | --- | --- | --- |\n${explainedRows}\n\n## Private/system exclusions\n\nOnly aggregate types and counts are reported. No customer, order, form, credential, session, or other private values are present in this report.\n\n| Excluded type | Count | Disposition |\n| --- | ---: | --- |\n${exclusionsRows}\n\n## Acceptance\n\n- Passed: **${value.acceptance.passed ? 'yes' : 'no'}**.\n- Public runtime wired to normalized data: **no**.\n- ${value.acceptance.nextStep}\n- Search Console exports, backlink data, and access-log URL evidence remain required pre-cutover inputs when available; this archive reconciliation does not claim those sources were supplied.\n`
+  return `# WordPress public-data reconciliation\n\nStatus: **${value.status.toUpperCase()}**\n\nThis is a read-only Phase 4 audit. The normalized WordPress data is not connected to public rendering, so the protected React/Vite-to-Next visual and SEO output remains unchanged.\n\n## Authority and snapshot boundary\n\n- Live production remains authoritative for URLs, status codes, canonicals, metadata, schema-facing SEO behavior, and rendered image alt text.\n- The protected React/Vite implementation remains authoritative for visual output and currently rendered content.\n- The WordPress backup remains authoritative for record IDs, relations, dates, and attachment metadata.\n- Archive database snapshot: **${markdownValue(value.sources.archiveDatabaseSnapshotAt)}**.\n- Live crawl evidence through: **${value.sources.liveSeoCapturedOn}**.\n- Production deltas newer than the backup: ${deltaSummary}. Published-after-snapshot absence is explicitly explained, not treated as archive data loss.\n\n## Deterministic inventory\n\n| Check | Expected | Found/matched |\n| --- | ---: | ---: |\n| Products | ${value.checks.productSlugsAndIds.expected} | ${value.checks.productSlugsAndIds.found} |\n| Baseline + live-delta posts | ${value.checks.articleSlugsAndDates.expected} | ${value.checks.articleSlugsAndDates.foundInArchive} |\n| Protected variation rows | ${value.checks.productVariations.expected} | ${value.checks.productVariations.found} |\n| Public taxonomy archive terms | ${value.checks.publicTaxonomyTerms.expected} | ${value.checks.publicTaxonomyTerms.found} |\n| Live referenced first-party upload keys | ${value.checks.media.liveReferencedFirstParty} | ${value.checks.media.matchedToBackupAttachment} |\n| Live referenced external media URLs | ${value.checks.media.liveReferencedExternal} | Preserved as explained dependencies |\n| SEO records with comparable backup fields | - | ${value.checks.seo.comparableRecords} |\n\n## Cutover blockers\n\nThe gate fails only for unexplained published-public mismatches or a privacy-boundary violation. Explained source-age differences and authority overrides remain visible below but do not fail the gate.\n\n| Code | Scope | Identity | Required resolution |\n| --- | --- | --- | --- |\n${blockerRows}\n\n## Explained mismatches and precedence decisions\n\n| Code | Scope | Identity | Authority |\n| --- | --- | --- | --- |\n${explainedRows}\n\n## Private/system exclusions\n\nOnly aggregate types and counts are reported. No customer, order, form, credential, session, or other private values are present in this report.\n\n| Excluded type | Count | Disposition |\n| --- | ---: | --- |\n${exclusionsRows}\n\n## Acceptance\n\n- Passed: **${value.acceptance.passed ? 'yes' : 'no'}**.\n- Public runtime wired to normalized data: **no**.\n- ${value.acceptance.nextStep}\n- Search Console exports, backlink data, and access-log URL evidence remain required pre-cutover inputs when available; this archive reconciliation does not claim those sources were supplied.\n`
 }
 
 await mkdir(reportDirectory, { recursive: true })
@@ -1031,8 +1044,8 @@ const documentation = buildMarkdown(report).replace(
   '\n| Products |',
   `\n| Public pages (including the posts index) | ${report.checks.publicPages.expected} | ${report.checks.publicPages.found} |\n| Products |`,
 ).replace(
-  `| Baseline + Aug 20 posts | ${report.checks.articleSlugsAndDates.expected} | ${report.checks.articleSlugsAndDates.foundInArchive} |`,
-  `| Baseline + Aug 20 posts | ${report.checks.articleSlugsAndDates.expected} | ${report.checks.articleSlugsAndDates.foundInArchive} archive + ${report.mismatchLedger.filter((entry) => entry.code === 'LIVE_POST_AFTER_ARCHIVE_SNAPSHOT').length} live delta |`,
+  `| Baseline + live-delta posts | ${report.checks.articleSlugsAndDates.expected} | ${report.checks.articleSlugsAndDates.foundInArchive} |`,
+  `| Baseline + live-delta posts | ${report.checks.articleSlugsAndDates.expected} | ${report.checks.articleSlugsAndDates.foundInArchive} archive + ${report.mismatchLedger.filter((entry) => entry.code === 'LIVE_POST_AFTER_ARCHIVE_SNAPSHOT').length} live deltas |`,
 ).replace(
   `| Live referenced first-party upload keys | ${report.checks.media.liveReferencedFirstParty} | ${report.checks.media.matchedToBackupAttachment} |`,
   `| Live referenced first-party upload keys | ${report.checks.media.liveReferencedFirstParty} | ${report.checks.media.totalArchiveVerified} archive verified + ${report.mismatchLedger.filter((entry) => entry.code === 'LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT').length} live delta |`,

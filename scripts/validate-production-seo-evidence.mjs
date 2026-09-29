@@ -2,6 +2,9 @@ import { createHash } from 'node:crypto'
 import { registerHooks } from 'node:module'
 import fixture from '../src/lib/seo/fixtures/production-seo-2026-08-22.json' with { type: 'json' }
 import postDelta from '../src/lib/seo/fixtures/production-post-delta-custom-puffy-stickers-guide-2026-08-21.json' with { type: 'json' }
+import currentPostDelta from '../src/lib/seo/fixtures/production-post-delta-why-custom-stickers-feel-like-objects-2026-09-01.ts'
+import currentSeoDelta from '../src/lib/seo/fixtures/production-seo-current-delta-2026-09-01.ts'
+import currentSitemapIndexDelta from '../src/lib/seo/fixtures/production-sitemap-index-delta-2026-09-02.ts'
 import shopCanonical from '../src/lib/seo/fixtures/production-shop-canonical-target-2026-08-21.json' with { type: 'json' }
 
 registerHooks({
@@ -33,6 +36,10 @@ const {
   sitemapIndexXml,
   toNextMetadata,
 } = await import('../src/lib/seo/index.ts')
+const {
+  PRODUCTION_SEO_FIXTURE,
+  productionEndpointEvidence,
+} = await import('../src/lib/seo/production-evidence-fixture.ts')
 
 const failures = []
 const check = (condition, message) => { if (!condition) failures.push(message) }
@@ -46,6 +53,7 @@ const stableValue = (value) => {
 }
 const stableJson = (value) => JSON.stringify(stableValue(value))
 const same = (left, right) => stableJson(left) === stableJson(right)
+const COMPATIBILITY_SITEMAP_REDIRECT_CAPTURE_DATE = '2026-08-31'
 
 check(fixture.schemaVersion === 1, 'production fixture schema version changed')
 check(fixture.source === 'production-crawl-2026-08-22', 'production fixture source changed')
@@ -54,15 +62,35 @@ check(fixture.endpointCount === 9, `expected 9 captured production endpoints, fo
 check(Object.keys(fixture.pages).length === fixture.routeCount, 'fixture routeCount disagrees with page keys')
 check(Object.keys(fixture.endpoints).length === fixture.endpointCount, 'fixture endpointCount disagrees with endpoint keys')
 
+const expectedCurrentPagePaths = [
+  '/blog/tag/dimensional-stickers',
+  '/blog/tag/embossed-stickers',
+  '/blog/tag/product-design',
+  '/blog/tag/raised-stickers',
+  '/blog/why-custom-stickers-feel-like-objects',
+]
+check(currentSeoDelta.schemaVersion === 1, 'current production delta schema version changed')
+check(currentSeoDelta.source === 'production-crawl-2026-09-01', 'current production delta source changed')
+check(currentSeoDelta.capturedOn === '2026-09-01', 'current production delta capture date changed')
+check(currentSeoDelta.routeCount === 5, `expected 5 current-delta pages, found ${currentSeoDelta.routeCount}`)
+check(currentSeoDelta.endpointCount === 1, `expected 1 current-delta endpoint, found ${currentSeoDelta.endpointCount}`)
+check(same(Object.keys(currentSeoDelta.pages).sort(), expectedCurrentPagePaths), 'current production delta route set changed')
+check(same(Object.keys(currentSeoDelta.endpoints), ['/post-sitemap.xml']), 'current production delta must override only the post sitemap')
+check(Object.keys(currentSeoDelta.pages).every((path) => fixture.pages[path] === undefined), 'current production delta unexpectedly overlaps the historical page fixture')
+check(PRODUCTION_SEO_FIXTURE.routeCount === 128, `expected 128 merged production pages, found ${PRODUCTION_SEO_FIXTURE.routeCount}`)
+check(PRODUCTION_SEO_FIXTURE.endpointCount === 9, `expected 9 merged production endpoints, found ${PRODUCTION_SEO_FIXTURE.endpointCount}`)
+check(Object.keys(PRODUCTION_SEO_FIXTURE.pages).length === PRODUCTION_SEO_FIXTURE.routeCount, 'merged routeCount disagrees with page keys')
+check(Object.keys(PRODUCTION_SEO_FIXTURE.endpoints).length === PRODUCTION_SEO_FIXTURE.endpointCount, 'merged endpointCount disagrees with endpoint keys')
+
 const productionRoutes = [
   ...PRIMARY_ROUTE_CONTRACTS.filter((route) => route.productionSignals.scope === 'production'),
   ...CANONICALIZING_ALIAS_CONTRACTS,
 ]
-check(productionRoutes.length === fixture.routeCount, 'contracted production pages disagree with fixture coverage')
+check(productionRoutes.length === PRODUCTION_SEO_FIXTURE.routeCount, 'contracted production pages disagree with merged fixture coverage')
 check(PHASE_2_SEO_EVIDENCE_READY, 'Phase 2 SEO evidence gate still has uncaptured blockers')
 
 for (const route of productionRoutes) {
-  const page = fixture.pages[route.path]
+  const page = PRODUCTION_SEO_FIXTURE.pages[route.path]
   check(Boolean(page), `${route.path}: missing page evidence`)
   if (!page) continue
   check(page.status === 200, `${route.path}: captured status is ${page.status}`)
@@ -106,17 +134,48 @@ for (const [path, endpoint] of Object.entries(fixture.endpoints)) {
   check(endpoint.status === 200, `${path}: endpoint status is ${endpoint.status}`)
   check(hash(endpoint.body) === endpoint.normalizedBodyHash, `${path}: endpoint body hash mismatch`)
 }
-check(PRODUCTION_ROBOTS_TXT === fixture.endpoints['/robots.txt'].body, 'robots builder is not exact fixture body')
-check(compatibilitySitemapIndexXml() === fixture.endpoints['/sitemap.xml'].body, 'compatibility sitemap index is not exact fixture body')
-check(sitemapIndexXml() === fixture.endpoints['/sitemap_index.xml'].body, 'sitemap index is not exact fixture body')
-check(sitemapGroupXml('post') === fixture.endpoints['/post-sitemap.xml'].body, 'post sitemap is not exact fixture body')
-check(sitemapGroupXml('page') === fixture.endpoints['/page-sitemap.xml'].body, 'page sitemap is not exact fixture body')
-check(sitemapGroupXml('product') === fixture.endpoints['/product-sitemap.xml'].body, 'product sitemap is not exact fixture body')
-check(sitemapGroupXml('product-category') === fixture.endpoints['/product_cat-sitemap.xml'].body, 'product category sitemap is not exact fixture body')
-check(localSitemapXml() === fixture.endpoints['/local-sitemap.xml'].body, 'local sitemap is not exact fixture body')
-check(locationsKml() === fixture.endpoints['/locations.kml'].body, 'locations KML is not exact fixture body')
 
-check(SITEMAP_ENTRIES.length === 43, `expected 43 sitemap rows, found ${SITEMAP_ENTRIES.length}`)
+for (const [path, endpoint] of Object.entries(currentSeoDelta.endpoints)) {
+  check(endpoint.status === 200, `${path}: current-delta endpoint status is ${endpoint.status}`)
+  check(hash(endpoint.body) === endpoint.normalizedBodyHash, `${path}: current-delta endpoint body hash mismatch`)
+}
+check(currentSitemapIndexDelta.source === 'production-http-capture-2026-09-02', 'current sitemap-index evidence source changed')
+check(currentSitemapIndexDelta.capturedOn === '2026-09-02', 'current sitemap-index capture date changed')
+check(currentSitemapIndexDelta.endpoint.status === 200, 'current sitemap index is not 200')
+check(hash(currentSitemapIndexDelta.endpoint.body) === currentSitemapIndexDelta.endpoint.normalizedBodyHash, 'current sitemap-index body hash mismatch')
+
+const compatibilitySitemap = productionEndpointEvidence('/sitemap.xml')
+const canonicalSitemapIndex = productionEndpointEvidence('/sitemap_index.xml')
+const compatibilityRedirectChain = compatibilitySitemap.redirectChain ?? []
+check(compatibilitySitemap.redirectChainSource === 'production-http-manual-hop-capture', 'compatibility sitemap redirect evidence source changed')
+check(compatibilitySitemap.redirectChainCapturedOn === COMPATIBILITY_SITEMAP_REDIRECT_CAPTURE_DATE, 'compatibility sitemap redirect evidence capture date changed')
+check(compatibilitySitemap.requestedUrl === 'https://puffsticker.com/sitemap.xml', 'compatibility sitemap request URL changed')
+check(compatibilitySitemap.finalUrl === 'https://puffsticker.com/sitemap_index.xml', 'compatibility sitemap final URL changed')
+check(compatibilityRedirectChain.length === 2, 'compatibility sitemap must retain its exact one-hop redirect evidence')
+check(compatibilityRedirectChain[0]?.url === compatibilitySitemap.requestedUrl, 'compatibility sitemap redirect source changed')
+check(compatibilityRedirectChain[0]?.status === 301, 'compatibility sitemap request is not the observed 301')
+check(compatibilityRedirectChain[0]?.location === canonicalSitemapIndex.requestedUrl, 'compatibility sitemap redirect destination changed')
+check(compatibilityRedirectChain[0]?.contentType === 'text/html; charset=UTF-8', 'compatibility sitemap redirect MIME type changed')
+check(compatibilityRedirectChain[0]?.bodyLength === 0, 'compatibility sitemap redirect must have an empty body')
+check(compatibilityRedirectChain[0]?.normalizedBodyHash === hash(''), 'compatibility sitemap redirect empty-body hash changed')
+check(compatibilityRedirectChain[1]?.url === canonicalSitemapIndex.requestedUrl, 'compatibility sitemap terminal URL changed')
+check(compatibilityRedirectChain[1]?.status === 200, 'compatibility sitemap redirect target is not 200')
+check(compatibilityRedirectChain[1]?.location === null, 'compatibility sitemap redirect target unexpectedly redirects again')
+check(compatibilityRedirectChain[1]?.contentType === canonicalSitemapIndex.contentType, 'compatibility sitemap target MIME type disagrees with the canonical index')
+check(compatibilityRedirectChain[1]?.bodyLength === Buffer.byteLength(canonicalSitemapIndex.body), 'compatibility sitemap target body length disagrees with the canonical index')
+check(compatibilityRedirectChain[1]?.normalizedBodyHash === canonicalSitemapIndex.normalizedBodyHash, 'compatibility sitemap target body hash disagrees with the canonical index')
+
+check(PRODUCTION_ROBOTS_TXT === productionEndpointEvidence('/robots.txt').body, 'robots builder is not exact fixture body')
+check(compatibilitySitemapIndexXml() === canonicalSitemapIndex.body, 'redirect-followed compatibility sitemap target is not the exact canonical index body')
+check(sitemapIndexXml() === productionEndpointEvidence('/sitemap_index.xml').body, 'sitemap index is not exact current fixture body')
+check(sitemapGroupXml('post') === productionEndpointEvidence('/post-sitemap.xml').body, 'post sitemap is not exact current fixture body')
+check(sitemapGroupXml('page') === productionEndpointEvidence('/page-sitemap.xml').body, 'page sitemap is not exact fixture body')
+check(sitemapGroupXml('product') === productionEndpointEvidence('/product-sitemap.xml').body, 'product sitemap is not exact fixture body')
+check(sitemapGroupXml('product-category') === productionEndpointEvidence('/product_cat-sitemap.xml').body, 'product category sitemap is not exact fixture body')
+check(localSitemapXml() === productionEndpointEvidence('/local-sitemap.xml').body, 'local sitemap is not exact fixture body')
+check(locationsKml() === productionEndpointEvidence('/locations.kml').body, 'locations KML is not exact fixture body')
+
+check(SITEMAP_ENTRIES.length === 44, `expected 44 sitemap rows, found ${SITEMAP_ENTRIES.length}`)
 check(new Set(SITEMAP_ENTRIES.map((entry) => entry.path)).size === SITEMAP_ENTRIES.length, 'duplicate typed sitemap rows')
 check(same(
   [...CANONICAL_SITEMAP_ROUTES.map((route) => route.path)].sort(),
@@ -136,6 +195,12 @@ if (postDelta.post.yoastHead !== undefined) {
   check(postDelta.unavailablePublicFields.includes('yoast_head'), 'absent public Yoast head is not recorded as unavailable')
 }
 
+check(currentPostDelta.request.status === 200 && currentPostDelta.request.total === '1', 'current production-delta WP REST observation is incomplete')
+check(currentPostDelta.post.slug === 'why-custom-stickers-feel-like-objects', 'current production-delta WP REST slug changed')
+check(hash(currentPostDelta.post.content.rendered) === currentPostDelta.fingerprints.renderedContentHash, 'current production-delta rendered HTML hash mismatch')
+check(hash(currentPostDelta.post.excerpt.rendered) === currentPostDelta.fingerprints.renderedExcerptHash, 'current production-delta excerpt hash mismatch')
+check(currentPostDelta.unavailablePublicFields.includes('yoast_head'), 'current production-delta absent Yoast head is not recorded as unavailable')
+
 check(shopCanonical.requestedUrl === 'https://puffsticker.com/?page_id=9', 'shop canonical query target changed')
 check(shopCanonical.redirectChain.length === 2, 'shop canonical redirect chain length changed')
 check(shopCanonical.redirectChain[0]?.status === 301, 'shop canonical query target is not the observed 301')
@@ -148,9 +213,9 @@ if (failures.length) throw new Error(`Production SEO evidence validation failed:
 console.log(JSON.stringify({
   productionPages: productionRoutes.length,
   canonicalSitemapRoutes: SITEMAP_ENTRIES.length,
-  endpointBodies: Object.keys(fixture.endpoints).length,
+  endpointBodies: Object.keys(PRODUCTION_SEO_FIXTURE.endpoints).length,
   sitemapImages: SITEMAP_ENTRIES.reduce((sum, entry) => sum + (entry.images.state === 'captured' ? entry.images.value.length : 0), 0),
-  postBaselineDelta: postDelta.post.link,
+  postBaselineDeltas: [postDelta.post.link, currentPostDelta.post.link],
   shopCanonicalRedirect: shopCanonical.redirectChain,
   evidenceReady: PHASE_2_SEO_EVIDENCE_READY,
 }, null, 2))

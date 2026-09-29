@@ -1,6 +1,6 @@
 import { CANONICAL_SITEMAP_ROUTES, SITE_ORIGIN } from './route-contract'
 import { capturedSignal, type SeoSignal } from './evidence'
-import { productionEndpointEvidence } from './production-evidence-fixture'
+import { productionEndpointEvidence, productionEndpointEvidenceCapture } from './production-evidence-fixture'
 
 export type SitemapGroup = 'post' | 'page' | 'product' | 'product-category'
 
@@ -93,12 +93,13 @@ export const SITEMAP_ENTRIES: readonly SitemapEntryContract[] = (
   const route = canonicalRouteByUrl.get(observed.url)
   if (!route) throw new Error(`Captured sitemap URL has no canonical route contract: ${observed.url}`)
   if (groupFor(route.path) !== group) throw new Error(`${route.path} is in the wrong production sitemap group`)
+  const capture = productionEndpointEvidenceCapture(SITEMAP_PATH_BY_GROUP[group])
   return {
     path: route.path,
     url: observed.url,
     lastModified: observed.lastModified,
     group,
-    images: capturedSignal(observed.images, 'production-crawl-2026-08-22', '2026-08-22'),
+    images: capturedSignal(observed.images, capture.source, capture.capturedOn),
   }
 }))
 
@@ -113,12 +114,16 @@ export const SITEMAP_IMAGE_EVIDENCE_BLOCKERS: readonly [] = []
 
 function capturedEndpoint(path: string, details: Record<string, unknown>) {
   const endpoint = productionEndpointEvidence(path)
+  const capture = productionEndpointEvidenceCapture(path)
+  const requestedResponse = endpoint.redirectChain?.[0]
   return capturedSignal({
     ...details,
-    status: endpoint.status,
-    contentType: endpoint.contentType,
-    normalizedBodyHash: endpoint.normalizedBodyHash,
-  }, 'production-crawl-2026-08-22', '2026-08-22')
+    status: requestedResponse?.status ?? endpoint.status,
+    contentType: requestedResponse?.contentType ?? endpoint.contentType,
+    normalizedBodyHash: requestedResponse?.normalizedBodyHash ?? endpoint.normalizedBodyHash,
+    ...(requestedResponse?.location ? { location: requestedResponse.location } : {}),
+    redirectCount: Math.max(0, (endpoint.redirectChain?.length ?? 1) - 1),
+  }, capture.source, capture.capturedOn)
 }
 
 export const SITEMAP_ENDPOINT_EVIDENCE = {

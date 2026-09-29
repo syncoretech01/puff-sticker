@@ -50,8 +50,8 @@ const schemaTypes = (value) => {
   return types
 }
 
-check(PRIMARY_ROUTE_CONTRACTS.length === 91, `expected 91 primary routes, found ${PRIMARY_ROUTE_CONTRACTS.length}`)
-check(CANONICAL_SITEMAP_ROUTES.length === 43, `expected 43 HTML sitemap routes, found ${CANONICAL_SITEMAP_ROUTES.length}`)
+check(PRIMARY_ROUTE_CONTRACTS.length === 96, `expected 96 primary routes, found ${PRIMARY_ROUTE_CONTRACTS.length}`)
+check(CANONICAL_SITEMAP_ROUTES.length === 44, `expected 44 HTML sitemap routes, found ${CANONICAL_SITEMAP_ROUTES.length}`)
 check(CANONICALIZING_ALIAS_CONTRACTS.length === 34, `expected 34 explicit canonicalizing aliases, found ${CANONICALIZING_ALIAS_CONTRACTS.length}`)
 check(duplicates(PRIMARY_ROUTE_CONTRACTS.map((route) => route.path)).length === 0, 'duplicate primary route paths')
 check(duplicates(CANONICALIZING_ALIAS_CONTRACTS.map((route) => route.path)).length === 0, 'duplicate alias route paths')
@@ -63,7 +63,7 @@ const sitemapCounts = {
   product: SITEMAP_GROUPS.product.length,
   productCategory: SITEMAP_GROUPS['product-category'].length,
 }
-check(sitemapCounts.post === 11, `expected 11 post sitemap routes, found ${sitemapCounts.post}`)
+check(sitemapCounts.post === 12, `expected 12 post sitemap routes, found ${sitemapCounts.post}`)
 check(sitemapCounts.page === 8, `expected 8 page sitemap routes, found ${sitemapCounts.page}`)
 check(sitemapCounts.product === 21, `expected 21 product sitemap routes, found ${sitemapCounts.product}`)
 check(sitemapCounts.productCategory === 3, `expected 3 product-category sitemap routes, found ${sitemapCounts.productCategory}`)
@@ -159,21 +159,21 @@ for (const path of ['/resources/', '/shipping-delivery/']) {
 }
 
 const legacyArchives = PRIMARY_ROUTE_CONTRACTS.filter((route) => route.contentParity === 'legacy-static-required')
-check(legacyArchives.length === 37, `expected 37 preserve-first legacy/static routes, found ${legacyArchives.length}`)
-for (const route of legacyArchives) {
-  check(route.status === 200 && route.indexable, `${route.path}: legacy/static route must remain 200/index`)
-  check(route.metadata.canonical === `${SITE_ORIGIN}${route.publicPath}`, `${route.path}: legacy/static route is not self-canonical`)
-  check(route.structuredData.length > 0, `${route.path}: exact captured JSON-LD fixture is missing`)
-  check(route.audit.structuredDataEvidence === 'captured-production-fixture', `${route.path}: exact schema evidence is not declared`)
+check(legacyArchives.length === 0, `all audited production routes must render complete migrated content; unresolved routes: ${legacyArchives.map((route) => route.path).join(', ')}`)
+
+for (const expectedDelta of [
+  { path: '/blog/custom-puffy-stickers-guide', capturedOn: '2026-08-22' },
+  { path: '/blog/why-custom-stickers-feel-like-objects', capturedOn: '2026-09-01' },
+]) {
+  const productionDelta = PRIMARY_ROUTE_CONTRACTS.find((route) => route.path === expectedDelta.path)
+  check(Boolean(productionDelta), `${expectedDelta.path}: post-baseline production article is missing`)
+  if (!productionDelta) continue
+  check(productionDelta.contentParity === 'migrated', `${expectedDelta.path}: article must render its complete audited production content`)
+  check(productionDelta.inSitemap, `${expectedDelta.path}: article is missing from the live sitemap contract`)
+  check(productionDelta.evidence.capturedOn === expectedDelta.capturedOn, `${expectedDelta.path}: evidence date is incorrect`)
 }
 
-const productionDelta = PRIMARY_ROUTE_CONTRACTS.find((route) => route.path === '/blog/custom-puffy-stickers-guide')
-check(Boolean(productionDelta), 'post-baseline production article is missing')
-if (productionDelta) {
-  check(productionDelta.contentParity === 'legacy-static-required', 'post-baseline article must not claim protected-Vite content parity')
-  check(productionDelta.inSitemap, 'post-baseline production article is missing from the live sitemap contract')
-  check(productionDelta.evidence.capturedOn === '2026-08-22', 'post-baseline production article evidence date is incorrect')
-}
+check(TRAILING_SLASH_REDIRECTS.length === 129, `expected 129 slash redirects, found ${TRAILING_SLASH_REDIRECTS.length}`)
 
 for (const entry of SITEMAP_ENTRIES) {
   check(!Number.isNaN(Date.parse(entry.lastModified)), `${entry.path}: invalid last-modified timestamp`)

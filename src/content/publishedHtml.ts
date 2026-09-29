@@ -22,6 +22,10 @@ function textContent(html: string): string {
   return decodeHtmlText(html.replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]*>/g, ' ')).replace(/\s+/g, ' ').trim()
 }
 
+export function publishedPlainText(html: string): string {
+  return textContent(html)
+}
+
 function elementName(html: string): string {
   return html.match(/^<\s*([a-z][\w:-]*)/i)?.[1].toLowerCase() ?? ''
 }

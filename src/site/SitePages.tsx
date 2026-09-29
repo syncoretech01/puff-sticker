@@ -38,8 +38,8 @@ import { liveBlogContent } from '../content/liveBlogContent'
 import { livePageContent } from '../content/livePageContent'
 import { exactFaqByPath } from '../content/liveFaqSchema'
 import { getArchiveContent } from '../content/archiveContent'
-import { productionDeltaBlogContent, productionDeltaFeaturedImage } from '../content/productionDeltaContent'
-import { extractPublishedFaqs, splitPublishedProductFaqs as splitProductFaqsWithoutDom, stripPricomDemoImages } from '../content/publishedHtml'
+import { productionCurrentDeltaFeaturedImage, productionDeltaBlogContent, productionDeltaFeaturedImage } from '../content/productionDeltaContent'
+import { extractPublishedFaqs, publishedPlainText, splitPublishedProductFaqs as splitProductFaqsWithoutDom, stripPricomDemoImages } from '../content/publishedHtml'
 import { faqs as homeFaqs } from '../data'
 import { SiteLink, useRouter } from '../router'
 import { NotFoundPage } from './NotFoundPage'
@@ -113,7 +113,8 @@ function OfficialPageSection({ slug, label }: { slug: string; label: string }) {
 }
 
 const blogPosts = [
-  { slug: 'custom-puffy-stickers-guide', title: 'The Complete Guide to Custom Puffy Stickers', date: 'August 20, 2026', category: 'Custom Puffy Stickers', categories: ['Custom Puffy Stickers', 'Sticker Psychology'], excerpt: 'A complete guide to custom puffy stickers, covering material choice, ideal dome thickness, waterproof versus water resistant, die cut versus kiss cut, and printing methods.', image: productionDeltaFeaturedImage, imageAlt: 'Flat sticker proof beside a raised puffy sticker proof on a light table, showing the difference in profile' },
+  { slug: 'why-custom-stickers-feel-like-objects', title: 'Why Some Custom Stickers Feel Like Objects', date: 'August 31, 2026', category: 'Sticker Psychology', categories: ['Sticker Psychology'], excerpt: 'A sticker outlives its adhesive. Pull one off a water bottle a year later and it comes away in a curl, not a scrap — the edges stay clean, the color faded evenly, like a stone worn by a river. This piece explores why some custom stickers stop behaving like flat pictures and start behaving like things a person owns.', image: productionCurrentDeltaFeaturedImage, imageAlt: 'Why Some Custom Stickers Feel Like Objects' },
+  { slug: 'custom-puffy-stickers-guide', title: 'The Complete Guide to Custom Puffy Stickers', date: 'August 20, 2026', category: 'Custom Puffy Stickers', categories: ['Custom Puffy Stickers', 'Sticker Psychology'], excerpt: 'A complete guide to custom puffy stickers, covering material choice, ideal dome thickness, waterproof versus water resistant, die cut versus kiss cut, and printing methods.', image: productionDeltaFeaturedImage, imageAlt: 'The Complete Guide to Custom Puffy Stickers' },
   { slug: 'when-3d-stickers-become-collectibles', title: 'When 3D Stickers Become Collectibles', date: 'July 29, 2026', category: 'Custom Puffy Stickers', categories: ['Custom Puffy Stickers', 'Sticker Psychology'], excerpt: 'How texture, context and the feeling of an object can move a sticker from decoration into something people keep.', image: '/assets/blog-collectibles.webp' },
   { slug: 'why-sticker-books-never-really-disappeared', title: 'Why Sticker Books Never Really Disappeared', date: 'July 3, 2026', category: 'Custom Puffy Stickers', categories: ['Custom Puffy Stickers', 'Sticker Psychology'], excerpt: 'Why collecting, arranging and saving stickers continues to feel personal across generations.', image: '/assets/blog-sticker-books.webp' },
   { slug: 'why-we-save-stickers-we-never-use', title: 'Why We Save Stickers We Never Use: The Psychology Behind Unused Stickers', date: 'June 23, 2026', category: 'Custom Puffy Stickers', categories: ['Custom Puffy Stickers', 'Sticker Psychology'], excerpt: 'The psychology behind keeping the perfect sticker untouched—and what that says about attachment, identity and value.', image: '/assets/blog-unused-stickers.png' },
@@ -130,7 +131,8 @@ const blogPosts = [
 // The new production-delta article has its own canonical route and captured
 // archive relationships. The protected framework-migration baseline keeps the
 // existing blog index composition until content-source reconciliation.
-const baselineBlogPosts = blogPosts.filter((post) => post.slug !== 'custom-puffy-stickers-guide')
+const productionDeltaBlogSlugs = new Set(['custom-puffy-stickers-guide', 'why-custom-stickers-feel-like-objects'])
+const baselineBlogPosts = blogPosts.filter((post) => !productionDeltaBlogSlugs.has(post.slug))
 
 const articleSections: Record<string, Array<{ title: string; body: string }>> = {
   'when-3d-stickers-become-collectibles': [
@@ -229,7 +231,13 @@ function PageHero({
   )
 }
 
-function ProductGridCard({ product, index }: { product: CatalogProduct; index: number }) {
+type PublishedArchiveProductCopy = {
+  html: string
+  relationshipSource: string
+  sourceUrl: string
+}
+
+function ProductGridCard({ product, index, publishedArchiveCopy }: { product: CatalogProduct; index: number; publishedArchiveCopy?: PublishedArchiveProductCopy }) {
   const card = useRef<HTMLElement>(null)
   const media = useRef<HTMLAnchorElement>(null)
   const bounds = useRef<DOMRect | null>(null)
@@ -260,8 +268,18 @@ function ProductGridCard({ product, index }: { product: CatalogProduct; index: n
     bounds.current = null
   }
   return (
-    <article className="catalog-card reveal-block" ref={card} onPointerEnter={enter} onPointerMove={onMove} onPointerLeave={leave} style={{ '--product-accent': product.accent, '--product-soft': product.accentSoft } as React.CSSProperties}>
-      <SiteLink ref={media} to={`/${product.category}/${product.slug}`} className="catalog-card__media" data-cursor="VIEW">
+    <article
+      className="catalog-card reveal-block"
+      ref={card}
+      onPointerEnter={enter}
+      onPointerMove={onMove}
+      onPointerLeave={leave}
+      style={{ '--product-accent': product.accent, '--product-soft': product.accentSoft } as React.CSSProperties}
+      data-archive-result-path={publishedArchiveCopy ? `/${product.category}/${product.slug}` : undefined}
+      data-archive-result-source={publishedArchiveCopy?.relationshipSource}
+      data-archive-source-url={publishedArchiveCopy?.sourceUrl}
+    >
+      <SiteLink ref={media} to={`/${product.category}/${product.slug}`} className="catalog-card__media" data-cursor="VIEW" aria-label={`View ${product.name}`}>
         <span className="catalog-card__index">{String(index + 1).padStart(2, '0')}</span>
         <img src={product.image} alt={product.name} loading="lazy" decoding="async" />
         <span className="catalog-card__view"><ArrowUpRight /></span>
@@ -269,7 +287,9 @@ function ProductGridCard({ product, index }: { product: CatalogProduct; index: n
       <div className="catalog-card__copy">
         <div><span>{categories[product.category].shortName}</span><span>{product.price}</span></div>
         <SiteLink to={`/${product.category}/${product.slug}`}><h3>{product.name}</h3></SiteLink>
-        <p>{product.summary}</p>
+        {publishedArchiveCopy
+          ? <section className="catalog-card__published-copy" data-archive-source-copy dangerouslySetInnerHTML={{ __html: publishedArchiveCopy.html }} />
+          : <p>{product.summary}</p>}
       </div>
     </article>
   )
@@ -887,19 +907,22 @@ export function QuotePage() {
 }
 
 export function BlogPage({ categorySlug }: { categorySlug?: string } = {}) {
-  const filters = ['All', ...Array.from(new Set(baselineBlogPosts.flatMap((post) => post.categories)))]
+  const { nextMode } = useRouter()
+  const allAvailableBlogPosts = nextMode ? blogPosts : baselineBlogPosts
+  const listedBlogPosts = nextMode && !categorySlug ? allAvailableBlogPosts.slice(0, 10) : allAvailableBlogPosts
+  const filters = ['All', ...Array.from(new Set(allAvailableBlogPosts.flatMap((post) => post.categories)))]
   const requestedFilter = filters.find((filter) => filter.toLowerCase().replaceAll(/[^a-z0-9]+/g, '-') === categorySlug) ?? 'All'
   const [active, setActive] = useState(requestedFilter)
-  const visible = active === 'All' ? baselineBlogPosts : baselineBlogPosts.filter((post) => post.categories.includes(active))
+  const visible = active === 'All' ? listedBlogPosts : allAvailableBlogPosts.filter((post) => post.categories.includes(active))
   return (
     <>
-      <PageHero eyebrow="The Puff Blog" title={<>Material, memory<br />and <em>things that stick.</em></>} text="Field notes on tactile design, sticker psychology, packaging and the small material choices that change how a brand is perceived." meta={`${baselineBlogPosts.length} stories`} />
+      <PageHero eyebrow="The Puff Blog" title={<>Material, memory<br />and <em>things that stick.</em></>} text="Field notes on tactile design, sticker psychology, packaging and the small material choices that change how a brand is perceived." meta={`${allAvailableBlogPosts.length} stories`} />
       <section className="blog-page">
         <div className="page-shell blog-filter" role="group" aria-label="Filter stories">{filters.map((filter) => <button type="button" onClick={() => setActive(filter)} className={active === filter ? 'is-active' : ''} key={filter}>{filter}</button>)}</div>
         {active === 'All' && (
           <article className="page-shell blog-feature reveal-block">
-            <SiteLink to={`/blog/${baselineBlogPosts[0].slug}`} className="blog-feature__media"><img src={baselineBlogPosts[0].image} alt={baselineBlogPosts[0].imageAlt ?? ''} /></SiteLink>
-            <div className="blog-feature__copy"><span>{baselineBlogPosts[0].categories.join(' · ')} · {baselineBlogPosts[0].date}</span><SiteLink to={`/blog/${baselineBlogPosts[0].slug}`}><h2>{baselineBlogPosts[0].title}</h2></SiteLink><p>{baselineBlogPosts[0].excerpt}</p><SiteLink to={`/blog/${baselineBlogPosts[0].slug}`} className="page-text-link">Read the field note <ArrowRight /></SiteLink></div>
+            <SiteLink to={`/blog/${listedBlogPosts[0].slug}`} className="blog-feature__media"><img src={listedBlogPosts[0].image} alt={listedBlogPosts[0].imageAlt ?? ''} /></SiteLink>
+            <div className="blog-feature__copy"><span>{listedBlogPosts[0].categories.join(' · ')} · {listedBlogPosts[0].date}</span><SiteLink to={`/blog/${listedBlogPosts[0].slug}`}><h2>{listedBlogPosts[0].title}</h2></SiteLink><p>{listedBlogPosts[0].excerpt}</p><SiteLink to={`/blog/${listedBlogPosts[0].slug}`} className="page-text-link">Read the field note <ArrowRight /></SiteLink></div>
           </article>
         )}
         <div className="page-shell blog-grid">
@@ -919,43 +942,85 @@ export function BlogPage({ categorySlug }: { categorySlug?: string } = {}) {
 export function ArchivePage({ pathname }: { pathname: string }) {
   const archive = getArchiveContent(pathname)
   if (!archive) return <NotFoundPage />
-  const articles = archive.articleSlugs.flatMap((slug) => {
-    const post = blogPosts.find((item) => item.slug === slug)
-    return post ? [post] : []
+  const articles = archive.articles.map((relationship) => {
+    const post = blogPosts.find((item) => item.slug === relationship.slug)
+    const published = getLiveBlogEntry(relationship.slug)
+    if (!post || !published) {
+      throw new Error(`${pathname}: missing committed ${relationship.source} record for ${relationship.slug}`)
+    }
+    return { post, published, relationship }
   })
-  const archiveProducts = archive.productSlugs.flatMap((slug) => {
-    const product = getProduct(slug)
-    return product ? [product] : []
+  const archiveProducts = archive.products.map((relationship) => {
+    const product = getProduct(relationship.slug)
+    const published = getLiveProductEntry(relationship.slug)
+    if (!product || !published) {
+      throw new Error(`${pathname}: missing committed ${relationship.source} record for ${relationship.slug}`)
+    }
+    return { product, published, relationship }
   })
   const resultCount = articles.length + archiveProducts.length
+  const heroText = articles[0]
+    ? publishedPlainText(articles[0].published.excerptHtml)
+    : publishedPlainText(archiveProducts[0].published.shortDescriptionHtml)
 
   return (
     <>
-      <PageHero
-        eyebrow={pathname === '/blog/page/2' ? 'The Puff Blog' : 'Published archive'}
-        title={<>{archive.label}<br /><em>archive.</em></>}
-        text="Published PuffSticker articles and products grouped by their original archive relationship."
-        meta={`${resultCount} ${resultCount === 1 ? 'result' : 'results'}`}
-      />
-      {articles.length > 0 && (
-        <section className="blog-page">
-          <div className="page-shell blog-grid">
-            {articles.map((post) => (
-              <article className="blog-card reveal-block" key={post.slug}>
-                <SiteLink to={`/blog/${post.slug}`} className="blog-card__media" data-cursor="READ"><img src={post.image} alt={post.imageAlt ?? post.title} loading="lazy" /><i><ArrowUpRight /></i></SiteLink>
-                <div><span>{post.categories.join(' · ')} · {post.date}</span><SiteLink to={`/blog/${post.slug}`}><h2>{post.title}</h2></SiteLink><p>{post.excerpt}</p></div>
-              </article>
-            ))}
-          </div>
-        </section>
-      )}
-      {archiveProducts.length > 0 && (
-        <section className="catalog-section catalog-section--category">
-          <div className="page-shell catalog-grid">
-            {archiveProducts.map((product, index) => <ProductGridCard product={product} index={index} key={product.slug} />)}
-          </div>
-        </section>
-      )}
+      <div
+        className="archive-page"
+        data-archive-renderer={archive.renderer}
+        data-archive-path={archive.path}
+        data-archive-kind={archive.kind}
+        data-archive-relationship-source={archive.relationshipSource}
+        data-archive-result-count={resultCount}
+      >
+        <PageHero
+          eyebrow={archive.eyebrow}
+          title={archive.kind === 'pagination' ? <>{archive.heading}<br /><em>{archive.label}</em></> : archive.heading}
+          text={heroText}
+          meta={`${resultCount} ${resultCount === 1 ? 'result' : 'results'}`}
+        />
+        {articles.length > 0 && (
+          <section className="blog-page" aria-label={`${archive.label} articles`}>
+            <div className="page-shell blog-grid">
+              {articles.map(({ post, published, relationship }) => (
+                <article
+                  className="blog-card reveal-block"
+                  key={post.slug}
+                  data-archive-result-path={`/blog/${post.slug}`}
+                  data-archive-result-source={relationship.source}
+                  data-archive-source-url={published.sourceUrl}
+                >
+                  <SiteLink to={`/blog/${post.slug}`} className="blog-card__media" data-cursor="READ" aria-label={`Read ${published.title}`}><img src={post.image} alt={post.imageAlt ?? published.title} loading="lazy" decoding="async" /><i><ArrowUpRight /></i></SiteLink>
+                  <div>
+                    <span>{post.categories.join(' · ')} · {post.date} · by taby</span>
+                    <SiteLink to={`/blog/${post.slug}`}><h3>{published.title}</h3></SiteLink>
+                    <div className="blog-card__published-excerpt" data-archive-source-copy dangerouslySetInnerHTML={{ __html: published.excerptHtml }} />
+                    <SiteLink to={`/blog/${post.slug}`} className="page-text-link">Read more <ArrowRight /></SiteLink>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+        {archiveProducts.length > 0 && (
+          <section className="catalog-section catalog-section--category" aria-label={`${archive.label} products`}>
+            <div className="page-shell catalog-grid">
+              {archiveProducts.map(({ product, published, relationship }, index) => (
+                <ProductGridCard
+                  product={product}
+                  index={index}
+                  publishedArchiveCopy={{
+                    html: published.shortDescriptionHtml,
+                    relationshipSource: relationship.source,
+                    sourceUrl: published.sourceUrl,
+                  }}
+                  key={product.slug}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
       <SiteFooter />
     </>
   )

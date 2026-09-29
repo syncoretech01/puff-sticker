@@ -214,7 +214,7 @@ export function validateSeoManifest(snapshot: SeoManifestSnapshot = SEO_MANIFEST
   }
 
   if (snapshot === SEO_MANIFEST_SNAPSHOT) {
-    if (CANONICAL_SITEMAP_ROUTES.length !== 43) failures.push(`expected 43 canonical sitemap routes, found ${CANONICAL_SITEMAP_ROUTES.length}`)
+    if (CANONICAL_SITEMAP_ROUTES.length !== 44) failures.push(`expected 44 canonical sitemap routes, found ${CANONICAL_SITEMAP_ROUTES.length}`)
     const expectedSlashPaths = new Set(allPages.filter((route) => route.path !== '/').map((route) => route.path))
     const actualSlashPaths = TRAILING_SLASH_REDIRECTS.map((route) => route.path)
     const actualSlashPathSet = new Set(actualSlashPaths)

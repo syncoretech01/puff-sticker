@@ -8,13 +8,16 @@ export type SeoEvidenceSource =
   | 'production-crawl-2026-08-12'
   | 'production-crawl-2026-08-14'
   | 'production-crawl-2026-08-22'
+  | 'production-crawl-2026-09-01'
+  | 'production-http-capture-2026-08-31'
+  | 'production-http-capture-2026-09-02'
   | 'approved-target-contract'
 
 export type CapturedSignal<T> = {
   state: 'captured'
   value: T
   source: SeoEvidenceSource
-  capturedOn: '2026-08-12' | '2026-08-14' | '2026-08-22'
+  capturedOn: '2026-08-12' | '2026-08-14' | '2026-08-22' | '2026-08-31' | '2026-09-01' | '2026-09-02'
 }
 
 export type NotCapturedSignal = {

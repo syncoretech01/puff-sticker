@@ -773,6 +773,16 @@
 .blog-card:hover .blog-card__media i { opacity: 1; transform: translateY(0) rotate(0); }
 .blog-card h3 { margin: 13px 0 11px; font-family: 'Archivo Variable', sans-serif; font-size: clamp(23px, 2.2vw, 34px); font-weight: 680; line-height: 1.05; letter-spacing: -.045em; }
 .blog-card p { margin: 0; color: rgba(7,29,69,.58); font-size: 14px; line-height: 1.7; }
+.blog-card__published-excerpt > :first-child,
+.catalog-card__published-copy > :first-child { margin-top: 0; }
+.blog-card__published-excerpt > :last-child,
+.catalog-card__published-copy > :last-child { margin-bottom: 0; }
+.blog-card__published-excerpt + .page-text-link { margin-top: 20px; }
+.catalog-card__published-copy { color: rgba(7,29,69,.62); }
+.catalog-card__published-copy h2,
+.catalog-card__published-copy h3,
+.catalog-card__published-copy h4 { margin: 16px 0 8px; font-family: 'Archivo Variable', sans-serif; font-size: 17px; line-height: 1.22; letter-spacing: -.02em; }
+.catalog-card__published-copy ul { max-width: 95%; margin: 14px 0 0; padding-left: 18px; color: rgba(7,29,69,.62); font-size: 14px; line-height: 1.65; }
 
 .article-page { padding: 160px 0 120px; background: var(--paper); }
 .article-page__header { max-width: 1160px; text-align: center; }
@@ -809,6 +819,7 @@
 .article-page__inline-media img { width: 100%; max-height: 760px; object-fit: cover; border-radius: 16px; background: var(--cream); }
 .article-page__inline-media figcaption { margin-top: 11px; color: rgba(7,29,69,.42); font-size: 8px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
 .article-page__source-html img { width: 100%; height: auto; margin: 42px 0 13px; border-radius: 16px; background: var(--cream); }
+.article-page__source-html .wp-caption { width: 100% !important; max-width: 100%; }
 .article-page__source-html figure { margin: 45px 0; }
 .article-page__source-html figure img { margin: 0; }
 .article-page__source-html figcaption { margin-top: 10px; color: rgba(7,29,69,.46); font-size: 9px; line-height: 1.6; }

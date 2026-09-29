@@ -1,0 +1,129 @@
+name: Release gates
+
+on:
+  push:
+    branches: [main, migration/nextjs]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-gates-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 24.16.0
+  NPM_VERSION: 11.13.0
+
+jobs:
+  build-and-static-gates:
+    name: Build, SEO, data, and fast CMS gates
+    runs-on: windows-2022
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Use pinned npm
+        shell: pwsh
+        run: npm.cmd install --global npm@${{ env.NPM_VERSION }}
+      - name: Verify toolchain pins
+        shell: pwsh
+        run: |
+          if ((node --version) -ne "v${{ env.NODE_VERSION }}") { throw "Unexpected Node version: $(node --version)" }
+          if ((npm.cmd --version) -ne "${{ env.NPM_VERSION }}") { throw "Unexpected npm version: $(npm.cmd --version)" }
+      - run: npm ci
+      - name: Reject high or critical production dependency advisories
+        run: npm audit --omit=dev --audit-level=high
+      - name: Install Playwright-pinned Chromium
+        run: npm run test:regression:install
+      - name: Next production build
+        run: npm run build
+        env:
+          VERCEL_ENV: production
+      - name: Protected Vite build
+        run: npm run build:vite
+      - run: npm run test:seo
+      - run: npm run test:wordpress-data
+      - name: Reconcile immutable WordPress snapshot with live deltas
+        run: |
+          npm run migration:reconcile-wordpress
+          git diff --exit-code -- docs/migration/wordpress-reconciliation.md docs/migration/reports/wordpress-reconciliation.json
+      - run: npm run db:check
+      - run: npm run test:cms
+
+  visual-and-functional-regression:
+    name: Vite and Next Playwright parity (pinned Windows Chromium)
+    runs-on: windows-2022
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Use pinned npm
+        shell: pwsh
+        run: npm.cmd install --global npm@${{ env.NPM_VERSION }}
+      - name: Verify toolchain pins
+        shell: pwsh
+        run: |
+          if ((node --version) -ne "v${{ env.NODE_VERSION }}") { throw "Unexpected Node version: $(node --version)" }
+          if ((npm.cmd --version) -ne "${{ env.NPM_VERSION }}") { throw "Unexpected npm version: $(npm.cmd --version)" }
+      - run: npm ci
+      - name: Install Playwright-pinned Chromium
+        run: npm run test:regression:install
+      - run: npm run build:vite
+      - name: Protected Vite regression profile
+        run: npm run test:regression
+        env:
+          PUFF_REGRESSION_PROFILE: vite
+          PUFF_REGRESSION_BASE_URL: http://127.0.0.1:43073
+      - name: Next production build
+        run: npm run build
+        env:
+          VERCEL_ENV: production
+      - name: Next regression profile
+        run: npm run test:regression
+        env:
+          PUFF_REGRESSION_PROFILE: next
+          PUFF_REGRESSION_BASE_URL: http://127.0.0.1:43074
+          VERCEL_ENV: production
+      - name: Upload diagnostics after failure
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: playwright-windows-diagnostics
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  postgres-integration:
+    name: PostgreSQL CMS integration
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Use pinned npm
+        run: npm install --global npm@${{ env.NPM_VERSION }}
+      - name: Verify toolchain pins
+        run: |
+          test "$(node --version)" = "v${NODE_VERSION}"
+          test "$(npm --version)" = "${NPM_VERSION}"
+      - run: npm ci
+      # Linux is used only for disposable PostgreSQL and functional browser checks; no screenshots run here.
+      - name: Install pinned Chromium and Linux browser dependencies
+        run: npx playwright install --with-deps chromium
+      - run: docker version
+      - run: npm run test:cms:postgres

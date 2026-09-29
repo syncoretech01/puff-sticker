@@ -10,8 +10,8 @@ This is a read-only Phase 4 audit. The normalized WordPress data is not connecte
 - The protected React/Vite implementation remains authoritative for visual output and currently rendered content.
 - The WordPress backup remains authoritative for record IDs, relations, dates, and attachment metadata.
 - Archive database snapshot: **2026-08-12T22:29:58.000Z**.
-- Live crawl evidence: **2026-08-22**.
-- The production delta `custom-puffy-stickers-guide` (post 19341) was published at **2026-08-20T20:39:34**. Published-after-snapshot absence is explicitly explained, not treated as archive data loss.
+- Live crawl evidence through: **2026-09-01**.
+- Production deltas newer than the backup: `custom-puffy-stickers-guide` (post 19341, published 2026-08-20T20:39:34); `why-custom-stickers-feel-like-objects` (post 19368, published 2026-08-31T21:21:35). Published-after-snapshot absence is explicitly explained, not treated as archive data loss.
 
 ## Deterministic inventory
 
@@ -19,10 +19,10 @@ This is a read-only Phase 4 audit. The normalized WordPress data is not connecte
 | --- | ---: | ---: |
 | Public pages (including the posts index) | 9 | 9 |
 | Products | 21 | 21 |
-| Baseline + Aug 20 posts | 12 | 11 archive + 1 live delta |
+| Baseline + live-delta posts | 13 | 11 archive + 2 live deltas |
 | Protected variation rows | 15 | 15 |
-| Public taxonomy archive terms | 45 | 45 |
-| Live referenced first-party upload keys | 157 | 151 archive verified + 6 live delta |
+| Public taxonomy archive terms | 49 | 45 |
+| Live referenced first-party upload keys | 164 | 151 archive verified + 13 live delta |
 | Live referenced external media URLs | 16 | Preserved as explained dependencies |
 | SEO records with comparable backup fields | - | 44 |
 
@@ -86,7 +86,14 @@ The gate fails only for unexplained published-public mismatches or a privacy-bou
 | LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT | media | `/wp-content/uploads/2026/08/custom-puffy-sticker-flat-vs-domed-proof-scaled.webp` | live-production-after-archive |
 | LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT | media | `/wp-content/uploads/2026/08/custom-puffy-sticker-packaging-insert-unboxing.webp` | live-production-after-archive |
 | LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT | media | `/wp-content/uploads/2026/08/die-cut-vs-kiss-cut-sticker-diagram.webp` | live-production-after-archive |
+| LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT | media | `/wp-content/uploads/2026/08/featured-scaled.jpg` | live-production-after-archive |
 | LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT | media | `/wp-content/uploads/2026/08/fingertip-on-raised-puffy-sticker-dome.webp` | live-production-after-archive |
+| LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT | media | `/wp-content/uploads/2026/08/image-1.jpg` | live-production-after-archive |
+| LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT | media | `/wp-content/uploads/2026/08/image-2.jpg` | live-production-after-archive |
+| LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT | media | `/wp-content/uploads/2026/08/image-3.jpg` | live-production-after-archive |
+| LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT | media | `/wp-content/uploads/2026/08/image-4.jpg` | live-production-after-archive |
+| LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT | media | `/wp-content/uploads/2026/08/image-5.jpg` | live-production-after-archive |
+| LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT | media | `/wp-content/uploads/2026/08/image-6.jpg` | live-production-after-archive |
 | LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT | media | `/wp-content/uploads/2026/08/puffy-sticker-domed-edge-macro-closeup.webp` | live-production-after-archive |
 | LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT | media | `/wp-content/uploads/2026/08/puffy-sticker-vs-epoxy-sticker-water-bottle-laptop.webp` | live-production-after-archive |
 | LIVE_MEDIA_VERIFIED_AS_UNINDEXED_ARCHIVE_FILE | media | `/wp-content/uploads/revslider/home-6/decor-slide-61.svg` | wordpress-backup-for-binary-presence; live-production-for-rendered-alt |
@@ -111,6 +118,7 @@ The gate fails only for unexplained published-public mismatches or a privacy-bou
 | EXTERNAL_LIVE_MEDIA_REFERENCE | media | `https://pricom.harutheme.com/creative/wp-content/uploads/2022/04/banner-about-1.png` | live-production-for-rendered-content; outside-wordpress-backup-boundary |
 | EXTERNAL_LIVE_MEDIA_REFERENCE | media | `https://pricom.harutheme.com/creative/wp-content/uploads/2022/04/banner-about-2.png` | live-production-for-rendered-content; outside-wordpress-backup-boundary |
 | LIVE_POST_AFTER_ARCHIVE_SNAPSHOT | post | `custom-puffy-stickers-guide` | live-production-after-archive |
+| LIVE_POST_AFTER_ARCHIVE_SNAPSHOT | post | `why-custom-stickers-feel-like-objects` | live-production-after-archive |
 | BACKUP_SEO_DIFFERS_FROM_LIVE | seo | `/` | live-production-for-seo |
 | BACKUP_SEO_DIFFERS_FROM_LIVE | seo | `/about-us` | live-production-for-seo |
 | BACKUP_SEO_DIFFERS_FROM_LIVE | seo | `/blog` | live-production-for-seo |
@@ -151,6 +159,10 @@ The gate fails only for unexplained published-public mismatches or a privacy-bou
 | BACKUP_SEO_DIFFERS_FROM_LIVE | seo | `/reprint-policy` | live-production-for-seo |
 | BACKUP_SEO_DIFFERS_FROM_LIVE | seo | `/request-a-quote` | live-production-for-seo |
 | BACKUP_SEO_DIFFERS_FROM_LIVE | seo | `/terms-of-service` | live-production-for-seo |
+| LIVE_TAXONOMY_AFTER_ARCHIVE_SNAPSHOT | taxonomy | `post_tag:dimensional-stickers` | live-production-for-public-route; wordpress-backup-for-term-identity |
+| LIVE_TAXONOMY_AFTER_ARCHIVE_SNAPSHOT | taxonomy | `post_tag:embossed-stickers` | live-production-for-public-route; wordpress-backup-for-term-identity |
+| LIVE_TAXONOMY_AFTER_ARCHIVE_SNAPSHOT | taxonomy | `post_tag:product-design` | live-production-for-public-route; wordpress-backup-for-term-identity |
+| LIVE_TAXONOMY_AFTER_ARCHIVE_SNAPSHOT | taxonomy | `post_tag:raised-stickers` | live-production-for-public-route; wordpress-backup-for-term-identity |
 
 ## Private/system exclusions
 

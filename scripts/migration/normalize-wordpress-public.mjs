@@ -17,7 +17,10 @@ const REPOSITORY_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..'
 const DEFAULT_OUTPUT_DIR = resolve(REPOSITORY_ROOT, 'data/migration/wordpress-public')
 const SCHEMA_VERSION = 1
 const POLICY_VERSION = 1
-const KNOWN_PUBLIC_DELTA_SLUG = 'custom-puffy-stickers-guide'
+const KNOWN_PUBLIC_DELTA_SLUGS = [
+  'custom-puffy-stickers-guide',
+  'why-custom-stickers-feel-like-objects',
+]
 const UNINDEXED_PUBLIC_MEDIA_PATHS = [
   '/wp-content/uploads/2022/02/payment-method-2.png',
   '/wp-content/uploads/2022/04/about-1-video-1.png',
@@ -949,21 +952,24 @@ async function main() {
   const publicMediaEvidence = await loadPublicMediaEvidence(args.publicMediaEvidence, args.archiveSha256)
   content.unindexedPublicMedia = publicMediaEvidence.records
   const counts = countSummary(content)
-  const liveDeltaPresent = [...content.posts, ...content.pages, ...content.products].some((record) => record.slug === KNOWN_PUBLIC_DELTA_SLUG)
+  const publicRecords = [...content.posts, ...content.pages, ...content.products]
   const gaps = [
     {
       code: 'live-crawl-remains-current-seo-authority',
       severity: 'expected',
       detail: 'The backup is a historical structural/data reference. Current production crawl evidence remains authoritative for live URLs, status, canonicals, metadata, schema and rendered content.',
     },
-    {
-      code: liveDeltaPresent ? 'known-live-delta-found-in-backup' : 'known-live-delta-absent-from-backup',
-      severity: liveDeltaPresent ? 'informational' : 'reconcile',
-      slug: KNOWN_PUBLIC_DELTA_SLUG,
-      detail: liveDeltaPresent
-        ? 'The production-delta post captured through the public WordPress REST API is present in this database snapshot.'
-        : 'The production-delta post captured through the public WordPress REST API is newer than or otherwise absent from this database snapshot; retain the protected live fixture during reconciliation.',
-    },
+    ...KNOWN_PUBLIC_DELTA_SLUGS.map((slug) => {
+      const liveDeltaPresent = publicRecords.some((record) => record.slug === slug)
+      return {
+        code: liveDeltaPresent ? 'known-live-delta-found-in-backup' : 'known-live-delta-absent-from-backup',
+        severity: liveDeltaPresent ? 'informational' : 'reconcile',
+        slug,
+        detail: liveDeltaPresent
+          ? 'The production-delta post captured through the public WordPress REST API is present in this database snapshot.'
+          : 'The production-delta post captured through the public WordPress REST API is newer than or otherwise absent from this database snapshot; retain the protected live fixture during reconciliation.',
+      }
+    }),
     ...(instance.yoastIndexable.length ? [] : [{
       code: 'yoast-indexables-unavailable',
       severity: 'informational',

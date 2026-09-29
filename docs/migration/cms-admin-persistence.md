@@ -61,7 +61,7 @@ Run `npm run db:migrate` only against the intended database after reviewing `DAT
 npm.cmd run cms:import-wordpress -- --apply --confirm=<archiveSha256>
 ```
 
-The import is idempotent, records archive and per-record payload SHA-256 provenance, and keeps the post `custom-puffy-stickers-guide` as an explicit live-after-backup delta. A fresh production capture must reconcile that delta before any public source switch.
+The import is idempotent, records archive and per-record payload SHA-256 provenance, and keeps `custom-puffy-stickers-guide` and `why-custom-stickers-feel-like-objects` as explicit live-after-backup deltas. A fresh production capture must reconcile both deltas and every later production change before any public source switch.
 
 ## Verification
 

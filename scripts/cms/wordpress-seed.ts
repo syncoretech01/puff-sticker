@@ -315,7 +315,7 @@ export function buildWordpressSeedPlan(): WordpressSeedPlan {
     importBatch,
     contents,
     media: [...attachments, ...unindexed],
-    knownLiveDeltas: ['custom-puffy-stickers-guide'],
+    knownLiveDeltas: ['custom-puffy-stickers-guide', 'why-custom-stickers-feel-like-objects'],
   }
 }
 
@@ -328,8 +328,11 @@ export function assertWordpressSeedPlan(plan: WordpressSeedPlan): void {
     throw new Error(`Unexpected seed counts: ${JSON.stringify(counts)}`)
   }
   if (plan.media.length !== 156) throw new Error(`Unexpected media count: ${plan.media.length}`)
-  if (!plan.knownLiveDeltas.includes('custom-puffy-stickers-guide')) {
-    throw new Error('The known live-after-backup article must remain explicit.')
+  if (
+    !plan.knownLiveDeltas.includes('custom-puffy-stickers-guide')
+    || !plan.knownLiveDeltas.includes('why-custom-stickers-feel-like-objects')
+  ) {
+    throw new Error('Both known live-after-backup articles must remain explicit.')
   }
   const ids = [...plan.contents.map((item) => item.input.id), ...plan.media.map((item) => item.input.id)]
   if (ids.some((id) => !id) || new Set(ids).size !== ids.length) throw new Error('Seed IDs must be present and unique.')

@@ -1,9 +1,11 @@
 /**
  * Read-only production SEO evidence capture.
  *
- * This script deliberately writes one explicit, reviewable fixture and does
- * not update route contracts. Run it only when a fresh production observation
- * has been requested, then review the resulting diff before using it.
+ * This script deliberately writes one new, reviewable fixture and does not
+ * update route contracts or overwrite a prior audit. A caller must provide an
+ * explicit YYYY-MM-DD `PUFF_PRODUCTION_SEO_CAPTURE_DATE`; the output filename
+ * is derived from that date and created exclusively. Review the resulting
+ * unreferenced fixture before composing it into the production contract.
  */
 import { createHash } from 'node:crypto'
 import { writeFile } from 'node:fs/promises'
@@ -33,9 +35,13 @@ const {
 } = await import('../src/lib/seo/route-contract.ts')
 const { LEGACY_SITEMAP_PATHS } = await import('../src/lib/seo/sitemap-contract.ts')
 
-const OUTPUT_PATH = resolve('src/lib/seo/fixtures/production-seo-2026-08-22.json')
 const CONCURRENCY = 3
-const CAPTURE_DATE = '2026-08-22'
+const CAPTURE_DATE = process.env.PUFF_PRODUCTION_SEO_CAPTURE_DATE?.trim()
+if (!CAPTURE_DATE || !/^\d{4}-\d{2}-\d{2}$/.test(CAPTURE_DATE)) {
+  throw new Error('Set PUFF_PRODUCTION_SEO_CAPTURE_DATE=YYYY-MM-DD for a requested new production observation')
+}
+const OUTPUT_PATH = resolve(`src/lib/seo/fixtures/production-seo-capture-${CAPTURE_DATE}.json`)
+const COMPATIBILITY_SITEMAP_REDIRECT_CAPTURE_DATE = CAPTURE_DATE
 const USER_AGENT = 'PuffSticker-Parity-Capture/1.0 (+https://puffsticker.com/)'
 
 function sha256(value) {
@@ -100,23 +106,65 @@ const endpointPaths = [
 ]
 
 const endpoints = {}
+const redirectStatuses = new Set([301, 302, 303, 307, 308])
+
+async function captureEndpoint(path, requestedUrl) {
+  const redirectChain = []
+  const seenUrls = new Set()
+  let nextUrl = requestedUrl
+
+  for (let hop = 0; hop < 10; hop += 1) {
+    if (seenUrls.has(nextUrl)) throw new Error(`${path}: redirect loop detected at ${nextUrl}`)
+    seenUrls.add(nextUrl)
+
+    const response = await retry(`${path} hop ${hop + 1}`, () => fetch(nextUrl, {
+      redirect: 'manual',
+      headers: { 'user-agent': USER_AGENT, accept: '*/*' },
+      signal: AbortSignal.timeout(90_000),
+    }))
+    const body = (await response.text()).replace(/\r\n/g, '\n')
+    const rawLocation = response.headers.get('location')
+    const location = rawLocation ? new URL(rawLocation, nextUrl).href : null
+    redirectChain.push({
+      url: nextUrl,
+      status: response.status,
+      location,
+      contentType: response.headers.get('content-type'),
+      bodyLength: Buffer.byteLength(body),
+      normalizedBodyHash: sha256(body),
+    })
+
+    if (redirectStatuses.has(response.status)) {
+      if (!location) throw new Error(`${path}: ${response.status} response has no Location header`)
+      nextUrl = location
+      continue
+    }
+
+    return { response, body, redirectChain }
+  }
+
+  throw new Error(`${path}: redirect chain exceeded 10 responses`)
+}
+
 for (const path of endpointPaths) {
   const requestedUrl = `${SITE_ORIGIN}${path}`
-  const response = await retry(path, () => fetch(requestedUrl, {
-    redirect: 'follow',
-    headers: { 'user-agent': USER_AGENT, accept: '*/*' },
-    signal: AbortSignal.timeout(90_000),
-  }))
-  const body = (await response.text()).replace(/\r\n/g, '\n')
+  const { response, body, redirectChain } = await captureEndpoint(path, requestedUrl)
   endpoints[path] = {
     requestedUrl,
     finalUrl: response.url,
     status: response.status,
+    ...(redirectChain.length > 1 ? {
+      redirectChainSource: 'production-http-manual-hop-capture',
+      redirectChainCapturedOn: path === LEGACY_SITEMAP_PATHS.compatibilityIndex
+        ? COMPATIBILITY_SITEMAP_REDIRECT_CAPTURE_DATE
+        : CAPTURE_DATE,
+      redirectChain,
+    } : {}),
     contentType: response.headers.get('content-type'),
     normalizedBodyHash: sha256(body),
     body,
   }
-  process.stdout.write(`[endpoint] ${path} ${response.status}\n`)
+  process.stdout.write(`[endpoint] ${path} ${redirectChain.map((hop) => hop.status).join(' -> ')}\n`)
 }
 
 function sitemapDocumentUrls(body) {
@@ -353,7 +401,7 @@ if (Object.keys(pages).length !== productionRoutes.length || failedPages.length 
 
 const fixture = {
   schemaVersion: 1,
-  source: 'production-crawl-2026-08-22',
+  source: `production-crawl-${CAPTURE_DATE}`,
   capturedOn: CAPTURE_DATE,
   origin: SITE_ORIGIN,
   capturePolicy: {
@@ -372,7 +420,10 @@ const fixture = {
   endpoints,
 }
 
-await writeFile(OUTPUT_PATH, `${JSON.stringify(fixture, null, 2)}\n`, 'utf8')
+await writeFile(OUTPUT_PATH, `${JSON.stringify(fixture, null, 2)}\n`, {
+  encoding: 'utf8',
+  flag: 'wx',
+})
 console.log(JSON.stringify({
   output: OUTPUT_PATH,
   pages: fixture.routeCount,

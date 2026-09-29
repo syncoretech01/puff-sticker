@@ -13,12 +13,23 @@ export const EXACT_SEO_ENDPOINT_PATHS = [
   LEGACY_SITEMAP_PATHS.locations,
 ] as const
 
-export type ExactSeoEndpointPath = (typeof EXACT_SEO_ENDPOINT_PATHS)[number]
+export const EXACT_SEO_BODY_ENDPOINT_PATHS = [
+  '/robots.txt',
+  LEGACY_SITEMAP_PATHS.index,
+  LEGACY_SITEMAP_PATHS.post,
+  LEGACY_SITEMAP_PATHS.page,
+  LEGACY_SITEMAP_PATHS.product,
+  LEGACY_SITEMAP_PATHS.productCategory,
+  LEGACY_SITEMAP_PATHS.local,
+  LEGACY_SITEMAP_PATHS.locations,
+] as const
+
+export type ExactSeoEndpointPath = (typeof EXACT_SEO_BODY_ENDPOINT_PATHS)[number]
 
 /**
- * Return the reviewed production body byte-for-byte with its captured MIME
- * type. Route handlers delegate to this fixture-backed boundary so the public
- * SEO discovery surface cannot drift endpoint by endpoint.
+ * Return a reviewed production 200 body byte-for-byte with its captured MIME
+ * type. `/sitemap.xml` is deliberately excluded because its public contract
+ * is an empty-body 301 handled by the compatibility redirect route.
  */
 export function exactSeoEndpointResponse(path: ExactSeoEndpointPath): Response {
   const endpoint = productionEndpointEvidence(path)
