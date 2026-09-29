@@ -1,9 +1,6 @@
-import { existsSync, readFileSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 
 import { expect, test } from '@playwright/test'
-
-import { breakpoints } from './cases'
-import { regressionEnvironment } from './environment'
 
 type BaselineEnvironment = {
   platform: string
@@ -31,13 +28,4 @@ test('screenshots run in the canonical OS and browser environment', async ({ bro
     deviceScaleFactor: await page.evaluate(() => window.devicePixelRatio),
   }
   expect(actual).toEqual(baseline)
-})
-
-test('the configured pixel environment has every Finish Lab baseline', () => {
-  test.skip(!regressionEnvironment.pixelEnvironment, 'The local Windows baseline uses the unsuffixed snapshots.')
-  const snapshotRoot = new URL('./__screenshots__/visual.spec.ts/', import.meta.url)
-  for (const breakpoint of breakpoints) {
-    const name = `home-finish-lab-${breakpoint.name}-${regressionEnvironment.pixelEnvironment}.png`
-    expect(existsSync(new URL(name, snapshotRoot)), name).toBe(true)
-  }
 })

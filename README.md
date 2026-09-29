@@ -55,7 +55,7 @@ npm.cmd run test:regression
 Remove-Item Env:\PUFF_REGRESSION_PROFILE, Env:\PUFF_REGRESSION_BASE_URL, Env:\VERCEL_ENV
 ```
 
-`npm run test:cms:postgres` requires Docker and tests the migration against an ephemeral PostgreSQL image pinned by digest. GitHub Actions runs the build, SEO, data reconciliation, CMS, database, and both Playwright profiles. Pixel comparisons use pinned Playwright Chromium serially on the asserted `windows-2022` runner image version; the Linux PostgreSQL job never compares screenshots across operating systems. Finish Lab keeps separate strict local-Windows and Windows Server baselines because their subpixel rasterization differs while geometry is identical. Geometry snapshots and immutable migration JSON are checked out with canonical LF endings on every operating system.
+`npm run test:cms:postgres` requires Docker and tests the migration against an ephemeral PostgreSQL image pinned by digest. GitHub Actions runs the build, SEO, data reconciliation, CMS, database, and both Playwright profiles. Pixel comparisons use pinned Playwright Chromium serially on one `windows-2022` runner; the Linux PostgreSQL job never compares screenshots across operating systems. The environment-sensitive Finish Lab image is captured and recaptured from protected Vite through Playwright's normal stabilization, then Next is compared against that exact same-runner capture with the unchanged strict threshold. Local Windows continues to compare both profiles with the committed protected baseline. Geometry snapshots and immutable migration JSON are checked out with canonical LF endings on every operating system.
 
 ## Server configuration
 

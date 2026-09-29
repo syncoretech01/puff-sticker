@@ -12,17 +12,14 @@ function parseOrigin(value: string, variable: string) {
   return url.origin
 }
 
-function parsePixelEnvironment(value: string | undefined) {
-  if (!value) return null
-  if (!/^[a-z0-9][a-z0-9-]*$/.test(value)) {
-    throw new Error(`PUFF_REGRESSION_PIXEL_ENV must be a lowercase hyphenated environment slug, received: ${value}`)
-  }
-  return value
-}
-
 const profile = process.env.PUFF_REGRESSION_PROFILE ?? 'vite'
 if (profile !== 'vite' && profile !== 'next') {
   throw new Error(`PUFF_REGRESSION_PROFILE must be "vite" or "next", received: ${profile}`)
+}
+
+const captureViteFinishLab = process.env.PUFF_REGRESSION_CAPTURE_VITE_FINISH_LAB ?? '0'
+if (captureViteFinishLab !== '0' && captureViteFinishLab !== '1') {
+  throw new Error('PUFF_REGRESSION_CAPTURE_VITE_FINISH_LAB must be "0" or "1".')
 }
 
 export const regressionEnvironment = Object.freeze({
@@ -33,6 +30,6 @@ export const regressionEnvironment = Object.freeze({
   ),
   serverCommand: process.env.PUFF_REGRESSION_SERVER_COMMAND ?? DEFAULT_SERVER_COMMAND,
   manageServer: process.env.PUFF_REGRESSION_EXTERNAL_SERVER !== '1',
-  pixelEnvironment: parsePixelEnvironment(process.env.PUFF_REGRESSION_PIXEL_ENV),
+  captureViteFinishLab: captureViteFinishLab === '1',
   profile: profile as RegressionProfile,
 })
