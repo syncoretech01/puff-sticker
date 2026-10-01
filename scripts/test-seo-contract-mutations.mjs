@@ -21,7 +21,7 @@ const {
 } = await import('../src/lib/seo/index.ts')
 
 const route = PRIMARY_ROUTE_CONTRACTS.find((entry) => (
-  entry.path === '/blog/tag/sticker-psychology'
+  entry.path === '/blog/kraft-look-packaging'
 ))
 if (!route) throw new Error('Mutation fixture route is missing')
 

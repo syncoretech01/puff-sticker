@@ -31,6 +31,7 @@ import { livePageContent } from './content/livePageContent'
 import { sanitizePublishedHomeHtml } from './content/publishedHtml'
 import { SiteLink, useRouter } from './router'
 import { BackToTop } from './components/BackToTop'
+import { useCurrentProductionContent } from './next/CurrentProductionContentContext'
 import { NotFoundPage } from './site/NotFoundPage'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
@@ -78,7 +79,7 @@ const vitePageComponents: AppPageComponents = {
   ResourcesPage,
   ShopPage,
 }
-const categoryPaths = new Set(['puffy-labels-stickers', 'flat-labels-stickers', 'promotional-items'])
+const categoryPaths = new Set(['puffy-labels-stickers', 'flat-labels-stickers', 'promotional-items', 'cbd-packaging-boxes'])
 
 const productTicker = [
   'Puffy Stickers',
@@ -970,8 +971,9 @@ function Faq() {
 
 function PublishedHomeArchive() {
   const { nextMode } = useRouter()
+  const currentContent = useCurrentProductionContent()
   const page = livePageContent.home ?? null
-  const publishedHtml = useMemo(() => page ? sanitizePublishedHomeHtml(page.html, nextMode) : '', [nextMode, page])
+  const publishedHtml = useMemo(() => currentContent?.semanticHtml ?? (page ? sanitizePublishedHomeHtml(page.html, nextMode) : ''), [currentContent, nextMode, page])
 
   return (
     <section className="official-page-source home-published-source">
@@ -981,7 +983,7 @@ function PublishedHomeArchive() {
           <h2>Everything you need to plan your run.</h2>
           <p>Explore complete product, manufacturing, sample-pack, ordering and material information from PuffSticker.</p>
         </aside>
-        {page
+        {publishedHtml
           ? <details className="official-page-source__disclosure reveal-block" data-live-loaded="page-home">
             <summary><span><small>Detailed information</small><strong>Open the complete PuffSticker guide</strong></span><i><ArrowDown /></i></summary>
             <div className="official-page-source__content" dangerouslySetInnerHTML={{ __html: publishedHtml }} />
@@ -1061,6 +1063,7 @@ function RouteContent({ pathname, pages }: { pathname: string; pages: AppPageCom
   if (first === 'about-us' || first === 'about') return <pages.AboutPage />
   if (first === 'faqs' || first === 'faq') return <pages.FullFaqPage />
   if (first === 'contact-us' || first === 'contact') return <pages.ContactPage />
+  if (first === 'checkout') return <pages.PolicyPage slug="checkout" />
   if (first === 'request-a-quote' || first === 'quote') return <pages.QuotePage />
   if (first === 'blog') {
     if ((parts[1] === 'tag' && parts[2]) || (parts[1] === 'page' && parts[2])) return <pages.ArchivePage pathname={pathname} />
@@ -1070,7 +1073,7 @@ function RouteContent({ pathname, pages }: { pathname: string; pages: AppPageCom
   }
   if (first === 'product-tag' && parts[1]) return <pages.ArchivePage pathname={pathname} />
   if (first === 'resources') return <pages.ResourcesPage />
-  if (['reprint-policy', 'privacy-policy', 'terms-of-service', 'shipping-delivery'].includes(first)) return <pages.PolicyPage slug={first} />
+  if (['reprint-policy', 'privacy-policy', 'terms-of-service', 'shipping-delivery', 'shipping-policy', 'payment-terms', 'industries'].includes(first)) return <pages.PolicyPage slug={first} />
   return <NotFoundPage />
 }
 

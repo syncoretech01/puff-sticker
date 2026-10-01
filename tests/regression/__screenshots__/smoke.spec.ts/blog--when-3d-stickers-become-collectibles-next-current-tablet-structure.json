@@ -1,0 +1,44 @@
+{
+  "headings": [
+    {
+      "text": "When 3D Stickers Become Collectibles",
+      "x": 38,
+      "y": 282,
+      "width": 691,
+      "height": 101
+    },
+    {
+      "text": "When 3D Stickers Become Collectibles",
+      "x": 38,
+      "y": 1720,
+      "width": 691,
+      "height": 44
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "article",
+      "id": null,
+      "className": "article-page",
+      "y": 0,
+      "width": 768,
+      "height": 23818
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "more-notes",
+      "y": 23818,
+      "width": 768,
+      "height": 1221
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 25039,
+      "width": 768,
+      "height": 968
+    }
+  ]
+}

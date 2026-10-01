@@ -43,6 +43,16 @@ const categorySeo: Record<CategorySlug, RouteSeo> = {
     openGraphImage: `${siteUrl}/assets/catalog/woven-bags.webp`,
     openGraphType: 'website',
   },
+  'cbd-packaging-boxes': {
+    title: 'CBD Packaging Boxes | Custom CBD Boxes Wholesale',
+    metaDescription: 'Shop custom CBD packaging boxes for tinctures, gummies, oils, and more. Durable, compliant materials, full branding, and 18–20 business days.',
+    canonical: `${siteUrl}/cbd-packaging-boxes/`,
+    robots: null,
+    openGraphTitle: 'CBD Packaging Boxes | Custom CBD Boxes Wholesale',
+    openGraphDescription: 'Shop custom CBD packaging boxes for tinctures, gummies, oils, and more. Durable, compliant materials, full branding, and 18–20 business days.',
+    openGraphImage: null,
+    openGraphType: 'website',
+  },
 }
 
 const aliases: Record<string, string> = {

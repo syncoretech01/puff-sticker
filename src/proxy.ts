@@ -10,6 +10,7 @@ const INTERNAL_REWRITE_HEADER = 'x-puff-seo-internal-rewrite'
 const INTERNAL_REWRITE_TOKEN = crypto.randomUUID()
 const INTERNAL_ENDPOINT_REWRITES: Readonly<Record<string, string>> = {
   '/robots.txt': `${INTERNAL_ENDPOINT_PREFIX}robots.txt`,
+  '/sitemap.xml': `${INTERNAL_ENDPOINT_PREFIX}sitemap.xml`,
 }
 const INTERNAL_ENDPOINT_TARGETS = new Set(Object.values(INTERNAL_ENDPOINT_REWRITES))
 

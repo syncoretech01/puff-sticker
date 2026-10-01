@@ -1,0 +1,92 @@
+{
+  "headings": [
+    {
+      "text": "Mylar Bags",
+      "x": 38,
+      "y": 792,
+      "width": 691,
+      "height": 47
+    },
+    {
+      "text": "Kraft Mylar Bags",
+      "x": 38,
+      "y": 7623,
+      "width": 691,
+      "height": 44
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-detail",
+      "y": 0,
+      "width": 768,
+      "height": 2493
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-proof",
+      "y": 2493,
+      "width": 768,
+      "height": 1247
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-content",
+      "y": 3740,
+      "width": 768,
+      "height": 12014
+    },
+    {
+      "element": "section",
+      "id": "product-specifications",
+      "className": "product-specs",
+      "y": 15754,
+      "width": 768,
+      "height": 1164
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-applications",
+      "y": 16918,
+      "width": 768,
+      "height": 1268
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "faq product-page-faq",
+      "y": 18186,
+      "width": 768,
+      "height": 1205
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "related-products",
+      "y": 19391,
+      "width": 768,
+      "height": 1342
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "inline-quote",
+      "y": 20733,
+      "width": 768,
+      "height": 389
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 21122,
+      "width": 768,
+      "height": 968
+    }
+  ]
+}

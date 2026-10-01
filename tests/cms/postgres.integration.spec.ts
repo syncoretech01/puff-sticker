@@ -333,6 +333,6 @@ test.describe.serial('real PostgreSQL persistence boundary', () => {
 
     const publicResponse = await page.goto('/', { waitUntil: 'domcontentloaded' })
     expect(publicResponse?.headers()['x-robots-tag']).toBeUndefined()
-    await expect(page.locator('meta[name=robots]')).not.toHaveAttribute('content', /noindex/)
+    await expect(page.locator('meta[name=robots]')).toHaveCount(0)
   })
 })

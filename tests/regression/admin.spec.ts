@@ -25,8 +25,10 @@ test.describe('private admin boundary', () => {
 
   test('does not alter the public content source or public indexability', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' })
-    await expect(page.locator('main h1')).toHaveCount(1)
-    await expect(page.locator('meta[name="robots"]')).not.toHaveAttribute('content', /noindex/)
+    await expect(page.locator('main h1')).toHaveCount(2)
+    await expect(page.locator('h1.hero-title')).toHaveAttribute('aria-label', 'Make your mark touchable')
+    await expect(page.locator('[data-live-loaded="page-home"] h1')).toHaveText('Custom puffy stickers, made to order.')
+    await expect(page.locator('meta[name="robots"]')).toHaveCount(0)
     await expect(page.locator('a[href^="/admin"]')).toHaveCount(0)
   })
 })

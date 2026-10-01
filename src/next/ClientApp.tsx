@@ -4,7 +4,9 @@ import { useRouter as useNextRouter } from 'next/navigation'
 import { useMemo } from 'react'
 
 import App, { type AppPageComponents } from '../App'
+import type { CurrentProductionContentPayload } from '../content/currentProductionContent'
 import { RouterProvider, type ClientNavigationAdapter } from '../router'
+import { CurrentProductionContentProvider } from './CurrentProductionContentContext'
 import {
   AboutPage,
   ArchivePage,
@@ -49,6 +51,7 @@ export type ClientAppProps = {
   initialSearch?: string
   initialHash?: string
   renderPathname?: string
+  productionContent?: CurrentProductionContentPayload | null
   nextMode?: boolean
 }
 
@@ -57,6 +60,7 @@ export default function ClientApp({
   initialSearch = '',
   initialHash = '',
   renderPathname,
+  productionContent = null,
   nextMode = true,
 }: ClientAppProps) {
   const nextRouter = useNextRouter()
@@ -67,13 +71,15 @@ export default function ClientApp({
   }), [nextRouter])
 
   return (
-    <RouterProvider
-      initialLocation={{ pathname: initialPathname, search: initialSearch, hash: initialHash }}
-      renderPathname={renderPathname}
-      nextMode={nextMode}
-      clientNavigation={clientNavigation}
-    >
-      <App pageComponents={nextPageComponents} />
-    </RouterProvider>
+    <CurrentProductionContentProvider content={productionContent}>
+      <RouterProvider
+        initialLocation={{ pathname: initialPathname, search: initialSearch, hash: initialHash }}
+        renderPathname={renderPathname}
+        nextMode={nextMode}
+        clientNavigation={clientNavigation}
+      >
+        <App pageComponents={nextPageComponents} />
+      </RouterProvider>
+    </CurrentProductionContentProvider>
   )
 }

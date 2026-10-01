@@ -15,6 +15,7 @@ export const EXACT_SEO_ENDPOINT_PATHS = [
 
 export const EXACT_SEO_BODY_ENDPOINT_PATHS = [
   '/robots.txt',
+  LEGACY_SITEMAP_PATHS.compatibilityIndex,
   LEGACY_SITEMAP_PATHS.index,
   LEGACY_SITEMAP_PATHS.post,
   LEGACY_SITEMAP_PATHS.page,
@@ -27,19 +28,22 @@ export const EXACT_SEO_BODY_ENDPOINT_PATHS = [
 export type ExactSeoEndpointPath = (typeof EXACT_SEO_BODY_ENDPOINT_PATHS)[number]
 
 /**
- * Return a reviewed production 200 body byte-for-byte with its captured MIME
- * type. `/sitemap.xml` is deliberately excluded because its public contract
- * is an empty-body 301 handled by the compatibility redirect route.
+ * Return the reviewed requested response exactly. Redirecting legacy sitemap
+ * paths use the first manually captured hop; terminal endpoints retain their
+ * exact status, body and MIME type, including the current locations 404.
  */
 export function exactSeoEndpointResponse(path: ExactSeoEndpointPath): Response {
   const endpoint = productionEndpointEvidence(path)
-  if (endpoint.status !== 200 || !endpoint.contentType) {
-    throw new Error(`${path}: captured endpoint is missing an exact 200 response contract`)
-  }
-  return new Response(endpoint.body, {
-    status: endpoint.status,
+  const requested = endpoint.redirectChain?.[0]
+  const status = requested?.status ?? endpoint.status
+  const contentType = requested?.contentType ?? endpoint.contentType
+  const location = requested?.location
+  const body = requested ? null : endpoint.body
+  return new Response(body, {
+    status,
     headers: {
-      'content-type': endpoint.contentType,
+      ...(contentType ? { 'content-type': contentType } : {}),
+      ...(location ? { location } : {}),
       'cache-control': 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400',
       'x-content-type-options': 'nosniff',
     },

@@ -6,18 +6,6 @@ const nextConfig: NextConfig = {
   // The SEO contract owns a finite one-hop 301 surface. Disabling Next's
   // blanket normalization prevents unknown slashless URLs becoming chains.
   skipTrailingSlashRedirect: true,
-  async rewrites() {
-    return {
-      beforeFiles: [
-        {
-          source: '/sitemap.xml',
-          destination: '/seo-internal/sitemap-redirect',
-        },
-      ],
-      afterFiles: [],
-      fallback: [],
-    }
-  },
   async headers() {
     const rules = [
       {

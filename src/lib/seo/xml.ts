@@ -31,7 +31,7 @@ export function urlSetXml(entries: readonly SitemapEntryContract[]) {
         '</image:image>',
       ].join('')).join('')
       : ''
-    return `<url><loc>${xmlEscape(entry.url)}</loc><lastmod>${entry.lastModified}</lastmod>${images}</url>`
+    return `<url><loc>${xmlEscape(entry.url)}</loc>${entry.lastModified ? `<lastmod>${entry.lastModified}</lastmod>` : ''}${images}</url>`
   }).join('')
   return `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">${rows}</urlset>`
 }

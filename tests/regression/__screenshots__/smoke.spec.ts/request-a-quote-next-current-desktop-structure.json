@@ -1,0 +1,44 @@
+{
+  "headings": [
+    {
+      "text": "A clear brief makes a better puff.",
+      "x": 58,
+      "y": 198,
+      "width": 1000,
+      "height": 179
+    },
+    {
+      "text": "Request a quote",
+      "x": 617,
+      "y": 1548,
+      "width": 765,
+      "height": 53
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "quote-page",
+      "y": 0,
+      "width": 1440,
+      "height": 1198
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "official-page-source",
+      "y": 1198,
+      "width": 1440,
+      "height": 577
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 1776,
+      "width": 1440,
+      "height": 754
+    }
+  ]
+}

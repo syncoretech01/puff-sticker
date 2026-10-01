@@ -1,0 +1,84 @@
+{
+  "headings": [
+    {
+      "text": "We make a sticker something you can feel.",
+      "x": 38,
+      "y": 196,
+      "width": 691,
+      "height": 222
+    },
+    {
+      "text": "The home of puffy stickers.",
+      "x": 38,
+      "y": 5440,
+      "width": 691,
+      "height": 32
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "page-hero page-hero--dark",
+      "y": 0,
+      "width": 768,
+      "height": 704
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "about-origin",
+      "y": 704,
+      "width": 768,
+      "height": 1139
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "about-timeline",
+      "y": 1843,
+      "width": 768,
+      "height": 949
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "about-principles",
+      "y": 2792,
+      "width": 768,
+      "height": 1043
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "about-global",
+      "y": 3834,
+      "width": 768,
+      "height": 968
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "official-page-source",
+      "y": 4803,
+      "width": 768,
+      "height": 577
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "procurement-band",
+      "y": 5379,
+      "width": 768,
+      "height": 606
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 5986,
+      "width": 768,
+      "height": 968
+    }
+  ]
+}

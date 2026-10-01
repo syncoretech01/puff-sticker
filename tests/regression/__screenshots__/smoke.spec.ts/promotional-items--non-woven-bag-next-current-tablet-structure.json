@@ -1,0 +1,92 @@
+{
+  "headings": [
+    {
+      "text": "Non-Woven Bag",
+      "x": 38,
+      "y": 792,
+      "width": 691,
+      "height": 47
+    },
+    {
+      "text": "Non-Woven Bags",
+      "x": 38,
+      "y": 5561,
+      "width": 691,
+      "height": 44
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-detail",
+      "y": 0,
+      "width": 768,
+      "height": 1823
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-proof",
+      "y": 1823,
+      "width": 768,
+      "height": 1198
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-content",
+      "y": 3021,
+      "width": 768,
+      "height": 10191
+    },
+    {
+      "element": "section",
+      "id": "product-specifications",
+      "className": "product-specs",
+      "y": 13211,
+      "width": 768,
+      "height": 1609
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-applications",
+      "y": 14820,
+      "width": 768,
+      "height": 1268
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "faq product-page-faq",
+      "y": 16089,
+      "width": 768,
+      "height": 1231
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "related-products",
+      "y": 17320,
+      "width": 768,
+      "height": 1318
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "inline-quote",
+      "y": 18639,
+      "width": 768,
+      "height": 389
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 19028,
+      "width": 768,
+      "height": 968
+    }
+  ]
+}

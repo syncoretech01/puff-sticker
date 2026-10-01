@@ -1,6 +1,11 @@
-import fixtureJson from './fixtures/production-seo-2026-08-22.json' with { type: 'json' }
-import currentDeltaFixtureRaw from './fixtures/production-seo-current-delta-2026-09-01'
-import currentSitemapIndexFixture from './fixtures/production-sitemap-index-delta-2026-09-02'
+import currentCaptureJson from './fixtures/production-seo-capture-2026-09-30.json' with { type: 'json' }
+import checkoutCaptureJson from './fixtures/production-seo-capture-2026-10-01-checkout.json' with { type: 'json' }
+import {
+  FROZEN_PRODUCTION_SEO_BASELINE_FIXTURE,
+  FROZEN_PRODUCTION_SEO_DELTA_FIXTURE,
+  FROZEN_PRODUCTION_SEO_FIXTURE,
+  frozenProductionPageEvidenceCapture,
+} from './frozen-production-evidence-fixture'
 
 export type ProductionOpenGraphEvidence = {
   title: string | null
@@ -28,13 +33,13 @@ export type ProductionTwitterEvidence = {
 export type ProductionPageEvidence = {
   requestedUrl: string
   finalUrl: string
-  status: 200
+  status: number
   responseHeaders: { contentType: string | null; xRobotsTag: string | null }
   coreMetadata: {
     title: string
     description: string | null
     canonical: string
-    robots: string
+    robots: string | null
   }
   openGraph: ProductionOpenGraphEvidence
   twitter: ProductionTwitterEvidence
@@ -61,7 +66,7 @@ export type ProductionPageEvidence = {
 export type ProductionEndpointEvidence = {
   requestedUrl: string
   finalUrl: string
-  status: 200
+  status: number
   contentType: string | null
   normalizedBodyHash: string
   body: string
@@ -94,78 +99,64 @@ export type ProductionSeoFixture = {
   endpoints: Readonly<Record<string, ProductionEndpointEvidence>>
 }
 
-export const PRODUCTION_SEO_BASELINE_FIXTURE = fixtureJson as unknown as ProductionSeoFixture
-export const PRODUCTION_SEO_CURRENT_DELTA_FIXTURE = currentDeltaFixtureRaw as ProductionSeoFixture
+export const PRODUCTION_SEO_BASELINE_FIXTURE = FROZEN_PRODUCTION_SEO_BASELINE_FIXTURE
+export const PRODUCTION_SEO_CURRENT_DELTA_FIXTURE = FROZEN_PRODUCTION_SEO_DELTA_FIXTURE
+export { FROZEN_PRODUCTION_SEO_FIXTURE }
 
-const currentIndex = currentSitemapIndexFixture.endpoint as ProductionEndpointEvidence
-const compatibilityBaseline = PRODUCTION_SEO_BASELINE_FIXTURE.endpoints['/sitemap.xml']
-const compatibilityRedirect = compatibilityBaseline.redirectChain?.[0]
+const currentCapture = currentCaptureJson as unknown as ProductionSeoFixture
+const checkoutCapture = checkoutCaptureJson as unknown as ProductionSeoFixture
 
-if (!compatibilityRedirect) {
-  throw new Error('The production /sitemap.xml compatibility redirect evidence is missing')
+export const CURRENT_PRODUCTION_SEO_FIXTURE: ProductionSeoFixture = {
+  ...currentCapture,
+  source: 'production-crawl-2026-09-30-with-checkout-supplement-2026-10-01',
+  capturedOn: '2026-10-01',
+  routeCount: Object.keys({ ...currentCapture.pages, ...checkoutCapture.pages }).length,
+  pages: { ...currentCapture.pages, ...checkoutCapture.pages },
 }
 
-const currentCompatibilityEndpoint: ProductionEndpointEvidence = {
-  ...compatibilityBaseline,
-  finalUrl: currentIndex.finalUrl,
-  status: currentIndex.status,
-  contentType: currentIndex.contentType,
-  normalizedBodyHash: currentIndex.normalizedBodyHash,
-  body: currentIndex.body,
-  redirectChain: [
-    compatibilityRedirect,
-    {
-      url: currentIndex.requestedUrl,
-      status: currentIndex.status,
-      location: null,
-      contentType: currentIndex.contentType,
-      bodyLength: new TextEncoder().encode(currentIndex.body).byteLength,
-      normalizedBodyHash: currentIndex.normalizedBodyHash,
-    },
-  ],
+const legacyPreservedPaths = new Set(
+  Object.entries(CURRENT_PRODUCTION_SEO_FIXTURE.pages)
+    .filter(([, page]) => page.status === 404 && FROZEN_PRODUCTION_SEO_FIXTURE.pages[pagePathFor(page)])
+    .map(([path]) => path),
+)
+
+function pagePathFor(page: ProductionPageEvidence): string {
+  const pathname = new URL(page.requestedUrl).pathname
+  return pathname === '/' ? '/' : `/${pathname.split('/').filter(Boolean).join('/')}`
 }
 
-const mergedPages = {
-  ...PRODUCTION_SEO_BASELINE_FIXTURE.pages,
-  ...PRODUCTION_SEO_CURRENT_DELTA_FIXTURE.pages,
-}
-
-const mergedEndpoints = {
-  ...PRODUCTION_SEO_BASELINE_FIXTURE.endpoints,
-  ...PRODUCTION_SEO_CURRENT_DELTA_FIXTURE.endpoints,
-  '/sitemap_index.xml': currentIndex,
-  '/sitemap.xml': currentCompatibilityEndpoint,
-}
+const effectivePages = Object.fromEntries(
+  Object.entries(CURRENT_PRODUCTION_SEO_FIXTURE.pages).map(([path, page]) => [
+    path,
+    legacyPreservedPaths.has(path) ? FROZEN_PRODUCTION_SEO_FIXTURE.pages[path] : page,
+  ]),
+)
 
 export const PRODUCTION_SEO_FIXTURE: ProductionSeoFixture = {
-  ...PRODUCTION_SEO_BASELINE_FIXTURE,
-  source: 'production-crawl-2026-08-22-plus-current-deltas',
-  capturedOn: '2026-09-02',
-  routeCount: Object.keys(mergedPages).length,
-  endpointCount: Object.keys(mergedEndpoints).length,
-  pages: mergedPages,
-  endpoints: mergedEndpoints,
+  ...CURRENT_PRODUCTION_SEO_FIXTURE,
+  source: 'production-crawl-2026-09-30-with-frozen-legacy-coverage',
+  routeCount: Object.keys(effectivePages).length,
+  pages: effectivePages,
 }
 
-const currentPagePaths = new Set(Object.keys(PRODUCTION_SEO_CURRENT_DELTA_FIXTURE.pages))
+export const CURRENT_PRODUCTION_ACTIVE_PATHS = Object.freeze(
+  Object.entries(CURRENT_PRODUCTION_SEO_FIXTURE.pages)
+    .filter(([, page]) => page.status === 200)
+    .map(([path]) => path)
+    .sort(),
+)
+
+export const LEGACY_PRESERVED_PATHS = Object.freeze([...legacyPreservedPaths].sort())
 
 export function productionPageEvidenceCapture(path: string) {
-  return currentPagePaths.has(path)
-    ? { source: 'production-crawl-2026-09-01', capturedOn: '2026-09-01' } as const
-    : { source: 'production-crawl-2026-08-22', capturedOn: '2026-08-22' } as const
+  if (path === '/checkout') return { source: 'production-crawl-2026-10-01', capturedOn: '2026-10-01' } as const
+  return legacyPreservedPaths.has(path)
+    ? frozenProductionPageEvidenceCapture(path)
+    : { source: 'production-crawl-2026-09-30', capturedOn: '2026-09-30' } as const
 }
 
-export function productionEndpointEvidenceCapture(path: string) {
-  if (path === '/sitemap.xml') {
-    return { source: 'production-http-capture-2026-08-31', capturedOn: '2026-08-31' } as const
-  }
-  if (path === '/sitemap_index.xml') {
-    return { source: 'production-http-capture-2026-09-02', capturedOn: '2026-09-02' } as const
-  }
-  if (path === '/post-sitemap.xml') {
-    return { source: 'production-crawl-2026-09-01', capturedOn: '2026-09-01' } as const
-  }
-  return { source: 'production-crawl-2026-08-22', capturedOn: '2026-08-22' } as const
+export function productionEndpointEvidenceCapture(_path: string) {
+  return { source: 'production-crawl-2026-09-30', capturedOn: '2026-09-30' } as const
 }
 
 export function productionPageEvidence(path: string): ProductionPageEvidence {

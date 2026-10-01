@@ -33,18 +33,18 @@ if (canonicalRoutes.length !== 51) {
 export const localExtensionContracts = [
   {
     path: '/shop/',
-    vite: { canonical: `${regressionEnvironment.canonicalOrigin}/shop/`, indexable: true },
-    next: { canonical: `${regressionEnvironment.canonicalOrigin}/?page_id=9`, indexable: true },
+    vite: { canonical: `${regressionEnvironment.canonicalOrigin}/shop/`, indexable: true, robots: 'follow,index,max-image-preview:large' },
+    next: { canonical: `${regressionEnvironment.canonicalOrigin}/shop/`, indexable: true, robots: null },
   },
   {
     path: '/resources/',
-    vite: { canonical: `${regressionEnvironment.canonicalOrigin}/resources/`, indexable: true },
-    next: { canonical: `${regressionEnvironment.canonicalOrigin}/resources/`, indexable: false },
+    vite: { canonical: `${regressionEnvironment.canonicalOrigin}/resources/`, indexable: true, robots: 'follow,index' },
+    next: { canonical: `${regressionEnvironment.canonicalOrigin}/resources/`, indexable: false, robots: 'noindex, follow' },
   },
   {
     path: '/shipping-delivery/',
-    vite: { canonical: `${regressionEnvironment.canonicalOrigin}/shipping-delivery/`, indexable: true },
-    next: { canonical: `${regressionEnvironment.canonicalOrigin}/shipping-delivery/`, indexable: false },
+    vite: { canonical: `${regressionEnvironment.canonicalOrigin}/shipping-delivery/`, indexable: true, robots: 'follow,index' },
+    next: { canonical: `${regressionEnvironment.canonicalOrigin}/shipping-delivery/`, indexable: false, robots: 'noindex, follow' },
   },
 ] as const
 

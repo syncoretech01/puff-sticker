@@ -1,13 +1,18 @@
 import { catalogProducts } from '../../content/catalog'
-import { liveSeo } from '../../content/liveSeo'
 import {
   capturedSignal,
   notApplicable,
   type ExactCoreMetadata,
   type PageProductionSignals,
 } from './evidence'
-import { productionPageEvidence, productionPageEvidenceCapture } from './production-evidence-fixture'
-import { SHOP_CANONICAL_TARGET_EVIDENCE, type ShopCanonicalTargetEvidence } from './shop-canonical-evidence'
+import {
+  CURRENT_PRODUCTION_ACTIVE_PATHS,
+  CURRENT_PRODUCTION_SEO_FIXTURE,
+  LEGACY_PRESERVED_PATHS,
+  productionPageEvidence,
+  productionPageEvidenceCapture,
+} from './production-evidence-fixture'
+import type { ShopCanonicalTargetEvidence } from './shop-canonical-evidence'
 import { EXPLICIT_TRAILING_SLASH_PATHS } from './slash-redirects'
 
 export const SITE_ORIGIN = 'https://puffsticker.com' as const
@@ -139,7 +144,7 @@ export type EvidenceProvenance = {
   searchConsole: ExternalEvidenceAvailability
   backlinks: ExternalEvidenceAvailability
   accessLogs: ExternalEvidenceAvailability
-  capturedOn: '2026-08-14' | '2026-08-22' | '2026-09-01'
+  capturedOn: '2026-08-14' | '2026-08-22' | '2026-09-01' | '2026-09-30' | '2026-10-01'
 }
 
 export type StructuredDataEvidence =
@@ -160,7 +165,7 @@ export type SeoMetadataContract = {
   title: string
   description: string | null
   canonical: string
-  robots: string
+  robots: string | null
   openGraph: {
     title: string | null
     description: string | null
@@ -231,7 +236,7 @@ type ArchiveDefinition = {
   expectedSchemaTypes: readonly string[]
 }
 
-const LIVE_SITEMAP_PATHS = new Set([
+const FROZEN_LIVE_SITEMAP_PATHS = new Set([
   '/',
   '/about-us',
   '/blog',
@@ -277,6 +282,18 @@ const LIVE_SITEMAP_PATHS = new Set([
   '/blog/sound-of-packaging-mylar-bags',
   '/blog/custom-jute-tote-bags-the-perfect-blend-of-sustainability',
 ])
+
+const currentSitemapBody = CURRENT_PRODUCTION_SEO_FIXTURE.endpoints['/sitemap.xml'].body
+const CURRENT_LIVE_SITEMAP_PATHS = new Set(
+  [...currentSitemapBody.matchAll(/<loc>([\s\S]*?)<\/loc>/g)].map((match) => {
+    const pathname = new URL(match[1].trim()).pathname
+    return pathname === '/' ? '/' : `/${pathname.split('/').filter(Boolean).join('/')}`
+  }),
+)
+
+// Retained as immutable evidence documentation; route membership below is
+// intentionally driven by the separately captured 2026-09-30 flat sitemap.
+void FROZEN_LIVE_SITEMAP_PATHS
 
 const BLOG_TAG_TITLES = {
   '3d-holographic': '3D holographic',
@@ -403,10 +420,14 @@ function canonicalPath(value: string): string {
 function routeKind(path: string): PrimaryRouteKind {
   if (path === '/') return 'home'
   if (path === '/blog') return 'blog-index'
-  if (path === '/puffy-labels-stickers' || path === '/flat-labels-stickers' || path === '/promotional-items') return 'product-category'
+  if (path === '/puffy-labels-stickers' || path === '/flat-labels-stickers' || path === '/promotional-items' || path === '/cbd-packaging-boxes') return 'product-category'
+  if (path.startsWith('/cbd-packaging-boxes/')) return 'product'
   if (PRODUCT_PATHS.has(path)) return 'product'
   if (path.startsWith('/blog/category/')) return 'blog-category'
-  if (path.startsWith('/blog/') && BLOG_ARTICLE_SLUGS.has(path.split('/')[2] ?? '')) return 'blog-article'
+  if (path.startsWith('/blog/tag/')) return 'blog-tag'
+  if (path.startsWith('/blog/page/')) return 'pagination'
+  if (path.startsWith('/product-tag/')) return 'product-tag'
+  if (path.startsWith('/blog/') && !path.startsWith('/blog/category/')) return 'blog-article'
   return 'page'
 }
 
@@ -441,9 +462,10 @@ function capturedRouteMetadata(path: string): SeoMetadataContract {
 function makeExactRoute(
   path: string,
   contentParity: ContentParity = 'migrated',
-  evidenceCapturedOn: EvidenceProvenance['capturedOn'] = '2026-08-14',
+  evidenceCapturedOn?: EvidenceProvenance['capturedOn'],
 ): PageRouteContract {
   const page = productionPageEvidence(path)
+  const capture = productionPageEvidenceCapture(path)
   const metadata = capturedRouteMetadata(path)
   const kind = routeKind(path)
   const minimumMeaningfulWordCount = kind === 'product' || kind === 'blog-article' ? 100 : 25
@@ -455,14 +477,14 @@ function makeExactRoute(
     kind,
     renderPath: path,
     canonicalPath: canonicalPath(metadata.canonical),
-    indexable: true,
-    inSitemap: LIVE_SITEMAP_PATHS.has(path),
+    indexable: !/\bnoindex\b/i.test(metadata.robots ?? ''),
+    inSitemap: CURRENT_LIVE_SITEMAP_PATHS.has(path),
     contentParity,
     metadata,
     structuredData: page.structuredData.normalizedGraphs,
     expectedSchemaTypes: page.structuredData.types,
     audit: pageAudit('captured-production-fixture', minimumMeaningfulWordCount),
-    evidence: observedPageEvidence(LIVE_SITEMAP_PATHS.has(path), evidenceCapturedOn),
+    evidence: observedPageEvidence(CURRENT_LIVE_SITEMAP_PATHS.has(path), evidenceCapturedOn ?? capture.capturedOn),
     productionSignals: productionSignals(path),
   }
 }
@@ -571,45 +593,17 @@ function makeLocalRoute(
   }
 }
 
-const exactRoutes = Object.keys(liveSeo)
-  .filter((path) => path !== '/shop')
-  .map((path) => makeExactRoute(path))
-
-// Published after the protected Vite baseline and therefore retained as a
-// separately evidenced production delta. The Next release candidate renders
-// its complete audited production content without changing the Vite baseline.
-const productionDeltaRoutes = [
-  makeExactRoute('/blog/custom-puffy-stickers-guide', 'migrated', '2026-08-22'),
-  makeExactRoute('/blog/why-custom-stickers-feel-like-objects', 'migrated', '2026-09-01'),
-]
-
-const shopPage = productionPageEvidence('/shop')
-const shopMetadata = capturedRouteMetadata('/shop')
-const shopRoute: PageRouteContract = {
-  disposition: 'page',
-  path: '/shop',
-  publicPath: '/shop/',
-  status: 200,
-  kind: 'local-page',
-  renderPath: '/shop',
-  canonicalPath: '/',
-  indexable: true,
-  inSitemap: false,
-  contentParity: 'migrated',
-  metadata: shopMetadata,
-  structuredData: shopPage.structuredData.normalizedGraphs,
-  expectedSchemaTypes: shopPage.structuredData.types,
-  audit: pageAudit('captured-production-fixture', 25),
-  evidence: observedPageEvidence(false),
-  productionSignals: productionSignals('/shop'),
-  canonicalTargetEvidence: SHOP_CANONICAL_TARGET_EVIDENCE,
-}
+const currentCanonicalPaths = CURRENT_PRODUCTION_ACTIVE_PATHS
+  .filter((path) => CURRENT_LIVE_SITEMAP_PATHS.has(path)
+    || canonicalPath(CURRENT_PRODUCTION_SEO_FIXTURE.pages[path].coreMetadata.canonical) === path)
+const currentAliasPaths = CURRENT_PRODUCTION_ACTIVE_PATHS
+  .filter((path) => !currentCanonicalPaths.includes(path))
+const legacySelfCanonicalPaths = LEGACY_PRESERVED_PATHS.filter((path) => path.startsWith('/product-tag/'))
+const legacyAliasPaths = LEGACY_PRESERVED_PATHS.filter((path) => !legacySelfCanonicalPaths.includes(path))
 
 export const PRIMARY_ROUTE_CONTRACTS: readonly PageRouteContract[] = [
-  ...exactRoutes,
-  ...productionDeltaRoutes,
-  ...ARCHIVE_DEFINITIONS.map(makeArchiveRoute),
-  shopRoute,
+  ...currentCanonicalPaths.map((path) => makeExactRoute(path)),
+  ...legacySelfCanonicalPaths.map((path) => makeExactRoute(path)),
   makeLocalRoute(
     '/resources',
     'Custom Printing Resources | PuffSticker.com',
@@ -628,49 +622,34 @@ const primaryByPath = new Map(PRIMARY_ROUTE_CONTRACTS.map((route) => [route.path
 function makeCanonicalizingAlias(path: string, target: string): PageRouteContract {
   const canonical = primaryByPath.get(target)
   if (!canonical) throw new Error(`Missing canonical route ${target} for alias ${path}`)
-  const page = productionPageEvidence(path)
-  const metadata = capturedRouteMetadata(path)
+  const alias = makeExactRoute(path)
   return {
-    ...canonical,
-    path,
-    publicPath: publicPath(path),
+    ...alias,
     renderPath: target,
-    canonicalPath: target,
     inSitemap: false,
-    metadata,
-    structuredData: page.structuredData.normalizedGraphs,
-    expectedSchemaTypes: page.structuredData.types,
-    audit: pageAudit('captured-production-fixture', canonical.audit.minimumMeaningfulWordCount),
-    evidence: observedPageEvidence(false),
-    productionSignals: productionSignals(path),
   }
 }
 
-const productAliases = catalogProducts.map((product) =>
-  makeCanonicalizingAlias(`/product/${product.slug}`, `/${product.category}/${product.slug}`),
-)
+function currentCanonicalTarget(path: string): string {
+  const canonical = CURRENT_PRODUCTION_SEO_FIXTURE.pages[path]?.coreMetadata.canonical
+  if (!canonical) throw new Error(`${path}: current alias is missing a canonical target`)
+  return canonicalPath(canonical)
+}
 
-const misspelledProductAliases = catalogProducts
-  .filter((product) => product.category === 'puffy-labels-stickers')
-  .map((product) => makeCanonicalizingAlias(`/puff-labels-stickers/${product.slug}`, `/${product.category}/${product.slug}`))
-
-const canonicalizingTagAliases = [
-  makeCanonicalizingAlias('/blog/tag/custom-stickers', '/flat-labels-stickers/custom-stickers'),
-  makeCanonicalizingAlias('/blog/tag/holographic-stickers', '/flat-labels-stickers/holographic-stickers'),
-  makeCanonicalizingAlias('/blog/tag/puffy-stickers', '/puffy-labels-stickers/puffy-stickers'),
-]
-
-const productCategoryAliases = [
-  makeCanonicalizingAlias('/product-category/puffy-labels-stickers', '/puffy-labels-stickers'),
-  makeCanonicalizingAlias('/product-category/flat-labels-stickers', '/flat-labels-stickers'),
-  makeCanonicalizingAlias('/product-category/promotional-items', '/promotional-items'),
-]
+function legacyCanonicalTarget(path: string): string {
+  if (path.startsWith('/product/')) {
+    const slug = path.split('/')[2]
+    const product = productBySlug.get(slug)
+    if (!product) throw new Error(`${path}: preserved product alias has no catalog target`)
+    return `/${product.category}/${product.slug}`
+  }
+  if (path.startsWith('/product-category/')) return `/${path.split('/')[2]}`
+  throw new Error(`${path}: preserved alias has no explicit target policy`)
+}
 
 export const CANONICALIZING_ALIAS_CONTRACTS: readonly PageRouteContract[] = [
-  ...productAliases,
-  ...misspelledProductAliases,
-  ...canonicalizingTagAliases,
-  ...productCategoryAliases,
+  ...currentAliasPaths.map((path) => makeCanonicalizingAlias(path, currentCanonicalTarget(path))),
+  ...legacyAliasPaths.map((path) => makeCanonicalizingAlias(path, legacyCanonicalTarget(path))),
 ]
 
 const pageByPath = new Map(

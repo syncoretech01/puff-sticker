@@ -1,0 +1,53 @@
+{
+  "headings": [
+    {
+      "text": "Frequently askedquestions.",
+      "x": 38,
+      "y": 196,
+      "width": 691,
+      "height": 148
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "page-hero ",
+      "y": 0,
+      "width": 768,
+      "height": 660
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "faq-page-visuals",
+      "y": 660,
+      "width": 768,
+      "height": 1091
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "faq faq-page",
+      "y": 1751,
+      "width": 768,
+      "height": 3014
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "faq-page-contact",
+      "y": 4764,
+      "width": 768,
+      "height": 1234
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 5999,
+      "width": 768,
+      "height": 968
+    }
+  ]
+}

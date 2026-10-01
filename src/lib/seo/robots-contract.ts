@@ -1,18 +1,16 @@
 import { SITE_ORIGIN } from './route-contract'
 import { productionEndpointEvidence } from './production-evidence-fixture'
 
-/** Exact production robots.txt captured from puffsticker.com on 2026-08-14. */
+/** Exact production robots.txt captured from puffsticker.com on 2026-09-30. */
 export const PRODUCTION_ROBOTS_LINES = [
   'User-agent: *',
-  'Disallow: /wp-content/uploads/wc-logs/',
-  'Disallow: /wp-content/uploads/woocommerce_transient_files/',
-  'Disallow: /wp-content/uploads/woocommerce_uploads/',
-  'Disallow: /*?add-to-cart=',
-  'Disallow: /*?*add-to-cart=',
-  'Disallow: /wp-admin/',
-  'Allow: /wp-admin/admin-ajax.php',
+  'Allow: /',
   '',
-  `Sitemap: ${SITE_ORIGIN}/sitemap_index.xml`,
+  '# WordPress internals the old site exposed. Nothing here exists now.',
+  'Disallow: /wp-admin/',
+  'Disallow: /wp-content/',
+  '',
+  `Sitemap: ${SITE_ORIGIN}/sitemap.xml`,
 ] as const
 
 const robotsEvidence = productionEndpointEvidence('/robots.txt')
@@ -24,8 +22,8 @@ if (PRODUCTION_ROBOTS_TXT !== `${PRODUCTION_ROBOTS_LINES.join('\n')}\n`) {
 
 export const PRODUCTION_ROBOTS_EVIDENCE = {
   state: 'captured',
-  source: 'production-crawl-2026-08-22',
-  capturedOn: '2026-08-22',
+  source: 'production-crawl-2026-09-30',
+  capturedOn: '2026-09-30',
   normalizedBodyHash: robotsEvidence.normalizedBodyHash,
 } as const
 

@@ -82,6 +82,17 @@ function questionFromParagraph(element: string): string | null {
 
 export function extractPublishedFaqs(html: string | undefined): PublishedFaq[] {
   if (!html) return []
+
+  const disclosureFaqs = [...html.matchAll(/<details\b[^>]*>([\s\S]*?)<\/details>/gi)].flatMap((match) => {
+    const summary = match[1].match(/<summary\b[^>]*>([\s\S]*?)<\/summary>/i)
+    if (!summary) return []
+    const heading = summary[1].match(/<h[1-6]\b[^>]*>([\s\S]*?)<\/h[1-6]>/i)
+    const question = cleanQuestion(heading?.[1] ?? summary[1]).replace(/\s*\+\s*$/, '')
+    const answerHtml = match[1].replace(summary[0], '').trim()
+    return question && textContent(answerHtml) ? [{ question, answerHtml }] : []
+  })
+  if (disclosureFaqs.length) return disclosureFaqs
+
   const elements = topLevelElements(html)
   return elements.flatMap((element, index) => {
     if (elementName(element) !== 'a') return []

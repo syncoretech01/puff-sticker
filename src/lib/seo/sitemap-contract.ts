@@ -7,7 +7,7 @@ export type SitemapGroup = 'post' | 'page' | 'product' | 'product-category'
 export type SitemapEntryContract = {
   path: string
   url: string
-  lastModified: string
+  lastModified?: string
   group: SitemapGroup
   images: SeoSignal<readonly SitemapImageContract[]>
 }
@@ -50,17 +50,17 @@ function elementText(xml: string, name: string): string | undefined {
 
 type ObservedSitemapRow = {
   url: string
-  lastModified: string
+  lastModified?: string
   images: readonly SitemapImageContract[]
 }
 
-function observedRows(group: SitemapGroup): readonly ObservedSitemapRow[] {
-  const endpoint = productionEndpointEvidence(SITEMAP_PATH_BY_GROUP[group])
+function observedRows(): readonly ObservedSitemapRow[] {
+  const endpoint = productionEndpointEvidence(LEGACY_SITEMAP_PATHS.compatibilityIndex)
   return [...endpoint.body.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((match) => {
     const row = match[1]
     const url = elementText(row, 'loc')
     const lastModified = elementText(row, 'lastmod')
-    if (!url || !lastModified) throw new Error(`${SITEMAP_PATH_BY_GROUP[group]} contains an incomplete URL row`)
+    if (!url) throw new Error(`${LEGACY_SITEMAP_PATHS.compatibilityIndex} contains an incomplete URL row`)
     const images = [...row.matchAll(/<image:image>([\s\S]*?)<\/image:image>/g)].map((imageMatch) => {
       const location = elementText(imageMatch[1], 'image:loc')
       if (!location) throw new Error(`${url} has an image row without image:loc`)
@@ -68,20 +68,24 @@ function observedRows(group: SitemapGroup): readonly ObservedSitemapRow[] {
       const caption = elementText(imageMatch[1], 'image:caption')
       return { location, ...(title ? { title } : {}), ...(caption ? { caption } : {}) }
     })
-    return { url, lastModified, images }
+    return { url, ...(lastModified ? { lastModified } : {}), images }
   })
 }
 
-const OBSERVED_ROWS = Object.fromEntries(
-  (Object.keys(SITEMAP_PATH_BY_GROUP) as SitemapGroup[]).map((group) => [group, observedRows(group)]),
-) as Readonly<Record<SitemapGroup, readonly ObservedSitemapRow[]>>
-
 function groupFor(path: string): SitemapGroup {
   if (path === '/blog' || path.startsWith('/blog/')) return 'post'
-  if (path === '/puffy-labels-stickers' || path === '/flat-labels-stickers' || path === '/promotional-items') return 'product-category'
+  if (path === '/puffy-labels-stickers' || path === '/flat-labels-stickers' || path === '/promotional-items' || path === '/cbd-packaging-boxes') return 'product-category'
   if (path.split('/').filter(Boolean).length === 2 && !path.startsWith('/blog/')) return 'product'
   return 'page'
 }
+
+const flatRows = observedRows()
+const OBSERVED_ROWS = Object.fromEntries(
+  (Object.keys(SITEMAP_PATH_BY_GROUP) as SitemapGroup[]).map((group) => [
+    group,
+    flatRows.filter((row) => groupFor(new URL(row.url).pathname.replace(/\/$/, '') || '/') === group),
+  ]),
+) as unknown as Readonly<Record<SitemapGroup, readonly ObservedSitemapRow[]>>
 
 const canonicalRouteByUrl = new Map(
   CANONICAL_SITEMAP_ROUTES.map((route) => [`${SITE_ORIGIN}${route.publicPath}`, route]),
@@ -93,11 +97,11 @@ export const SITEMAP_ENTRIES: readonly SitemapEntryContract[] = (
   const route = canonicalRouteByUrl.get(observed.url)
   if (!route) throw new Error(`Captured sitemap URL has no canonical route contract: ${observed.url}`)
   if (groupFor(route.path) !== group) throw new Error(`${route.path} is in the wrong production sitemap group`)
-  const capture = productionEndpointEvidenceCapture(SITEMAP_PATH_BY_GROUP[group])
+  const capture = productionEndpointEvidenceCapture(LEGACY_SITEMAP_PATHS.compatibilityIndex)
   return {
     path: route.path,
     url: observed.url,
-    lastModified: observed.lastModified,
+    ...(observed.lastModified ? { lastModified: observed.lastModified } : {}),
     group,
     images: capturedSignal(observed.images, capture.source, capture.capturedOn),
   }
@@ -127,8 +131,8 @@ function capturedEndpoint(path: string, details: Record<string, unknown>) {
 }
 
 export const SITEMAP_ENDPOINT_EVIDENCE = {
-  compatibilityIndex: capturedEndpoint(LEGACY_SITEMAP_PATHS.compatibilityIndex, { equivalentTo: LEGACY_SITEMAP_PATHS.index, childCount: 5 }),
-  index: capturedEndpoint(LEGACY_SITEMAP_PATHS.index, { childCount: 5 }),
+  compatibilityIndex: capturedEndpoint(LEGACY_SITEMAP_PATHS.compatibilityIndex, { urlCount: flatRows.length }),
+  index: capturedEndpoint(LEGACY_SITEMAP_PATHS.index, { redirectsTo: LEGACY_SITEMAP_PATHS.compatibilityIndex }),
   post: capturedEndpoint(LEGACY_SITEMAP_PATHS.post, {
     urlCount: OBSERVED_ROWS.post.length,
     imageCount: OBSERVED_ROWS.post.reduce((sum, row) => sum + row.images.length, 0),
@@ -145,6 +149,6 @@ export const SITEMAP_ENDPOINT_EVIDENCE = {
     urlCount: OBSERVED_ROWS['product-category'].length,
     imageCount: OBSERVED_ROWS['product-category'].reduce((sum, row) => sum + row.images.length, 0),
   }),
-  local: capturedEndpoint(LEGACY_SITEMAP_PATHS.local, { urlCount: 1, locationPath: LEGACY_SITEMAP_PATHS.locations }),
-  locations: capturedEndpoint(LEGACY_SITEMAP_PATHS.locations, { placemarkCount: 1 }),
+  local: capturedEndpoint(LEGACY_SITEMAP_PATHS.local, { redirectsTo: LEGACY_SITEMAP_PATHS.compatibilityIndex }),
+  locations: capturedEndpoint(LEGACY_SITEMAP_PATHS.locations, { notFound: true }),
 } as const

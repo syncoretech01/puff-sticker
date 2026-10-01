@@ -1,0 +1,44 @@
+{
+  "headings": [
+    {
+      "text": "Why Sticker Books Never Really Disappeared",
+      "x": 20,
+      "y": 282,
+      "width": 351,
+      "height": 198
+    },
+    {
+      "text": "Why Sticker Books Never Really Disappeared",
+      "x": 20,
+      "y": 1561,
+      "width": 351,
+      "height": 132
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "article",
+      "id": null,
+      "className": "article-page",
+      "y": 0,
+      "width": 390,
+      "height": 15862
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "more-notes",
+      "y": 15862,
+      "width": 390,
+      "height": 1704
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 17566,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

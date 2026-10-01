@@ -1,0 +1,44 @@
+{
+  "headings": [
+    {
+      "text": "Soft Depth vs Smooth Depth: Puffy and Epoxy Stickers Compared",
+      "x": 195,
+      "y": 282,
+      "width": 1050,
+      "height": 284
+    },
+    {
+      "text": "Puffy vs Epoxy Stickers: Soft Depth vs Smooth Depth",
+      "x": 528,
+      "y": 2053,
+      "width": 720,
+      "height": 88
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "article",
+      "id": null,
+      "className": "article-page",
+      "y": 0,
+      "width": 1440,
+      "height": 11395
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "more-notes",
+      "y": 11395,
+      "width": 1440,
+      "height": 906
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 12301,
+      "width": 1440,
+      "height": 754
+    }
+  ]
+}

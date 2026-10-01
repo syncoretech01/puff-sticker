@@ -40,7 +40,19 @@ const CAPTURE_DATE = process.env.PUFF_PRODUCTION_SEO_CAPTURE_DATE?.trim()
 if (!CAPTURE_DATE || !/^\d{4}-\d{2}-\d{2}$/.test(CAPTURE_DATE)) {
   throw new Error('Set PUFF_PRODUCTION_SEO_CAPTURE_DATE=YYYY-MM-DD for a requested new production observation')
 }
-const OUTPUT_PATH = resolve(`src/lib/seo/fixtures/production-seo-capture-${CAPTURE_DATE}.json`)
+const CAPTURE_SUFFIX = process.env.PUFF_PRODUCTION_SEO_CAPTURE_SUFFIX?.trim() ?? ''
+if (CAPTURE_SUFFIX && !/^[a-z0-9-]+$/.test(CAPTURE_SUFFIX)) throw new Error('PUFF_PRODUCTION_SEO_CAPTURE_SUFFIX must be lowercase kebab-case')
+const EXTRA_ROUTE_PATHS = (process.env.PUFF_PRODUCTION_EXTRA_ROUTES ?? '')
+  .split(',').map((value) => value.trim()).filter(Boolean)
+  .map((value) => {
+    const url = new URL(value, SITE_ORIGIN)
+    if (url.origin !== SITE_ORIGIN) throw new Error(`Cross-origin extra route is not allowed: ${value}`)
+    const path = url.pathname === '/' ? '/' : `/${url.pathname.split('/').filter(Boolean).join('/')}`
+    return { path, publicPath: `${url.pathname}${url.search}` }
+  })
+const CAPTURE_ONLY_EXTRA_ROUTES = process.env.PUFF_PRODUCTION_CAPTURE_ONLY_EXTRA_ROUTES === '1'
+if (CAPTURE_ONLY_EXTRA_ROUTES && !EXTRA_ROUTE_PATHS.length) throw new Error('Extra-only capture requires PUFF_PRODUCTION_EXTRA_ROUTES')
+const OUTPUT_PATH = resolve(`src/lib/seo/fixtures/production-seo-capture-${CAPTURE_DATE}${CAPTURE_SUFFIX ? `-${CAPTURE_SUFFIX}` : ''}.json`)
 const COMPATIBILITY_SITEMAP_REDIRECT_CAPTURE_DATE = CAPTURE_DATE
 const USER_AGENT = 'PuffSticker-Parity-Capture/1.0 (+https://puffsticker.com/)'
 
@@ -192,7 +204,9 @@ const routeByPath = new Map(contractedProductionRoutes.map((route) => [route.pat
 for (const route of sitemapDiscoveredRoutes) {
   if (!routeByPath.has(route.path)) routeByPath.set(route.path, route)
 }
-const productionRoutes = [...routeByPath.values()].sort((left, right) => left.path.localeCompare(right.path))
+for (const route of EXTRA_ROUTE_PATHS) routeByPath.set(route.path, route)
+const productionRoutes = (CAPTURE_ONLY_EXTRA_ROUTES ? EXTRA_ROUTE_PATHS : [...routeByPath.values()])
+  .sort((left, right) => left.path.localeCompare(right.path))
 
 const browser = await chromium.launch({ headless: true })
 const context = await browser.newContext({
@@ -388,14 +402,14 @@ try {
   await browser.close()
 }
 
-const failedPages = Object.entries(pages).filter(([, page]) => page.status !== 200)
-const failedEndpoints = Object.entries(endpoints).filter(([, endpoint]) => endpoint.status !== 200)
-if (Object.keys(pages).length !== productionRoutes.length || failedPages.length || failedEndpoints.length) {
+const unexpectedPages = Object.entries(pages).filter(([, page]) => ![200, 404].includes(page.status))
+const unexpectedEndpoints = Object.entries(endpoints).filter(([, endpoint]) => ![200, 404].includes(endpoint.status))
+if (Object.keys(pages).length !== productionRoutes.length || unexpectedPages.length || unexpectedEndpoints.length) {
   throw new Error(JSON.stringify({
     expectedPages: productionRoutes.length,
     capturedPages: Object.keys(pages).length,
-    failedPages: failedPages.map(([path, page]) => ({ path, status: page.status })),
-    failedEndpoints: failedEndpoints.map(([path, endpoint]) => ({ path, status: endpoint.status })),
+    unexpectedPages: unexpectedPages.map(([path, page]) => ({ path, status: page.status })),
+    unexpectedEndpoints: unexpectedEndpoints.map(([path, endpoint]) => ({ path, status: endpoint.status })),
   }, null, 2))
 }
 

@@ -1,0 +1,92 @@
+{
+  "headings": [
+    {
+      "text": "Jute Bag",
+      "x": 844,
+      "y": 310,
+      "width": 539,
+      "height": 79
+    },
+    {
+      "text": "Jute Bag",
+      "x": 568,
+      "y": 5219,
+      "width": 815,
+      "height": 44
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-detail",
+      "y": 0,
+      "width": 1440,
+      "height": 1550
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-proof",
+      "y": 1550,
+      "width": 1440,
+      "height": 791
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-content",
+      "y": 2341,
+      "width": 1440,
+      "height": 11120
+    },
+    {
+      "element": "section",
+      "id": "product-specifications",
+      "className": "product-specs",
+      "y": 13460,
+      "width": 1440,
+      "height": 622
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-applications",
+      "y": 14083,
+      "width": 1440,
+      "height": 850
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "faq product-page-faq",
+      "y": 14933,
+      "width": 1440,
+      "height": 962
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "related-products",
+      "y": 15894,
+      "width": 1440,
+      "height": 941
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "inline-quote",
+      "y": 16835,
+      "width": 1440,
+      "height": 365
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 17201,
+      "width": 1440,
+      "height": 754
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-export type CategorySlug = 'puffy-labels-stickers' | 'flat-labels-stickers' | 'promotional-items'
+export type CategorySlug = 'puffy-labels-stickers' | 'flat-labels-stickers' | 'promotional-items' | 'cbd-packaging-boxes'
 
 export type CatalogProduct = {
   id: number
@@ -59,9 +59,18 @@ export const categories: Record<
     accent: '#8be2d7',
     image: '/assets/catalog/woven-bags.webp',
   },
+  'cbd-packaging-boxes': {
+    name: 'CBD Packaging Boxes',
+    shortName: 'CBD Packaging',
+    kicker: 'Retail-ready packaging',
+    description: 'Custom CBD and hemp boxes built around the product, compliance panel, closure and shelf presentation.',
+    href: '/cbd-packaging-boxes',
+    accent: '#d6a957',
+    image: '/assets/catalog/mylar-bags.webp',
+  },
 }
 
-export const catalogProducts: CatalogProduct[] = [
+const legacyCatalogProducts: CatalogProduct[] = [
   {
     id: 17645,
     slug: 'puffy-stickers',
@@ -651,6 +660,50 @@ export const catalogProducts: CatalogProduct[] = [
     options: ['White kraft', 'Brown kraft', 'Full-color print', 'Monochrome print'],
   },
 ]
+
+const cbdProductDefinitions = [
+  ['cbd-bottle-boxes', 'CBD Bottle Boxes', 'Custom CBD bottle boxes sized for oil, tincture, or topical bottles. Sturdy construction, secure fit, full branding, and wholesale pricing available.'],
+  ['cbd-display-boxes', 'CBD Display Boxes', 'Custom CBD display boxes built to organize and showcase your product line at retail counters. Sturdy construction, full branding, and wholesale pricing available.'],
+  ['cbd-gummy-boxes', 'CBD Gummy Boxes', 'Custom CBD gummy boxes for wrapped or sealed gummies, with tamper-evident options and vibrant full-color printing.'],
+  ['cbd-kraft-boxes', 'CBD Kraft Boxes', 'Custom CBD kraft boxes with a natural, recyclable finish, durable construction and full-color printing.'],
+  ['cbd-oil-packaging', 'CBD Oil Packaging', 'Custom CBD oil packaging built around your bottle size, with durable materials and full branding.'],
+  ['cbd-sleeve-tray-boxes', 'CBD Sleeve Tray Boxes', 'Custom CBD sleeve and tray boxes with a two-piece design for an elevated retail look.'],
+  ['cbd-tincture-boxes', 'CBD Tincture Boxes', 'Custom CBD tincture boxes sized for dropper bottles, with sturdy stock, secure fit and full-color branding.'],
+  ['child-resistant-boxes', 'Child-Resistant Boxes', 'Custom child-resistant locking box styles, printed with full branding and built from durable materials.'],
+  ['custom-cbd-boxes', 'Custom CBD Boxes', 'Fully custom CBD boxes in any size, material or finish for a single SKU or a complete product line.'],
+  ['custom-hemp-boxes', 'Custom Hemp Boxes', 'Custom hemp boxes for a wide range of hemp-derived products, with durable materials and full branding.'],
+] as const
+
+const cbdProducts: CatalogProduct[] = cbdProductDefinitions.map(([slug, name, summary], index) => ({
+  id: 30001 + index,
+  slug,
+  name,
+  category: 'cbd-packaging-boxes',
+  eyebrow: 'Custom retail packaging',
+  tagline: summary,
+  summary,
+  overview: summary,
+  price: 'Quote for pricing',
+  image: '/assets/catalog/mylar-bags.webp',
+  sourceUrl: `https://puffsticker.com/cbd-packaging-boxes/${slug}/`,
+  accent: '#d6a957',
+  accentSoft: '#f1e3c7',
+  features: [
+    { title: 'Built to fit', text: 'Dimensions and structure are configured around the product and retail requirements.' },
+    { title: 'Full brand control', text: 'Artwork, copy, finishes and compliance panels are reviewed before production.' },
+    { title: 'Wholesale production', text: 'Made to order from 250 pieces with a free digital proof.' },
+  ],
+  specifications: [
+    { label: 'Minimum order', value: '250 pieces' },
+    { label: 'Proof', value: 'Free digital proof before production' },
+    { label: 'Production & delivery', value: '18–20 business days from proof approval' },
+    { label: 'Format', value: 'Custom size, stock, structure and finish' },
+  ],
+  applications: ['CBD retail', 'Hemp products', 'Tinctures and oils', 'Gummies and wellness'],
+  options: ['Custom dimensions', 'Custom print', 'Premium finishes', 'Protective inserts'],
+}))
+
+export const catalogProducts: CatalogProduct[] = [...legacyCatalogProducts, ...cbdProducts]
 
 export function getProduct(slug?: string) {
   return catalogProducts.find((product) => product.slug === slug)

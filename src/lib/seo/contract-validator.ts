@@ -195,7 +195,7 @@ export function validateSeoManifest(snapshot: SeoManifestSnapshot = SEO_MANIFEST
     if (route.status !== 200) failures.push(`${route.path}: page status must be 200`)
     if (!route.metadata.title.trim()) failures.push(`${route.path}: title missing`)
     if (!route.metadata.canonical.startsWith(SITE_ORIGIN)) failures.push(`${route.path}: non-first-party canonical`)
-    if (route.indexable === /noindex/i.test(route.metadata.robots)) failures.push(`${route.path}: robots/indexability mismatch`)
+    if (route.indexable === /noindex/i.test(route.metadata.robots ?? '')) failures.push(`${route.path}: robots/indexability mismatch`)
     if (route.inSitemap && !route.indexable) failures.push(`${route.path}: noindex page in sitemap`)
     if (route.evidence.searchConsole !== 'not-provided') failures.push(`${route.path}: unexpected Search Console evidence state`)
     if (route.evidence.backlinks !== 'not-provided') failures.push(`${route.path}: unexpected backlink evidence state`)
@@ -214,7 +214,7 @@ export function validateSeoManifest(snapshot: SeoManifestSnapshot = SEO_MANIFEST
   }
 
   if (snapshot === SEO_MANIFEST_SNAPSHOT) {
-    if (CANONICAL_SITEMAP_ROUTES.length !== 44) failures.push(`expected 44 canonical sitemap routes, found ${CANONICAL_SITEMAP_ROUTES.length}`)
+    if (CANONICAL_SITEMAP_ROUTES.length !== 72) failures.push(`expected 72 canonical sitemap routes, found ${CANONICAL_SITEMAP_ROUTES.length}`)
     const expectedSlashPaths = new Set(allPages.filter((route) => route.path !== '/').map((route) => route.path))
     const actualSlashPaths = TRAILING_SLASH_REDIRECTS.map((route) => route.path)
     const actualSlashPathSet = new Set(actualSlashPaths)

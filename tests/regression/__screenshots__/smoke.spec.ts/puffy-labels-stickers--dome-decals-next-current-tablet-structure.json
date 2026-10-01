@@ -1,0 +1,92 @@
+{
+  "headings": [
+    {
+      "text": "Dome Decals",
+      "x": 38,
+      "y": 792,
+      "width": 691,
+      "height": 47
+    },
+    {
+      "text": "Dome Decals",
+      "x": 38,
+      "y": 7022,
+      "width": 691,
+      "height": 44
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-detail",
+      "y": 0,
+      "width": 768,
+      "height": 2133
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-proof",
+      "y": 2133,
+      "width": 768,
+      "height": 1271
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-content",
+      "y": 3404,
+      "width": 768,
+      "height": 11168
+    },
+    {
+      "element": "section",
+      "id": "product-specifications",
+      "className": "product-specs",
+      "y": 14572,
+      "width": 768,
+      "height": 1227
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-applications",
+      "y": 15799,
+      "width": 768,
+      "height": 1268
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "faq product-page-faq",
+      "y": 17068,
+      "width": 768,
+      "height": 1205
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "related-products",
+      "y": 18273,
+      "width": 768,
+      "height": 1318
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "inline-quote",
+      "y": 19591,
+      "width": 768,
+      "height": 389
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 19980,
+      "width": 768,
+      "height": 968
+    }
+  ]
+}

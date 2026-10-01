@@ -1,0 +1,44 @@
+{
+  "headings": [
+    {
+      "text": "Why We Save Stickers We Never Use: The Psychology Behind Unused Stickers",
+      "x": 20,
+      "y": 282,
+      "width": 351,
+      "height": 396
+    },
+    {
+      "text": "Why We Save Stickers We Never Use",
+      "x": 20,
+      "y": 1841,
+      "width": 351,
+      "height": 88
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "article",
+      "id": null,
+      "className": "article-page",
+      "y": 0,
+      "width": 390,
+      "height": 17078
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "more-notes",
+      "y": 17078,
+      "width": 390,
+      "height": 1704
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 18783,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

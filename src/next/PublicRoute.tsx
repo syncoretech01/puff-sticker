@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
+import { currentProductionContent } from '../content/currentProductionContent'
 import {
   exactSocialMetaTags,
   resolveSeoRoute,
@@ -23,7 +24,7 @@ export function coreRouteMetadata(pathname: string): Metadata {
     title: metadata.title,
     ...(metadata.description === undefined ? {} : { description: metadata.description }),
     alternates: metadata.alternates,
-    robots: metadata.robots,
+    ...(metadata.robots ? { robots: metadata.robots } : {}),
   }
 }
 
@@ -49,12 +50,15 @@ export function PublicRoute({ pathname }: { pathname: string }) {
   const route = resolveSeoRoute(pathname)
   if (route.disposition === 'not-found') notFound()
 
+  const productionContent = currentProductionContent(route.path, route.canonicalPath)
+
   return (
     <>
       <RouteSeoSignals route={route} />
       <ClientApp
         initialPathname={route.path}
         renderPathname={route.renderPath}
+        productionContent={productionContent}
         nextMode
       />
     </>

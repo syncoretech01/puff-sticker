@@ -1,0 +1,44 @@
+{
+  "headings": [
+    {
+      "text": "A clear path when production is not right.",
+      "x": 20,
+      "y": 196,
+      "width": 351,
+      "height": 192
+    },
+    {
+      "text": "Refund and return policy",
+      "x": 20,
+      "y": 1046,
+      "width": 351,
+      "height": 88
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "page-hero ",
+      "y": 0,
+      "width": 390,
+      "height": 683
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "policy-page",
+      "y": 683,
+      "width": 390,
+      "height": 4927
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 5610,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

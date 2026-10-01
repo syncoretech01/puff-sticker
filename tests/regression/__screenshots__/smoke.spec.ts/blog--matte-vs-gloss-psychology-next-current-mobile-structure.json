@@ -1,0 +1,44 @@
+{
+  "headings": [
+    {
+      "text": "The Psychology of Quiet Surfaces",
+      "x": 20,
+      "y": 282,
+      "width": 351,
+      "height": 149
+    },
+    {
+      "text": "The Psychology of Quiet Surfaces: Why Matte, Gloss & Texture Shape Emotion",
+      "x": 20,
+      "y": 1593,
+      "width": 351,
+      "height": 176
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "article",
+      "id": null,
+      "className": "article-page",
+      "y": 0,
+      "width": 390,
+      "height": 23031
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "more-notes",
+      "y": 23031,
+      "width": 390,
+      "height": 1704
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 24735,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

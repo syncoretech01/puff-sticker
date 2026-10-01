@@ -23,13 +23,13 @@
       "className": "blog-page",
       "y": 780,
       "width": 1440,
-      "height": 1520
+      "height": 5999
     },
     {
       "element": "footer",
       "id": null,
       "className": "site-footer",
-      "y": 2300,
+      "y": 6779,
       "width": 1440,
       "height": 754
     }

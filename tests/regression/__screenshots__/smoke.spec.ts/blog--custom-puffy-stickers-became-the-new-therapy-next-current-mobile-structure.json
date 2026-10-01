@@ -1,0 +1,44 @@
+{
+  "headings": [
+    {
+      "text": "Small Joys, Big Impact: How Custom Puffy Stickers Became the New Therapy for Gen Z and Millennials in 2026",
+      "x": 20,
+      "y": 282,
+      "width": 351,
+      "height": 446
+    },
+    {
+      "text": "Custom Puffy Stickers - Therapy for Gen Z and Millennials in 2026",
+      "x": 20,
+      "y": 1915,
+      "width": 351,
+      "height": 176
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "article",
+      "id": null,
+      "className": "article-page",
+      "y": 0,
+      "width": 390,
+      "height": 12121
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "more-notes",
+      "y": 12121,
+      "width": 390,
+      "height": 1704
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 13825,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

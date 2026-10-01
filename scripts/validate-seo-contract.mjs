@@ -29,13 +29,15 @@ const {
   resolveSeoRoute,
   validateSeoManifest,
 } = await import('../src/lib/seo/index.ts')
+const { CURRENT_PRODUCTION_ACTIVE_PATHS, LEGACY_PRESERVED_PATHS } = await import('../src/lib/seo/production-evidence-fixture.ts')
 
 const failures = []
-const check = (condition, message) => {
-  if (!condition) failures.push(message)
-}
-
+const check = (condition, message) => { if (!condition) failures.push(message) }
 const duplicates = (values) => [...new Set(values.filter((value, index) => values.indexOf(value) !== index))]
+const normalizedPath = (value) => {
+  const pathname = new URL(value, SITE_ORIGIN).pathname
+  return pathname === '/' ? '/' : `/${pathname.split('/').filter(Boolean).join('/')}`
+}
 const schemaTypes = (value) => {
   const types = new Set()
   const visit = (item) => {
@@ -50,9 +52,10 @@ const schemaTypes = (value) => {
   return types
 }
 
-check(PRIMARY_ROUTE_CONTRACTS.length === 96, `expected 96 primary routes, found ${PRIMARY_ROUTE_CONTRACTS.length}`)
-check(CANONICAL_SITEMAP_ROUTES.length === 44, `expected 44 HTML sitemap routes, found ${CANONICAL_SITEMAP_ROUTES.length}`)
-check(CANONICALIZING_ALIAS_CONTRACTS.length === 34, `expected 34 explicit canonicalizing aliases, found ${CANONICALIZING_ALIAS_CONTRACTS.length}`)
+check(PRIMARY_ROUTE_CONTRACTS.length === 77, `expected 77 primary routes, found ${PRIMARY_ROUTE_CONTRACTS.length}`)
+check(CANONICAL_SITEMAP_ROUTES.length === 72, `expected 72 sitemap routes, found ${CANONICAL_SITEMAP_ROUTES.length}`)
+check(CANONICALIZING_ALIAS_CONTRACTS.length === 79, `expected 79 canonicalizing aliases, found ${CANONICALIZING_ALIAS_CONTRACTS.length}`)
+check(TRAILING_SLASH_REDIRECTS.length === 155, `expected 155 slash redirects, found ${TRAILING_SLASH_REDIRECTS.length}`)
 check(duplicates(PRIMARY_ROUTE_CONTRACTS.map((route) => route.path)).length === 0, 'duplicate primary route paths')
 check(duplicates(CANONICALIZING_ALIAS_CONTRACTS.map((route) => route.path)).length === 0, 'duplicate alias route paths')
 check(duplicates(SITEMAP_ENTRIES.map((entry) => entry.path)).length === 0, 'duplicate sitemap paths')
@@ -63,48 +66,40 @@ const sitemapCounts = {
   product: SITEMAP_GROUPS.product.length,
   productCategory: SITEMAP_GROUPS['product-category'].length,
 }
-check(sitemapCounts.post === 12, `expected 12 post sitemap routes, found ${sitemapCounts.post}`)
-check(sitemapCounts.page === 8, `expected 8 page sitemap routes, found ${sitemapCounts.page}`)
-check(sitemapCounts.product === 21, `expected 21 product sitemap routes, found ${sitemapCounts.product}`)
-check(sitemapCounts.productCategory === 3, `expected 3 product-category sitemap routes, found ${sitemapCounts.productCategory}`)
+check(sitemapCounts.post === 25, `expected 25 post routes, found ${sitemapCounts.post}`)
+check(sitemapCounts.page === 12, `expected 12 page routes, found ${sitemapCounts.page}`)
+check(sitemapCounts.product === 31, `expected 31 product routes, found ${sitemapCounts.product}`)
+check(sitemapCounts.productCategory === 4, `expected 4 product-category routes, found ${sitemapCounts.productCategory}`)
 
 for (const route of PRIMARY_ROUTE_CONTRACTS) {
   check(route.status === 200, `${route.path}: primary status is not 200`)
   check(Boolean(route.metadata.title), `${route.path}: title missing`)
   check(Boolean(route.metadata.canonical), `${route.path}: canonical missing`)
   check(route.metadata.canonical.startsWith(SITE_ORIGIN), `${route.path}: canonical is not first-party`)
-  check(route.indexable !== route.metadata.robots.toLowerCase().includes('noindex'), `${route.path}: indexability and robots disagree`)
+  check(route.indexable !== (route.metadata.robots ?? '').toLowerCase().includes('noindex'), `${route.path}: indexability and robots disagree`)
   check(route.inSitemap ? route.indexable : true, `${route.path}: noindex route entered sitemap`)
-  const approvedTargetOverride = route.path === '/resources' || route.path === '/shipping-delivery'
-  check(
-    route.evidence.crawl === (approvedTargetOverride ? 'approved-target-override' : 'observed-live'),
-    `${route.path}: primary route crawl provenance is incorrect`,
-  )
-  check(
-    route.evidence.liveStatus === (approvedTargetOverride ? 404 : 200),
-    `${route.path}: live status provenance is incorrect`,
-  )
+  const localOverride = route.path === '/resources' || route.path === '/shipping-delivery'
+  check(route.evidence.crawl === (localOverride ? 'approved-target-override' : 'observed-live'), `${route.path}: crawl provenance is incorrect`)
+  check(route.evidence.liveStatus === (localOverride ? 404 : 200), `${route.path}: live status provenance is incorrect`)
   check(route.evidence.targetStatus === 200, `${route.path}: target status provenance is incorrect`)
   check(route.evidence.sitemap === (route.inSitemap ? 'listed-live' : 'confirmed-off-sitemap'), `${route.path}: sitemap provenance disagrees`)
   check(route.evidence.searchConsole === 'not-provided', `${route.path}: Search Console availability is misstated`)
-  check(route.evidence.backlinks === 'not-provided', `${route.path}: backlink-data availability is misstated`)
+  check(route.evidence.backlinks === 'not-provided', `${route.path}: backlink availability is misstated`)
   check(route.evidence.accessLogs === 'not-provided', `${route.path}: access-log availability is misstated`)
   check(resolveSeoRoute(route.publicPath).disposition === 'page', `${route.path}: public path does not resolve as a page`)
   if (route.productionSignals.scope === 'production') {
     const actualTypes = schemaTypes(route.structuredData)
-    for (const expected of route.expectedSchemaTypes) {
-      check(actualTypes.has(expected), `${route.path}: migrated schema type ${expected} missing`)
-    }
+    for (const expected of route.expectedSchemaTypes) check(actualTypes.has(expected), `${route.path}: schema type ${expected} missing`)
   }
 }
 
 for (const route of CANONICALIZING_ALIAS_CONTRACTS) {
-  check(route.status === 200 && route.indexable, `${route.path}: live alias must remain 200/index`)
-  check(!route.inSitemap, `${route.path}: alias must remain off sitemap`)
-  check(route.path !== route.renderPath, `${route.path}: alias render target is not canonical content`)
-  check(route.metadata.canonical.includes(route.renderPath), `${route.path}: alias canonical does not target render path`)
+  check(route.status === 200 && route.indexable, `${route.path}: alias must remain 200/index`)
+  check(!route.inSitemap, `${route.path}: alias entered the sitemap`)
+  check(route.path !== route.renderPath, `${route.path}: alias does not render canonical content`)
+  check(normalizedPath(route.metadata.canonical) === route.renderPath, `${route.path}: alias canonical differs from render target`)
   check(route.evidence.crawl === 'observed-live' && route.evidence.sitemap === 'confirmed-off-sitemap', `${route.path}: alias evidence provenance changed`)
-  check(route.evidence.liveStatus === 200 && route.evidence.targetStatus === 200, `${route.path}: alias status provenance changed`)
+  check(route.evidence.liveStatus === 200 && route.evidence.targetStatus === 200, `${route.path}: preserved alias target contract changed`)
 }
 
 for (const redirect of TRAILING_SLASH_REDIRECTS) {
@@ -112,88 +107,73 @@ for (const redirect of TRAILING_SLASH_REDIRECTS) {
   check(resolved.disposition === 'redirect', `${redirect.path}: slashless request does not redirect`)
   check(resolved.disposition !== 'redirect' || resolved.status === 301, `${redirect.path}: slash redirect is not 301`)
   check(resolved.disposition !== 'redirect' || resolved.destination === `${redirect.path}/`, `${redirect.path}: slash redirect is not one hop`)
-  const approvedTargetOverride = redirect.path === '/resources' || redirect.path === '/shipping-delivery'
-  check(
-    redirect.evidence.crawl === (approvedTargetOverride ? 'approved-target-override' : 'derived-from-observed-policy'),
-    `${redirect.path}: slash redirect provenance is incorrect`,
-  )
-  check(
-    redirect.evidence.liveStatus === (approvedTargetOverride ? 404 : 'not-individually-verified'),
-    `${redirect.path}: slash redirect live status provenance is incorrect`,
-  )
-  check(redirect.evidence.targetStatus === 301, `${redirect.path}: slash redirect target status provenance is incorrect`)
+  const localOverride = redirect.path === '/resources' || redirect.path === '/shipping-delivery'
+  check(redirect.evidence.crawl === (localOverride ? 'approved-target-override' : 'derived-from-observed-policy'), `${redirect.path}: slash redirect provenance is incorrect`)
+  check(redirect.evidence.liveStatus === (localOverride ? 404 : 'not-individually-verified'), `${redirect.path}: slash redirect live status is incorrect`)
+  check(redirect.evidence.targetStatus === 301, `${redirect.path}: slash redirect target status is incorrect`)
 }
 
 for (const path of EXPLICIT_NOT_FOUND_PATHS) {
   const route = resolveSeoRoute(path)
-  check(route.disposition === 'not-found' && route.status === 404, `${path}: production 404 alias unexpectedly resolves`)
-  check(route.evidence.liveStatus === 404 && route.evidence.targetStatus === 404, `${path}: explicit 404 status provenance changed`)
+  check(route.disposition === 'not-found' && route.status === 404, `${path}: explicit production 404 unexpectedly resolves`)
+  check(route.evidence.liveStatus === 404 && route.evidence.targetStatus === 404, `${path}: explicit 404 provenance changed`)
 }
-check(EXPLICIT_NOT_FOUND_CONTRACTS.length === EXPLICIT_NOT_FOUND_PATHS.length, 'explicit 404 contract coverage mismatch')
-
-for (const path of ['/random/puffy-stickers/', '/arbitrary/custom-stickers/', '/product/not-a-product/', '/blog/tag/not-a-tag/']) {
+check(EXPLICIT_NOT_FOUND_CONTRACTS.length === 8, `expected 8 explicit 404 contracts, found ${EXPLICIT_NOT_FOUND_CONTRACTS.length}`)
+for (const path of ['/random/puffy-stickers/', '/arbitrary/custom-stickers/', '/product/not-a-product/', '/blog/tag/not-a-tag/', '/cbd-packaging-boxes/not-a-box/']) {
   const route = resolveSeoRoute(path)
-  check(route.disposition === 'not-found' && route.status === 404, `${path}: unknown wildcard-like route unexpectedly resolves`)
+  check(route.disposition === 'not-found' && route.status === 404, `${path}: unknown wildcard route unexpectedly resolves`)
 }
 
 const shop = resolveSeoRoute('/shop/')
 check(shop.disposition === 'page', '/shop: missing')
 if (shop.disposition === 'page') {
-  check(shop.status === 200 && shop.indexable, '/shop: must preserve 200/index')
-  check(shop.metadata.title === 'Shop - puffsticker.com', '/shop: production title changed')
-  check(shop.metadata.description === 'Products Archive - puffsticker.com', '/shop: production description changed')
-  check(shop.metadata.canonical === 'https://puffsticker.com/?page_id=9', '/shop: production canonical changed')
-  check(!shop.inSitemap, '/shop: must remain off sitemap')
-  check(shop.canonicalTargetEvidence?.redirectChain.length === 2, '/shop: canonical target redirect chain fixture missing')
-  check(shop.canonicalTargetEvidence?.redirectChain[0]?.status === 301, '/shop: canonical query target must preserve observed 301')
-  check(shop.canonicalTargetEvidence?.finalUrl === 'https://puffsticker.com/puffy-labels-stickers/puffy-stickers/', '/shop: canonical query target destination changed')
+  check(shop.status === 200 && shop.indexable, '/shop: must preserve current 200/index')
+  check(shop.metadata.title === 'All Products | Custom Stickers, Labels, Bags and Boxes | Puff Sticker', '/shop: current title changed')
+  check(shop.metadata.description === 'Every product PuffSticker makes: puffy and raised stickers, flat labels and stickers, promotional bags and CBD packaging boxes. Made to order from 250 pieces with a free digital proof.', '/shop: current description changed')
+  check(shop.metadata.canonical === 'https://puffsticker.com/shop/', '/shop: current self-canonical changed')
+  check(shop.inSitemap, '/shop: missing from current sitemap')
 }
 
+for (const path of ['/cbd-packaging-boxes/', '/industries/', '/payment-terms/', '/shipping-policy/']) {
+  const route = resolveSeoRoute(path)
+  check(route.disposition === 'page' && route.status === 200, `${path}: current production route missing`)
+  if (route.disposition === 'page') check(route.inSitemap && route.evidence.capturedOn === '2026-09-30', `${path}: current sitemap/evidence provenance missing`)
+}
+const checkout = resolveSeoRoute('/checkout/')
+check(checkout.disposition === 'page', '/checkout: missing')
+if (checkout.disposition === 'page') {
+  check(checkout.status === 200 && !checkout.indexable && !checkout.inSitemap, '/checkout: must preserve current 200/noindex/off-sitemap behavior')
+  check(checkout.metadata.title === 'Checkout | Puff Sticker', '/checkout: current title changed')
+  check(checkout.metadata.canonical === 'https://puffsticker.com/checkout/', '/checkout: current self-canonical changed')
+  check(checkout.metadata.robots === 'noindex', '/checkout: current robots directive changed')
+  check(checkout.evidence.capturedOn === '2026-10-01', '/checkout: supplemental evidence provenance changed')
+}
 for (const path of ['/resources/', '/shipping-delivery/']) {
   const route = resolveSeoRoute(path)
-  check(route.disposition === 'page', `${path}: missing`)
-  if (route.disposition === 'page') {
-    check(route.status === 200 && !route.indexable, `${path}: must be 200/noindex`)
-    check(!route.inSitemap, `${path}: must remain off sitemap`)
-  }
+  check(route.disposition === 'page' && route.status === 200 && !route.indexable && !route.inSitemap, `${path}: approved local 200/noindex contract changed`)
 }
 
 const legacyArchives = PRIMARY_ROUTE_CONTRACTS.filter((route) => route.contentParity === 'legacy-static-required')
-check(legacyArchives.length === 0, `all audited production routes must render complete migrated content; unresolved routes: ${legacyArchives.map((route) => route.path).join(', ')}`)
-
-for (const expectedDelta of [
-  { path: '/blog/custom-puffy-stickers-guide', capturedOn: '2026-08-22' },
-  { path: '/blog/why-custom-stickers-feel-like-objects', capturedOn: '2026-09-01' },
-]) {
-  const productionDelta = PRIMARY_ROUTE_CONTRACTS.find((route) => route.path === expectedDelta.path)
-  check(Boolean(productionDelta), `${expectedDelta.path}: post-baseline production article is missing`)
-  if (!productionDelta) continue
-  check(productionDelta.contentParity === 'migrated', `${expectedDelta.path}: article must render its complete audited production content`)
-  check(productionDelta.inSitemap, `${expectedDelta.path}: article is missing from the live sitemap contract`)
-  check(productionDelta.evidence.capturedOn === expectedDelta.capturedOn, `${expectedDelta.path}: evidence date is incorrect`)
-}
-
-check(TRAILING_SLASH_REDIRECTS.length === 129, `expected 129 slash redirects, found ${TRAILING_SLASH_REDIRECTS.length}`)
+check(legacyArchives.length === 0, `unmigrated production content remains: ${legacyArchives.map((route) => route.path).join(', ')}`)
+check(CURRENT_PRODUCTION_ACTIVE_PATHS.every((path) => resolveSeoRoute(path).disposition === 'page'), 'a current 200 production route is not implemented')
+check(LEGACY_PRESERVED_PATHS.every((path) => resolveSeoRoute(path).disposition === 'page'), 'a frozen legacy route is not preserved')
 
 for (const entry of SITEMAP_ENTRIES) {
-  check(!Number.isNaN(Date.parse(entry.lastModified)), `${entry.path}: invalid last-modified timestamp`)
+  check(entry.lastModified === undefined, `${entry.path}: current flat sitemap unexpectedly has lastmod`)
   const route = resolveSeoRoute(entry.path)
-  check(route.disposition === 'page' && route.inSitemap, `${entry.path}: sitemap entry has no matching route contract`)
+  check(route.disposition === 'page' && route.inSitemap, `${entry.path}: sitemap entry has no canonical route`)
 }
 
 for (const failure of validateSeoManifest()) failures.push(failure)
-
-if (failures.length) {
-  throw new Error(`SEO contract validation failed:\n${failures.join('\n')}`)
-}
+if (failures.length) throw new Error(`SEO contract validation failed:\n${failures.join('\n')}`)
 
 console.log(JSON.stringify({
   primaryRoutes: PRIMARY_ROUTE_CONTRACTS.length,
   indexablePrimaryRoutes: PRIMARY_ROUTE_CONTRACTS.filter((route) => route.indexable).length,
   canonicalSitemapRoutes: CANONICAL_SITEMAP_ROUTES.length,
   canonicalizingAliases: CANONICALIZING_ALIAS_CONTRACTS.length,
+  preservedLegacyRoutes: LEGACY_PRESERVED_PATHS.length,
   slashRedirects: TRAILING_SLASH_REDIRECTS.length,
-  explicitNegativeRoutes: EXPLICIT_NOT_FOUND_PATHS.length + 4,
-  legacyArchives,
+  explicitNegativeRoutes: EXPLICIT_NOT_FOUND_PATHS.length + 5,
   sitemapCounts,
-}, (_key, value) => Array.isArray(value) && value[0]?.disposition === 'page' ? value.length : value, 2))
+}, null, 2))

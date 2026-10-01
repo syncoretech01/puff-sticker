@@ -1,0 +1,44 @@
+{
+  "headings": [
+    {
+      "text": "The Sound of Packaging: Why a Mylar Bag Is Recognizable With Eyes Closed",
+      "x": 195,
+      "y": 282,
+      "width": 1050,
+      "height": 473
+    },
+    {
+      "text": "The Sound of Packaging: Why Mylar Bags Are Recognizable Instantly",
+      "x": 528,
+      "y": 2242,
+      "width": 720,
+      "height": 88
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "article",
+      "id": null,
+      "className": "article-page",
+      "y": 0,
+      "width": 1440,
+      "height": 10856
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "more-notes",
+      "y": 10856,
+      "width": 1440,
+      "height": 906
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 11762,
+      "width": 1440,
+      "height": 754
+    }
+  ]
+}

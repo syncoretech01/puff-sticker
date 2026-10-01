@@ -1,0 +1,60 @@
+{
+  "headings": [
+    {
+      "text": "A direct line to the people who make it.",
+      "x": 38,
+      "y": 196,
+      "width": 691,
+      "height": 222
+    },
+    {
+      "text": "Talk to a maker, not a bot.",
+      "x": 38,
+      "y": 2953,
+      "width": 691,
+      "height": 32
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "page-hero page-hero--dark",
+      "y": 0,
+      "width": 768,
+      "height": 704
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "contact-page",
+      "y": 704,
+      "width": 768,
+      "height": 1612
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "official-page-source",
+      "y": 2316,
+      "width": 768,
+      "height": 577
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "sample-band",
+      "y": 2892,
+      "width": 768,
+      "height": 396
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 3289,
+      "width": 768,
+      "height": 968
+    }
+  ]
+}

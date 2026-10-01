@@ -4,7 +4,7 @@ export type NextMetadataContract = {
   title: string
   description?: string
   alternates: { canonical: string }
-  robots: string
+  robots?: string
   openGraph?: {
     title: string
     description?: string
@@ -66,7 +66,7 @@ export function toNextMetadata(route: PageRouteContract): NextMetadataContract {
     title: metadata.title,
     ...(metadata.description ? { description: metadata.description } : {}),
     alternates: { canonical: metadata.canonical },
-    robots: metadata.robots,
+    ...(metadata.robots ? { robots: metadata.robots } : {}),
     ...(hasCapturedOpenGraph && openGraphTitle && openGraphUrl && metadata.openGraph.type ? {
       openGraph: {
         title: openGraphTitle,

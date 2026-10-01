@@ -1,0 +1,44 @@
+{
+  "headings": [
+    {
+      "text": "Why Puffy Stickers Are Trending in 2025 (And Why You Shouldn’t Settle for Flat)",
+      "x": 38,
+      "y": 282,
+      "width": 691,
+      "height": 151
+    },
+    {
+      "text": "Why Puffy Stickers Are Trending in 2025",
+      "x": 38,
+      "y": 1770,
+      "width": 691,
+      "height": 44
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "article",
+      "id": null,
+      "className": "article-page",
+      "y": 0,
+      "width": 768,
+      "height": 6049
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "more-notes",
+      "y": 6049,
+      "width": 768,
+      "height": 1221
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 7270,
+      "width": 768,
+      "height": 968
+    }
+  ]
+}

@@ -39,8 +39,8 @@ test.describe('local extensions', () => {
       expect(response.status()).toBe(200)
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', expected.canonical)
       const robots = await page.locator('meta[name="robots"]').evaluateAll((elements) => elements[0]?.getAttribute('content') ?? null)
+      expect(robots).toBe(expected.robots)
       if (expected.indexable) {
-        if (regressionEnvironment.profile === 'next') expect(robots).toMatch(/\bindex\b/i)
         expect(robots ?? '').not.toMatch(/\bnoindex\b/i)
       } else {
         expect(robots).toMatch(/\bnoindex\b[^\n]*\bfollow\b/i)

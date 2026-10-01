@@ -430,15 +430,37 @@ if (prohibitedPaths.length) {
 const productBySlug = new Map(collections.products.map((record) => [recordSlug(record), record]))
 const productById = new Map(collections.products.map((record) => [recordId(record), record]))
 const expectedProductSlugs = new Set(catalogProducts.map((product) => product.slug))
+const archiveSnapshotValue = manifest.archive?.databaseSnapshotAt
+  ?? manifest.source?.databaseSnapshotAt
+  ?? manifest.provenance?.databaseSnapshotAt
+  ?? manifest.databaseSnapshotAt
+  ?? manifest.snapshotAt
+  ?? null
+const archiveSnapshotTime = parseDate(archiveSnapshotValue)
+const declaredLiveDeltaSlugs = new Set(asArray(manifest.gaps)
+  .filter((gap) => gap?.code === 'known-live-delta-absent-from-backup' && gap.slug)
+  .map((gap) => String(gap.slug)))
+const primaryRoutesByPath = new Map(PRIMARY_ROUTE_CONTRACTS.map((route) => [route.path, route]))
+const capturedAfterArchive = (route) => {
+  const capturedOn = route?.productionSignals?.coreMetadata?.state === 'captured'
+    ? route.productionSignals.coreMetadata.capturedOn
+    : null
+  return archiveSnapshotTime !== null && parseDate(capturedOn) !== null && parseDate(capturedOn) > archiveSnapshotTime
+}
 
 for (const expected of catalogProducts) {
   const actual = productBySlug.get(expected.slug)
   if (!actual) {
+    const route = primaryRoutesByPath.get(`/${expected.category}/${expected.slug}`)
+    const currentProductionOnly = capturedAfterArchive(route)
     addMismatch({
-      code: 'PUBLISHED_PRODUCT_MISSING', scope: 'product', identity: expected.slug, field: 'record',
+      code: currentProductionOnly ? 'CURRENT_PRODUCTION_PRODUCT_OUTSIDE_WORDPRESS_BACKUP' : 'PUBLISHED_PRODUCT_MISSING',
+      severity: currentProductionOnly ? 'explained' : 'blocker', scope: 'product', identity: expected.slug, field: 'record',
       expected: { id: expected.id, status: 'publish' }, observed: null,
-      authority: 'live-production-and-protected-catalog',
-      resolution: 'Recover the published product record before any data-source cutover.',
+      authority: currentProductionOnly ? 'dated-live-production-and-protected-static-content' : 'live-production-and-protected-catalog',
+      resolution: currentProductionOnly
+        ? 'Preserve the exact dated production content in the protected static renderer. Create a CMS record only in a separately approved data-source switch; absence from the older WordPress backup is not public data loss.'
+        : 'Recover the published product record before any data-source cutover.',
     })
     continue
   }
@@ -534,7 +556,6 @@ for (const actual of collections.variations) {
   }
 }
 
-const primaryRoutesByPath = new Map(PRIMARY_ROUTE_CONTRACTS.map((route) => [route.path, route]))
 const expectedArticles = editorialArticleList.map((article) => ({
   slug: article.slug,
   path: `/blog/${article.slug}`,
@@ -553,17 +574,20 @@ for (const [slug, deltaPost] of Object.entries(productionDeltaPosts)) {
     isLiveDelta: true,
   })
 }
-
-const archiveSnapshotValue = manifest.archive?.databaseSnapshotAt
-  ?? manifest.source?.databaseSnapshotAt
-  ?? manifest.provenance?.databaseSnapshotAt
-  ?? manifest.databaseSnapshotAt
-  ?? manifest.snapshotAt
-  ?? null
-const archiveSnapshotTime = parseDate(archiveSnapshotValue)
-const declaredLiveDeltaSlugs = new Set(asArray(manifest.gaps)
-  .filter((gap) => gap?.code === 'known-live-delta-absent-from-backup' && gap.slug)
-  .map((gap) => String(gap.slug)))
+const expectedArticleSlugs = new Set(expectedArticles.map((article) => article.slug))
+for (const route of PRIMARY_ROUTE_CONTRACTS.filter((entry) => entry.kind === 'blog-article')) {
+  const slug = route.path.split('/').filter(Boolean).at(-1)
+  if (!slug || expectedArticleSlugs.has(slug)) continue
+  expectedArticles.push({
+    slug,
+    path: route.path,
+    localDate: livePublishedDate(route),
+    categories: [],
+    isLiveDelta: true,
+    isCurrentStaticDelta: true,
+  })
+  expectedArticleSlugs.add(slug)
+}
 const postBySlug = new Map(collections.posts.map((record) => [recordSlug(record), record]))
 
 for (const expected of expectedArticles) {
@@ -582,15 +606,19 @@ for (const expected of expectedArticles) {
     ),
   )
   if (!actual) {
+    const currentStaticDelta = Boolean(expected.isCurrentStaticDelta && capturedAfterArchive(route))
+    const explainedAbsence = publishedAfterSnapshot || currentStaticDelta
     addMismatch({
-      code: publishedAfterSnapshot ? 'LIVE_POST_AFTER_ARCHIVE_SNAPSHOT' : 'PUBLISHED_POST_MISSING',
-      severity: publishedAfterSnapshot ? 'explained' : 'blocker',
+      code: publishedAfterSnapshot
+        ? 'LIVE_POST_AFTER_ARCHIVE_SNAPSHOT'
+        : currentStaticDelta ? 'CURRENT_PRODUCTION_ARTICLE_OUTSIDE_WORDPRESS_BACKUP' : 'PUBLISHED_POST_MISSING',
+      severity: explainedAbsence ? 'explained' : 'blocker',
       scope: 'post', identity: expected.slug, field: 'record',
       expected: expected.isLiveDelta ? { id: expected.id, publishedAt: productionDate } : { publishedAt: productionDate },
       observed: null,
-      authority: publishedAfterSnapshot ? 'live-production-after-archive' : 'live-production-and-protected-content',
-      resolution: publishedAfterSnapshot
-        ? 'Keep the captured production article as an authoritative live delta and inject it during normalization reconciliation; do not treat its absence from the older archive as data loss.'
+      authority: explainedAbsence ? 'dated-live-production-and-protected-static-content' : 'live-production-and-protected-content',
+      resolution: explainedAbsence
+        ? 'Keep the captured production article as authoritative static content. Create a CMS record only in a separately approved data-source switch; do not treat its absence from the older WordPress backup as data loss.'
         : 'Recover the published article from the backup before data-source cutover.',
     })
     continue
@@ -659,10 +687,14 @@ for (const route of expectedPageRoutes) {
   const slug = route.path === '/' ? 'home' : route.path.split('/').filter(Boolean).at(-1)
   const actual = pageByPath.get(route.path) ?? pageBySlug.get(slug)
   if (!actual) {
+    const currentProductionOnly = capturedAfterArchive(route)
     addMismatch({
-      code: 'PUBLISHED_PAGE_MISSING', scope: 'page', identity: route.path, field: 'record',
+      code: currentProductionOnly ? 'CURRENT_PRODUCTION_PAGE_OUTSIDE_WORDPRESS_BACKUP' : 'PUBLISHED_PAGE_MISSING',
+      severity: currentProductionOnly ? 'explained' : 'blocker', scope: 'page', identity: route.path, field: 'record',
       expected: { path: route.path, status: 200 }, observed: null, authority: 'live-production',
-      resolution: 'Map the public WordPress page record to this live route before data-source cutover.',
+      resolution: currentProductionOnly
+        ? 'Preserve the exact dated production page in the protected static renderer. Create a CMS record only in a separately approved data-source switch.'
+        : 'Map the public WordPress page record to this live route before data-source cutover.',
     })
     continue
   }
@@ -702,7 +734,7 @@ for (const expected of expectedTaxonomies) {
   const actual = termIndex.get(`${expected.taxonomy}:${expected.slug}`)
     ?? collections.terms.find((term) => recordSlug(term) === expected.slug && recordPath(term) === expected.path)
   if (!actual) {
-    const currentLiveDelta = new Set([
+    const currentLiveDelta = capturedAfterArchive(primaryRoutesByPath.get(expected.path)) || new Set([
       '/blog/tag/dimensional-stickers',
       '/blog/tag/embossed-stickers',
       '/blog/tag/product-design',
@@ -714,7 +746,7 @@ for (const expected of expectedTaxonomies) {
       scope: 'taxonomy', identity: `${expected.taxonomy}:${expected.slug}`, field: 'term',
       expected, observed: null, authority: 'live-production-for-public-route; wordpress-backup-for-term-identity',
       resolution: currentLiveDelta
-        ? 'Create this audited live-after-backup tag during normalization reconciliation before data-source cutover.'
+        ? 'Preserve the audited live taxonomy route in the protected static renderer and create a CMS term only during a separately approved data-source switch.'
         : 'Recover or map this public archive term before data-source cutover.',
     })
   }
@@ -858,7 +890,6 @@ if (Number(manifest.counts?.unindexedPublicMedia) !== collections.unindexedPubli
 for (const [key, entry] of unindexedMediaByKey) {
   if (
     !key
-    || !liveMedia.has(key)
     || attachmentByMediaKey.has(key)
     || entry.archivePresent !== true
     || Number(entry.bytes) <= 0
@@ -870,6 +901,14 @@ for (const [key, entry] of unindexedMediaByKey) {
       observed: { liveReferenced: Boolean(key && liveMedia.has(key)), hasAttachment: Boolean(key && attachmentByMediaKey.has(key)), archivePresent: entry.archivePresent === true },
       authority: 'public-only-migration-policy',
       resolution: 'Exclude unrelated upload evidence and regenerate only the exact live-referenced public binary mapping.',
+    })
+  } else if (!liveMedia.has(key)) {
+    addMismatch({
+      code: 'LEGACY_PUBLIC_MEDIA_RETAINED_FROM_ARCHIVE', severity: 'explained', scope: 'media', identity: key, field: 'record',
+      expected: 'Valid archive-present public binary evidence retained for legacy parity',
+      observed: { liveReferencedByCurrentStaticProduction: false, bytes: Number(entry.bytes), sha256: String(entry.sha256).toLowerCase() },
+      authority: 'wordpress-backup-for-legacy-public-binary; current-production-for-active-assets',
+      resolution: 'Keep this verified public-only legacy binary isolated from current rendering. Removal is deferred until legacy visual/content coverage is separately retired.',
     })
   }
 }
@@ -956,15 +995,17 @@ const report = stable({
     archiveSha256: manifest.archive?.sha256 ?? manifest.source?.archiveSha256 ?? manifest.provenance?.archiveSha256 ?? manifest.archiveSha256 ?? null,
     databaseSha256: manifest.database?.sha256 ?? manifest.source?.databaseSha256 ?? manifest.provenance?.databaseSha256 ?? manifest.databaseSha256 ?? null,
     liveSeoEvidence: [
-      'src/lib/seo/fixtures/production-seo-2026-08-22.json',
-      'src/lib/seo/fixtures/production-seo-current-delta-2026-09-01.ts',
+      'src/lib/seo/fixtures/production-seo-capture-2026-09-30.json',
+      'src/lib/seo/fixtures/production-seo-capture-2026-10-01-checkout.json',
     ],
-    liveSeoCapturedOn: '2026-09-01',
+    liveSeoCapturedOn: '2026-10-01',
     protectedContentSources: [
       'src/content/catalog.ts',
       'src/content/editorial.ts',
       'src/content/productDetails.ts',
       'src/content/productionDeltaContent.ts',
+      'src/content/fixtures/production-content-2026-09-30.json',
+      'src/content/fixtures/production-content-2026-10-01-checkout.json',
     ],
   },
   snapshotDeltas: Object.entries(productionDeltaPosts).map(([slug, deltaPost]) => ({

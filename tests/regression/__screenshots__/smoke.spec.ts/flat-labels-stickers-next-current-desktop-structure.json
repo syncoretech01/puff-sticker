@@ -1,0 +1,60 @@
+{
+  "headings": [
+    {
+      "text": "Flat Labels & Stickers",
+      "x": 58,
+      "y": 278,
+      "width": 520,
+      "height": 181
+    },
+    {
+      "text": "Flat stickers",
+      "x": 792,
+      "y": 1251,
+      "width": 590,
+      "height": 53
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "category-hero",
+      "y": 0,
+      "width": 1440,
+      "height": 785
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "category-guide",
+      "y": 785,
+      "width": 1440,
+      "height": 480
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "catalog-section catalog-section--category",
+      "y": 1265,
+      "width": 1440,
+      "height": 1971
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "procurement-band",
+      "y": 3237,
+      "width": 1440,
+      "height": 517
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 3754,
+      "width": 1440,
+      "height": 754
+    }
+  ]
+}

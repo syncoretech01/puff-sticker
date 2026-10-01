@@ -26,26 +26,26 @@
   },
   "checks": {
     "articleSlugsAndDates": {
-      "expected": 13,
+      "expected": 24,
       "foundInArchive": 11
     },
     "dates": {
       "authorityReconciliations": 0,
-      "comparableFields": 37,
-      "exactFields": 37
+      "comparableFields": 11,
+      "exactFields": 11
     },
     "media": {
-      "exactAltMetadata": 101,
-      "indexedAttachmentMatches": 138,
-      "liveReferencedExternal": 16,
-      "liveReferencedFirstParty": 164,
-      "matchedToBackupAttachment": 151,
-      "renderedAltOverrides": 37,
-      "totalArchiveVerified": 151,
-      "verifiedUnindexedArchiveFile": 13
+      "exactAltMetadata": 2,
+      "indexedAttachmentMatches": 2,
+      "liveReferencedExternal": 0,
+      "liveReferencedFirstParty": 2,
+      "matchedToBackupAttachment": 2,
+      "renderedAltOverrides": 0,
+      "totalArchiveVerified": 2,
+      "verifiedUnindexedArchiveFile": 0
     },
     "productSlugsAndIds": {
-      "expected": 21,
+      "expected": 31,
       "found": 21
     },
     "productVariations": {
@@ -57,17 +57,17 @@
       "prohibitedKeyPaths": 0
     },
     "publicPages": {
-      "expected": 9,
+      "expected": 14,
       "found": 9
     },
     "publicTaxonomyTerms": {
-      "expected": 49,
-      "found": 45
+      "expected": 6,
+      "found": 5
     },
     "seo": {
       "comparableRecords": 44,
-      "exactFields": 99,
-      "liveAuthoritativeOverrides": 40
+      "exactFields": 82,
+      "liveAuthoritativeOverrides": 57
     }
   },
   "cutoverBlockers": [],
@@ -173,1389 +173,348 @@
   },
   "expectedPublicInventory": {
     "liveDeltaPosts": 2,
-    "liveReferencedUploadKeys": 164,
-    "productCategories": 3,
-    "products": 21,
+    "liveReferencedUploadKeys": 2,
+    "productCategories": 4,
+    "products": 31,
     "protectedBaselinePosts": 11,
     "protectedVariationRows": 15,
-    "publicCorePages": 9,
-    "publicTaxonomyArchiveTerms": 49
+    "publicCorePages": 14,
+    "publicTaxonomyArchiveTerms": 6
   },
-  "explainedMismatchCount": 125,
+  "explainedMismatchCount": 99,
   "mismatchLedger": [
     {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2022/02/dot-278-white-2.png",
-      "observed": [
-        "dot 278 white 2"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2022/02/ellipse-166-white-2.png",
-      "observed": [
-        "ellipse 166 white 2"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2022/02/ellipse-400-white-2.png",
-      "observed": [
-        "ellipse-400-white"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2022/03/dot-21-2.jpg",
-      "observed": [
-        "dot 21 2"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2022/03/dot-22-2.png",
-      "observed": [
-        "dot 22 2"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2022/03/eclipse-23-2.png",
-      "observed": [
-        "eclipse 23 2"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2022/03/eclipse-24-2.png",
-      "observed": [
-        "eclipse 24 2"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2022/03/elip-sale-31-2.png",
-      "observed": [
-        "elip sale 31 2"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2022/04/ellipse-484-white-1.png",
-      "observed": [
-        "ellipse 484 white 1"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2022/04/ellipse-banner-3-1.png",
-      "observed": [
-        "ellipse banner 3 1"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2022/11/banner-faqs-1.png",
-      "observed": [
-        "banner faqs 1"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Educational diagram comparing the cross-section of flat and puffy stickers. The flat sticker is shown as a thin two-layer strip with vinyl on top and adhesive below. The puffy sticker is illustrated as a three-layer structure with vinyl on top, foam in the middle, and adhesive at the base. Labels identify each layer. Set against a light gray background, ideal for product education, sticker material breakdowns, and category pages. Mock-up made by PuffSticker.com",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2025/08/chatgpt-image-aug-16-2025-06_04_36-am.webp",
-      "observed": [
-        "puffsticker.com"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Exploded view of a puffy sticker showing three distinct layers: a curved orange foam top, a gray adhesive middle layer, and a white backing base. Each layer is slightly separated to highlight the sticker’s construction. Set against a light gray background, ideal for explaining product build, material composition, and sticker quality. Mock-up made by PuffSticker.com",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2025/08/chatgpt-image-aug-16-2025-06_20_33-am.webp",
-      "observed": [
-        "puffsticker.com"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Diagram comparing three puffy sticker thicknesses: 1mm, 2mm, and 3mm. Each sticker is shown in cross-section with a yellow top layer and a gray adhesive base. The height increases from left to right, illustrating the dimensional difference. Set against a light gray background, ideal for explaining sticker texture, product specs, and material options. Mock-up made by PuffSticker.com",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2025/08/chatgpt-image-aug-16-2025-06_44_34-am.webp",
-      "observed": [
-        "puffsticker.com"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Yellow canvas jute tote bag with 'choose kindness' quote and daisy flower graphic, styled on a wooden table with plant and book. Mock-up made by PuffSticker.com",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2025/08/choose-kindness-yellow-canvas-tote-bag.webp",
-      "observed": [
-        "puffsticker.com"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Beige jute tote bag with sturdy handles placed on a light wooden surface against a neutral background. A blank brown tag is attached to one handle, and the front of the bag displays “YOUR LOGO” in bold black text. A green plant leaf peeks in from the right. Ideal for customizable eco-friendly promotional products. Mock-up made by PuffSticker.com",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2025/08/custom-jute-tote-bag-your-logo-tag-eco-friendly-promotional-merchandise.webp",
-      "observed": [
-        "Beige jute tote bag with sturdy handles placed on a light wooden surface against a neutral background. A blank brown tag is attached to one handle, and the front of the bag displays “YOUR LOGO” in bold black text. A green plant leaf peeks in from the right. Ideal for customizable eco-friendly promotional products."
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Rainbow-themed puffy sticker sheet with clouds, stars, hearts, and rainbows alongside colorful 'Follow Your Dreams' text on pink background. Mock-up made by PuffSticker.com",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2025/08/follow-your-dreams-rainbow-puffy-sticker-sheet.webp",
-      "observed": [
-        "puffsticker.com"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "A mockup of Puffy Sticker sheet by PuffSticker.com featuring three iconic cartoon characters on a brown background: Fred Flintstone in his orange spotted outfit and blue tie, Lisa Simpson in her red dress and pearl necklace, and Leonardo from Teenage Mutant Ninja Turtles with a blue mask and sword. Ideal for retro cartoon collections, pop culture merchandise, and character-themed sticker sets.",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2025/08/fred-lisa-leonardo-cartoon-stickers-flintstones-simpsons-tmnt-brown-background-e1755042146422.webp",
-      "observed": [
-        "Puffy Labels & Stickers"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Cartoon-style sticker of a smiling shark wearing blue sneakers on a beige background. Mock-up made by PuffSticker.com",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2025/08/funny-shark-wearing-blue-sneakers-sticker.webp",
-      "observed": [
-        "Die-cut Puffy Sticker"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Beige woven tote bag with thick handles placed centrally against a light background. Surrounding the bag are four icons with labels: a recycling symbol for “Biodegradable,” a sprouting plant for “Reusable,” a flexed arm for “Durable,” and a globe with leaves for “Eco-Friendly.” Promotes sustainable packaging and environmentally conscious design. Mock-up made by PuffSticker.com",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2025/08/jute-tote-bag-biodegradable-reusable-durable-eco-friendly-icons-e1756241366595.webp",
-      "observed": [
-        "Custom Jute Tote Bags – The Perfect Blend of Sustainability and Style"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Warm-toned puffy sticker sheet with LOVE text, rainbow, smiley face, heart, strawberries, and daisy flowers on wooden surface. Mock-up made by PuffSticker.com",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2025/08/love-themed-cinematic-puffy-sticker-sheet-e1756241823275.webp",
-      "observed": [
-        "Why Puffy Stickers Are Trending in 2025 (And Why You Shouldn’t Settle for Flat)"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Small beige jute tote bag with sturdy handles, placed on a light wooden surface against a neutral background. A brown tag labeled “Eco” is attached to one handle, and a green monstera leaf is partially visible in the background. Emphasizes sustainability through natural materials and minimalist design. Mock-up made by PuffSticker.com",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2025/08/mini-jute-tote-bag-eco-tag-sustainable-natural-materials.webp",
-      "observed": [
-        "Small beige jute tote bag with sturdy handles, placed on a light wooden surface against a neutral background. A brown tag labeled “Eco” is attached to one handle, and a green monstera leaf is partially visible in the background. Emphasizes sustainability through natural materials and minimalist design."
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Set of four minimalist flat-style stickers featuring a red circle, green leaf, blue medicine bottle, and black heart in a speech bubble on beige background. Mock-up made by PuffSticker.com",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2025/08/minimalist-flat-icon-sticker-set-leaf-bottle-heart.webp",
-      "observed": [
-        "Flat Labels & Stickers"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Square motivational sticker with the phrase 'No Pain No Gain' in bold serif font on beige background. Mock-up made by PuffSticker.com",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2025/08/motivational-no-pain-no-gain-sticker-design.webp",
-      "observed": [
-        "Square Vinyl Sticker"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Two pastel-colored custom puffy sticker sheets with hearts, clouds, rainbows, stars, sun, and flowers on a cream background. Mock-up made by PuffSticker.com",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2025/08/pastel-custom-puffy-sticker-sheets-with-clouds-and-stars.webp",
-      "observed": [
-        "Two pastel-colored custom puffy sticker sheets with hearts, clouds, rainbows, stars, sun, and flowers on a cream background"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Set of three eco-friendly reusable shopping bags including a cotton tote, woven straw handbag, and kraft paper bag on neutral background. Mock-up made by PuffSticker.com",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2025/08/puffy-sticker-sheet-cozy-creatures-pink-bunny-bear-cat-fox-cute-designs-e1755559028512.webp",
-      "observed": [
-        "Promotional Items"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "White canvas tote bag with colorful rainbow, smiling flower, stars, and 'RAINBOW' text in playful font. Mock-up made by PuffSticker.com",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2025/08/rainbow-print-canvas-tote-bag-with-stars-e1755904757571.webp",
-      "observed": [
-        "Custom Tote Bag"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Colorful rainbow-themed puffy sticker sheet with card header at top featuring hearts, flowers, clouds, stars, sun, butterfly, and pride symbols on a pink background. Mock-up made by PuffSticker.com",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2025/08/rainbow-themed-puffy-sticker-sheet-kawaii-design.webp",
-      "observed": [
-        "puffsticker.com"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Sticker with 'Stronger Together' message and raised fist inside female gender symbol on cream background. Mock-up made by PuffSticker.com",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2025/08/stronger-together-feminist-symbol-sticker.webp",
-      "observed": [
-        "Feminist Cheap Sticker"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Comparison image showing two disposable bags—a white plastic bag and a brown paper bag—on the left with a red “X” mark. On the right, a reusable woven jute tote bag with a green check mark. Text at the bottom reads “Choose packaging that lasts.” Highlights the importance of sustainable packaging choices. Mock-up made by PuffSticker.com",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2025/08/sustainable-bag-comparison-plastic-paper-vs-reusable-jute-eco-choice.webp",
-      "observed": [
-        "Comparison image showing two disposable bags—a white plastic bag and a brown paper bag—on the left with a red “X” mark. On the right, a reusable woven jute tote bag with a green check mark. Text at the bottom reads “Choose packaging that lasts.” Highlights the importance of sustainable packaging choices."
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Brown woven jute tote bag with looped handles on dark brown background. Mock-up made by PuffSticker.com",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2025/08/woven-brown-jute-tote-bag-transparent-e1755903818900.webp",
-      "observed": [
-        "Woven Jute Tote Bag"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "A group of six different Puff stand-up pouches displayed outdoors in a sunny forest meadow, featuring kraft, matte black, and child-resistant certified bags with visible state warning labels",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2026/03/packaging-innovation-and-compliance-showcase-scaled.webp",
-      "observed": [
-        "The Sound of Packaging: Why a Mylar Bag Is Recognizable With Eyes Closed"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Three young people enjoy a sticker activity at a table, surrounded by colorful designs, with playful wall decorations and a futuristic cityscape outside.",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2026/03/sticker-therapy-in-a-futuristic-world.webp",
-      "observed": [
-        "Small Joys, Big Impact: How Custom Puffy Stickers Became the New Therapy for Gen Z and Millennials in 2026"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "An infographic titled \"Why Shine Feels Valuable\" showing various gold foil stickers and explaining the benefits of metallic finishes in branding.",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2026/04/banner-care-scaled.webp",
-      "observed": [
-        "Why Shine Feels Valuable: The Psychology Behind Foil Stickers"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Three vertical sticker sheets titled Cosmic Dreams, Stellar Voyages, and Astral Harmonies, featuring holographic planets, astronauts, and celestial cats with 3D raised edges.",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2026/04/banner-scaled.webp",
-      "observed": [
-        "Color That Doesn’t Exist Until You Move: Understanding Holographic Stickers"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "A side-by-side comparison of a matte 'Wander' puffy sticker showing soft depth and a glossy 'Wander' epoxy sticker showing smooth depth.",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2026/05/soft-depth-vx-smooth-depth.webp",
-      "observed": [
-        "Soft Depth vs Smooth Depth: Puffy and Epoxy Stickers Compared"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-media-metadata; live-production-for-rendered-seo",
-      "code": "ATTACHMENT_ALT_DIFFERS_FROM_RENDERED_ALT",
-      "expected": "Matte vs gloss packaging comparison showing quiet luxury design, tactile branding, texture psychology, soft-touch packaging, reflective surfaces, and emotional material perception.",
-      "field": "alt",
-      "identity": "/wp-content/uploads/2026/06/banner-scaled.png",
-      "observed": [
-        "The Psychology of Quiet Surfaces"
-      ],
-      "resolution": "Retain the backup attachment alt as source metadata and preserve the captured rendered alt on public routes until a separately approved SEO cleanup.",
-      "scope": "media-alt",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-binary-presence; live-production-for-rendered-alt",
-      "code": "LIVE_MEDIA_VERIFIED_AS_UNINDEXED_ARCHIVE_FILE",
-      "expected": {
-        "renderedAlt": [
-          ""
-        ],
-        "routes": [
-          "/blog",
-          "/blog/category/custom-epoxy-stickers",
-          "/blog/category/custom-foil-stickers",
-          "/blog/category/custom-holographic-stickers",
-          "/blog/category/custom-jute-tote-bags",
-          "/blog/category/custom-mylar-bags",
-          "/blog/category/custom-puffy-stickers",
-          "/blog/category/sticker-psychology",
-          "/blog/custom-jute-tote-bags-the-perfect-blend-of-sustainability",
-          "/blog/custom-puffy-stickers-became-the-new-therapy",
-          "/blog/custom-puffy-stickers-guide",
-          "/blog/holographic-stickers-color-perception",
-          "/blog/matte-vs-gloss-psychology",
-          "/blog/page/2",
-          "/blog/puffy-stickers-are-trending-2025",
-          "/blog/soft-depth-vs-smooth-depth",
-          "/blog/sound-of-packaging-mylar-bags",
-          "/blog/tag/3d-holographic",
-          "/blog/tag/childhood-keepsakes",
-          "/blog/tag/collectible-stickers",
-          "/blog/tag/collecting-psychology",
-          "/blog/tag/custom-epoxy-stickers",
-          "/blog/tag/custom-foil-stickers",
-          "/blog/tag/custom-jute-tote-bags",
-          "/blog/tag/custom-mylar-bag",
-          "/blog/tag/custom-puffy-sheets",
-          "/blog/tag/custom-puffy-stickers",
-          "/blog/tag/dimensional-stickers",
-          "/blog/tag/embossed-stickers",
-          "/blog/tag/foil-stickers",
-          "/blog/tag/foil-stickers-printing",
-          "/blog/tag/holographic-materials",
-          "/blog/tag/journaling",
-          "/blog/tag/matte-vs-gloss",
-          "/blog/tag/memory-and-collecting",
-          "/blog/tag/mylar-bag",
-          "/blog/tag/mylar-packaging",
-          "/blog/tag/mylar-pouch",
-          "/blog/tag/nostalgia",
-          "/blog/tag/packaging-psychology",
-          "/blog/tag/personal-archives",
-          "/blog/tag/product-design",
-          "/blog/tag/puffy-sheets",
-          "/blog/tag/raised-stickers",
-          "/blog/tag/soft-touch-mylar",
-          "/blog/tag/soft-touch-packaging",
-          "/blog/tag/sticker-books",
-          "/blog/tag/sticker-nostalgia",
-          "/blog/tag/sticker-psychology",
-          "/blog/tag/stickers-psychology",
-          "/blog/tag/texture-psychology",
-          "/blog/tag/tote-bags",
-          "/blog/tag/vintage-sticker-collecting",
-          "/blog/tag/why-we-keep-stickers",
-          "/blog/when-3d-stickers-become-collectibles",
-          "/blog/why-custom-stickers-feel-like-objects",
-          "/blog/why-foil-stickers-feel-valuable",
-          "/blog/why-sticker-books-never-really-disappeared",
-          "/blog/why-we-save-stickers-we-never-use"
-        ]
-      },
-      "field": "attachment",
+      "authority": "wordpress-backup-for-legacy-public-binary; current-production-for-active-assets",
+      "code": "LEGACY_PUBLIC_MEDIA_RETAINED_FROM_ARCHIVE",
+      "expected": "Valid archive-present public binary evidence retained for legacy parity",
+      "field": "record",
       "identity": "/wp-content/uploads/2022/02/payment-method-2.png",
       "observed": {
-        "archivePresent": true,
         "bytes": 9486,
+        "liveReferencedByCurrentStaticProduction": false,
         "sha256": "f80d932f5dc75d10aa818b5847168c975005f691ff8b15cb0d8bf758375ca1bc"
       },
-      "resolution": "Preserve this verified public binary through object-storage migration; no attachment row or attachment alt metadata should be invented.",
+      "resolution": "Keep this verified public-only legacy binary isolated from current rendering. Removal is deferred until legacy visual/content coverage is separately retired.",
       "scope": "media",
       "severity": "explained"
     },
     {
-      "authority": "wordpress-backup-for-binary-presence; live-production-for-rendered-alt",
-      "code": "LIVE_MEDIA_VERIFIED_AS_UNINDEXED_ARCHIVE_FILE",
-      "expected": {
-        "renderedAlt": [
-          "about 1 video 1"
-        ],
-        "routes": [
-          "/about-us"
-        ]
-      },
-      "field": "attachment",
+      "authority": "wordpress-backup-for-legacy-public-binary; current-production-for-active-assets",
+      "code": "LEGACY_PUBLIC_MEDIA_RETAINED_FROM_ARCHIVE",
+      "expected": "Valid archive-present public binary evidence retained for legacy parity",
+      "field": "record",
       "identity": "/wp-content/uploads/2022/04/about-1-video-1.png",
       "observed": {
-        "archivePresent": true,
         "bytes": 109916,
+        "liveReferencedByCurrentStaticProduction": false,
         "sha256": "2fa4118d7cdc97b140861701a45772f39205a785865216433992590d1945a705"
       },
-      "resolution": "Preserve this verified public binary through object-storage migration; no attachment row or attachment alt metadata should be invented.",
+      "resolution": "Keep this verified public-only legacy binary isolated from current rendering. Removal is deferred until legacy visual/content coverage is separately retired.",
       "scope": "media",
       "severity": "explained"
     },
     {
-      "authority": "wordpress-backup-for-binary-presence; live-production-for-rendered-alt",
-      "code": "LIVE_MEDIA_VERIFIED_AS_UNINDEXED_ARCHIVE_FILE",
-      "expected": {
-        "renderedAlt": [
-          ""
-        ],
-        "routes": [
-          "/"
-        ]
-      },
-      "field": "attachment",
+      "authority": "wordpress-backup-for-legacy-public-binary; current-production-for-active-assets",
+      "code": "LEGACY_PUBLIC_MEDIA_RETAINED_FROM_ARCHIVE",
+      "expected": "Valid archive-present public binary evidence retained for legacy parity",
+      "field": "record",
       "identity": "/wp-content/uploads/2022/05/top-banner-img-1.svg",
       "observed": {
-        "archivePresent": true,
         "bytes": 566,
+        "liveReferencedByCurrentStaticProduction": false,
         "sha256": "7dbad2625aebbf630a49e4e66c38e767392d17c5ae64606623716069e25e71c1"
       },
-      "resolution": "Preserve this verified public binary through object-storage migration; no attachment row or attachment alt metadata should be invented.",
+      "resolution": "Keep this verified public-only legacy binary isolated from current rendering. Removal is deferred until legacy visual/content coverage is separately retired.",
       "scope": "media",
       "severity": "explained"
     },
     {
-      "authority": "wordpress-backup-for-binary-presence; live-production-for-rendered-alt",
-      "code": "LIVE_MEDIA_VERIFIED_AS_UNINDEXED_ARCHIVE_FILE",
-      "expected": {
-        "renderedAlt": [
-          "video bg 9 1"
-        ],
-        "routes": [
-          "/faqs"
-        ]
-      },
-      "field": "attachment",
+      "authority": "wordpress-backup-for-legacy-public-binary; current-production-for-active-assets",
+      "code": "LEGACY_PUBLIC_MEDIA_RETAINED_FROM_ARCHIVE",
+      "expected": "Valid archive-present public binary evidence retained for legacy parity",
+      "field": "record",
       "identity": "/wp-content/uploads/2022/11/video-bg-9-1.jpg",
       "observed": {
-        "archivePresent": true,
         "bytes": 75170,
+        "liveReferencedByCurrentStaticProduction": false,
         "sha256": "9c6faf66cf2ea8e0a5edef304cfef29d04ea9a5631aa155c3095ff64e81ab9eb"
       },
-      "resolution": "Preserve this verified public binary through object-storage migration; no attachment row or attachment alt metadata should be invented.",
+      "resolution": "Keep this verified public-only legacy binary isolated from current rendering. Removal is deferred until legacy visual/content coverage is separately retired.",
       "scope": "media",
       "severity": "explained"
     },
     {
-      "authority": "wordpress-backup-for-binary-presence; live-production-for-rendered-alt",
-      "code": "LIVE_MEDIA_VERIFIED_AS_UNINDEXED_ARCHIVE_FILE",
-      "expected": {
-        "renderedAlt": [
-          "puffsticker.com - "
-        ],
-        "routes": [
-          "/blog",
-          "/blog/category/custom-epoxy-stickers",
-          "/blog/category/custom-foil-stickers",
-          "/blog/category/custom-holographic-stickers",
-          "/blog/category/custom-jute-tote-bags",
-          "/blog/category/custom-mylar-bags",
-          "/blog/category/custom-puffy-stickers",
-          "/blog/category/sticker-psychology",
-          "/blog/custom-jute-tote-bags-the-perfect-blend-of-sustainability",
-          "/blog/custom-puffy-stickers-became-the-new-therapy",
-          "/blog/custom-puffy-stickers-guide",
-          "/blog/holographic-stickers-color-perception",
-          "/blog/matte-vs-gloss-psychology",
-          "/blog/page/2",
-          "/blog/puffy-stickers-are-trending-2025",
-          "/blog/soft-depth-vs-smooth-depth",
-          "/blog/sound-of-packaging-mylar-bags",
-          "/blog/tag/3d-holographic",
-          "/blog/tag/childhood-keepsakes",
-          "/blog/tag/collectible-stickers",
-          "/blog/tag/collecting-psychology",
-          "/blog/tag/custom-epoxy-stickers",
-          "/blog/tag/custom-foil-stickers",
-          "/blog/tag/custom-jute-tote-bags",
-          "/blog/tag/custom-mylar-bag",
-          "/blog/tag/custom-puffy-sheets",
-          "/blog/tag/custom-puffy-stickers",
-          "/blog/tag/dimensional-stickers",
-          "/blog/tag/embossed-stickers",
-          "/blog/tag/foil-stickers",
-          "/blog/tag/foil-stickers-printing",
-          "/blog/tag/holographic-materials",
-          "/blog/tag/journaling",
-          "/blog/tag/matte-vs-gloss",
-          "/blog/tag/memory-and-collecting",
-          "/blog/tag/mylar-bag",
-          "/blog/tag/mylar-packaging",
-          "/blog/tag/mylar-pouch",
-          "/blog/tag/nostalgia",
-          "/blog/tag/packaging-psychology",
-          "/blog/tag/personal-archives",
-          "/blog/tag/product-design",
-          "/blog/tag/puffy-sheets",
-          "/blog/tag/raised-stickers",
-          "/blog/tag/soft-touch-mylar",
-          "/blog/tag/soft-touch-packaging",
-          "/blog/tag/sticker-books",
-          "/blog/tag/sticker-nostalgia",
-          "/blog/tag/sticker-psychology",
-          "/blog/tag/stickers-psychology",
-          "/blog/tag/texture-psychology",
-          "/blog/tag/tote-bags",
-          "/blog/tag/vintage-sticker-collecting",
-          "/blog/tag/why-we-keep-stickers",
-          "/blog/when-3d-stickers-become-collectibles",
-          "/blog/why-custom-stickers-feel-like-objects",
-          "/blog/why-foil-stickers-feel-valuable",
-          "/blog/why-sticker-books-never-really-disappeared",
-          "/blog/why-we-save-stickers-we-never-use"
-        ]
-      },
-      "field": "attachment",
+      "authority": "wordpress-backup-for-legacy-public-binary; current-production-for-active-assets",
+      "code": "LEGACY_PUBLIC_MEDIA_RETAINED_FROM_ARCHIVE",
+      "expected": "Valid archive-present public binary evidence retained for legacy parity",
+      "field": "record",
       "identity": "/wp-content/uploads/2023/02/puff-logo-cloud-background-blue-yellow-text-soft-branding-e1754688317309.webp",
       "observed": {
-        "archivePresent": true,
         "bytes": 225684,
+        "liveReferencedByCurrentStaticProduction": false,
         "sha256": "3199ac19421ff8ad80560b3d0694dae6375039e379680f3a6f121f3765fea36f"
       },
-      "resolution": "Preserve this verified public binary through object-storage migration; no attachment row or attachment alt metadata should be invented.",
+      "resolution": "Keep this verified public-only legacy binary isolated from current rendering. Removal is deferred until legacy visual/content coverage is separately retired.",
       "scope": "media",
       "severity": "explained"
     },
     {
-      "authority": "wordpress-backup-for-binary-presence; live-production-for-rendered-alt",
-      "code": "LIVE_MEDIA_VERIFIED_AS_UNINDEXED_ARCHIVE_FILE",
-      "expected": {
-        "renderedAlt": [
-          "Cartoon-style illustration of a smiling chef in a traditional uniform and hat, making an \"okay\" hand gesture with closed eyes and a satisfied expression, rendered in light green tones with black outlines. Mock-up made by PuffSticker.com"
-        ],
-        "routes": [
-          "/"
-        ]
-      },
-      "field": "attachment",
+      "authority": "wordpress-backup-for-legacy-public-binary; current-production-for-active-assets",
+      "code": "LEGACY_PUBLIC_MEDIA_RETAINED_FROM_ARCHIVE",
+      "expected": "Valid archive-present public binary evidence retained for legacy parity",
+      "field": "record",
       "identity": "/wp-content/uploads/2025/08/chef-illustration-okay-gesture-light-green.webp",
       "observed": {
-        "archivePresent": true,
         "bytes": 238558,
+        "liveReferencedByCurrentStaticProduction": false,
         "sha256": "4d67364942be0c346d76cf54af21de6d1b76703357b4206cb21516b18057f5e4"
       },
-      "resolution": "Preserve this verified public binary through object-storage migration; no attachment row or attachment alt metadata should be invented.",
+      "resolution": "Keep this verified public-only legacy binary isolated from current rendering. Removal is deferred until legacy visual/content coverage is separately retired.",
       "scope": "media",
       "severity": "explained"
     },
     {
-      "authority": "wordpress-backup-for-binary-presence; live-production-for-rendered-alt",
-      "code": "LIVE_MEDIA_VERIFIED_AS_UNINDEXED_ARCHIVE_FILE",
-      "expected": {
-        "renderedAlt": [
-          "Eco-friendly jute handbag with rounded handles in natural brown finish, displayed on a smooth gradient background — sustainable and reusable tote for everyday or promotional use. Mock-up made by PuffSticker.com"
-        ],
-        "routes": [
-          "/"
-        ]
-      },
-      "field": "attachment",
+      "authority": "wordpress-backup-for-legacy-public-binary; current-production-for-active-assets",
+      "code": "LEGACY_PUBLIC_MEDIA_RETAINED_FROM_ARCHIVE",
+      "expected": "Valid archive-present public binary evidence retained for legacy parity",
+      "field": "record",
       "identity": "/wp-content/uploads/2025/08/eco-jute-handbag-rounded-handles.webp",
       "observed": {
-        "archivePresent": true,
         "bytes": 210336,
+        "liveReferencedByCurrentStaticProduction": false,
         "sha256": "e287fa2887feaedbb6ce085c1ae4b9524806bc10e8278941ab1b7481c6a51a47"
       },
-      "resolution": "Preserve this verified public binary through object-storage migration; no attachment row or attachment alt metadata should be invented.",
+      "resolution": "Keep this verified public-only legacy binary isolated from current rendering. Removal is deferred until legacy visual/content coverage is separately retired.",
       "scope": "media",
       "severity": "explained"
     },
     {
-      "authority": "wordpress-backup-for-binary-presence; live-production-for-rendered-alt",
-      "code": "LIVE_MEDIA_VERIFIED_AS_UNINDEXED_ARCHIVE_FILE",
-      "expected": {
-        "renderedAlt": [
-          "Cartoon sticker of a muscular man in black shirt and sunglasses flexing his arm, styled like Johnny Bravo, placed on a light mint green background with white border cutout. Mock-up made by PuffSticker.com"
-        ],
-        "routes": [
-          "/"
-        ]
-      },
-      "field": "attachment",
+      "authority": "wordpress-backup-for-legacy-public-binary; current-production-for-active-assets",
+      "code": "LEGACY_PUBLIC_MEDIA_RETAINED_FROM_ARCHIVE",
+      "expected": "Valid archive-present public binary evidence retained for legacy parity",
+      "field": "record",
       "identity": "/wp-content/uploads/2025/08/johnny-bravo-cartoon-muscle-pose-sticker-mint-bg.webp",
       "observed": {
-        "archivePresent": true,
         "bytes": 58662,
+        "liveReferencedByCurrentStaticProduction": false,
         "sha256": "62cd4c259a2b45abde278fe7faf192b935b7381481de3ff45e09d4691e0e9d0f"
       },
-      "resolution": "Preserve this verified public binary through object-storage migration; no attachment row or attachment alt metadata should be invented.",
+      "resolution": "Keep this verified public-only legacy binary isolated from current rendering. Removal is deferred until legacy visual/content coverage is separately retired.",
       "scope": "media",
       "severity": "explained"
     },
     {
-      "authority": "live-production-after-archive",
-      "code": "LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT",
-      "expected": {
-        "routes": [
-          "/",
-          "/blog",
-          "/blog/category/custom-puffy-stickers",
-          "/blog/category/sticker-psychology",
-          "/blog/custom-puffy-stickers-guide",
-          "/blog/tag/sticker-nostalgia",
-          "/blog/tag/sticker-psychology"
-        ],
-        "urls": [
-          "https://puffsticker.com/wp-content/uploads/2026/08/custom-puffy-sticker-flat-vs-domed-proof-scaled.webp"
-        ]
-      },
-      "field": "attachment",
-      "identity": "/wp-content/uploads/2026/08/custom-puffy-sticker-flat-vs-domed-proof-scaled.webp",
-      "observed": null,
-      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
-      "scope": "media",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-after-archive",
-      "code": "LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT",
-      "expected": {
-        "routes": [
-          "/blog/custom-puffy-stickers-guide"
-        ],
-        "urls": [
-          "https://puffsticker.com/wp-content/uploads/2026/08/custom-puffy-sticker-packaging-insert-unboxing-1024x558.webp"
-        ]
-      },
-      "field": "attachment",
-      "identity": "/wp-content/uploads/2026/08/custom-puffy-sticker-packaging-insert-unboxing.webp",
-      "observed": null,
-      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
-      "scope": "media",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-after-archive",
-      "code": "LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT",
-      "expected": {
-        "routes": [
-          "/blog/custom-puffy-stickers-guide"
-        ],
-        "urls": [
-          "https://puffsticker.com/wp-content/uploads/2026/08/die-cut-vs-kiss-cut-sticker-diagram-1024x558.webp"
-        ]
-      },
-      "field": "attachment",
-      "identity": "/wp-content/uploads/2026/08/die-cut-vs-kiss-cut-sticker-diagram.webp",
-      "observed": null,
-      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
-      "scope": "media",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-after-archive",
-      "code": "LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT",
-      "expected": {
-        "routes": [
-          "/blog/tag/dimensional-stickers",
-          "/blog/tag/embossed-stickers",
-          "/blog/tag/product-design",
-          "/blog/tag/raised-stickers",
-          "/blog/why-custom-stickers-feel-like-objects"
-        ],
-        "urls": [
-          "https://puffsticker.com/wp-content/uploads/2026/08/Featured-scaled.jpg"
-        ]
-      },
-      "field": "attachment",
-      "identity": "/wp-content/uploads/2026/08/featured-scaled.jpg",
-      "observed": null,
-      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
-      "scope": "media",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-after-archive",
-      "code": "LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT",
-      "expected": {
-        "routes": [
-          "/blog/custom-puffy-stickers-guide"
-        ],
-        "urls": [
-          "https://puffsticker.com/wp-content/uploads/2026/08/fingertip-on-raised-puffy-sticker-dome-1024x558.webp"
-        ]
-      },
-      "field": "attachment",
-      "identity": "/wp-content/uploads/2026/08/fingertip-on-raised-puffy-sticker-dome.webp",
-      "observed": null,
-      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
-      "scope": "media",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-after-archive",
-      "code": "LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT",
-      "expected": {
-        "routes": [
-          "/blog/why-custom-stickers-feel-like-objects"
-        ],
-        "urls": [
-          "https://puffsticker.com/wp-content/uploads/2026/08/image-1-1024x683.jpg"
-        ]
-      },
-      "field": "attachment",
-      "identity": "/wp-content/uploads/2026/08/image-1.jpg",
-      "observed": null,
-      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
-      "scope": "media",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-after-archive",
-      "code": "LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT",
-      "expected": {
-        "routes": [
-          "/blog/why-custom-stickers-feel-like-objects"
-        ],
-        "urls": [
-          "https://puffsticker.com/wp-content/uploads/2026/08/image-2-1024x576.jpg"
-        ]
-      },
-      "field": "attachment",
-      "identity": "/wp-content/uploads/2026/08/image-2.jpg",
-      "observed": null,
-      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
-      "scope": "media",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-after-archive",
-      "code": "LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT",
-      "expected": {
-        "routes": [
-          "/blog/why-custom-stickers-feel-like-objects"
-        ],
-        "urls": [
-          "https://puffsticker.com/wp-content/uploads/2026/08/image-3-1024x683.jpg"
-        ]
-      },
-      "field": "attachment",
-      "identity": "/wp-content/uploads/2026/08/image-3.jpg",
-      "observed": null,
-      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
-      "scope": "media",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-after-archive",
-      "code": "LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT",
-      "expected": {
-        "routes": [
-          "/blog/why-custom-stickers-feel-like-objects"
-        ],
-        "urls": [
-          "https://puffsticker.com/wp-content/uploads/2026/08/image-4-1024x683.jpg"
-        ]
-      },
-      "field": "attachment",
-      "identity": "/wp-content/uploads/2026/08/image-4.jpg",
-      "observed": null,
-      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
-      "scope": "media",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-after-archive",
-      "code": "LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT",
-      "expected": {
-        "routes": [
-          "/blog/why-custom-stickers-feel-like-objects"
-        ],
-        "urls": [
-          "https://puffsticker.com/wp-content/uploads/2026/08/image-5-1024x683.jpg"
-        ]
-      },
-      "field": "attachment",
-      "identity": "/wp-content/uploads/2026/08/image-5.jpg",
-      "observed": null,
-      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
-      "scope": "media",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-after-archive",
-      "code": "LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT",
-      "expected": {
-        "routes": [
-          "/blog/why-custom-stickers-feel-like-objects"
-        ],
-        "urls": [
-          "https://puffsticker.com/wp-content/uploads/2026/08/image-6-1024x683.jpg"
-        ]
-      },
-      "field": "attachment",
-      "identity": "/wp-content/uploads/2026/08/image-6.jpg",
-      "observed": null,
-      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
-      "scope": "media",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-after-archive",
-      "code": "LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT",
-      "expected": {
-        "routes": [
-          "/blog/custom-puffy-stickers-guide"
-        ],
-        "urls": [
-          "https://puffsticker.com/wp-content/uploads/2026/08/puffy-sticker-domed-edge-macro-closeup-1024x698.webp"
-        ]
-      },
-      "field": "attachment",
-      "identity": "/wp-content/uploads/2026/08/puffy-sticker-domed-edge-macro-closeup.webp",
-      "observed": null,
-      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
-      "scope": "media",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-after-archive",
-      "code": "LIVE_MEDIA_AFTER_ARCHIVE_SNAPSHOT",
-      "expected": {
-        "routes": [
-          "/blog/custom-puffy-stickers-guide"
-        ],
-        "urls": [
-          "https://puffsticker.com/wp-content/uploads/2026/08/puffy-sticker-vs-epoxy-sticker-water-bottle-laptop-1024x683.webp"
-        ]
-      },
-      "field": "attachment",
-      "identity": "/wp-content/uploads/2026/08/puffy-sticker-vs-epoxy-sticker-water-bottle-laptop.webp",
-      "observed": null,
-      "resolution": "Use the captured production-delta asset; its absence from the older archive is intentional and already isolated.",
-      "scope": "media",
-      "severity": "explained"
-    },
-    {
-      "authority": "wordpress-backup-for-binary-presence; live-production-for-rendered-alt",
-      "code": "LIVE_MEDIA_VERIFIED_AS_UNINDEXED_ARCHIVE_FILE",
-      "expected": {
-        "renderedAlt": [
-          ""
-        ],
-        "routes": [
-          "/"
-        ]
-      },
-      "field": "attachment",
+      "authority": "wordpress-backup-for-legacy-public-binary; current-production-for-active-assets",
+      "code": "LEGACY_PUBLIC_MEDIA_RETAINED_FROM_ARCHIVE",
+      "expected": "Valid archive-present public binary evidence retained for legacy parity",
+      "field": "record",
       "identity": "/wp-content/uploads/revslider/home-6/decor-slide-61.svg",
       "observed": {
-        "archivePresent": true,
         "bytes": 350,
+        "liveReferencedByCurrentStaticProduction": false,
         "sha256": "895abfcbf189be1888a3a23f5b0348da6dc2d1b5dd69c78cd2e2831fed0c30c7"
       },
-      "resolution": "Preserve this verified public binary through object-storage migration; no attachment row or attachment alt metadata should be invented.",
+      "resolution": "Keep this verified public-only legacy binary isolated from current rendering. Removal is deferred until legacy visual/content coverage is separately retired.",
       "scope": "media",
       "severity": "explained"
     },
     {
-      "authority": "wordpress-backup-for-binary-presence; live-production-for-rendered-alt",
-      "code": "LIVE_MEDIA_VERIFIED_AS_UNINDEXED_ARCHIVE_FILE",
-      "expected": {
-        "renderedAlt": [
-          ""
-        ],
-        "routes": [
-          "/"
-        ]
-      },
-      "field": "attachment",
+      "authority": "wordpress-backup-for-legacy-public-binary; current-production-for-active-assets",
+      "code": "LEGACY_PUBLIC_MEDIA_RETAINED_FROM_ARCHIVE",
+      "expected": "Valid archive-present public binary evidence retained for legacy parity",
+      "field": "record",
       "identity": "/wp-content/uploads/revslider/home-6/decor-slide-62.svg",
       "observed": {
-        "archivePresent": true,
         "bytes": 280,
+        "liveReferencedByCurrentStaticProduction": false,
         "sha256": "e780562ac2607dc4c6793b103a02de9c393b58a901b1e07efb0e2cdf5e5f74bd"
       },
-      "resolution": "Preserve this verified public binary through object-storage migration; no attachment row or attachment alt metadata should be invented.",
+      "resolution": "Keep this verified public-only legacy binary isolated from current rendering. Removal is deferred until legacy visual/content coverage is separately retired.",
       "scope": "media",
       "severity": "explained"
     },
     {
-      "authority": "wordpress-backup-for-binary-presence; live-production-for-rendered-alt",
-      "code": "LIVE_MEDIA_VERIFIED_AS_UNINDEXED_ARCHIVE_FILE",
-      "expected": {
-        "renderedAlt": [
-          ""
-        ],
-        "routes": [
-          "/"
-        ]
-      },
-      "field": "attachment",
+      "authority": "wordpress-backup-for-legacy-public-binary; current-production-for-active-assets",
+      "code": "LEGACY_PUBLIC_MEDIA_RETAINED_FROM_ARCHIVE",
+      "expected": "Valid archive-present public binary evidence retained for legacy parity",
+      "field": "record",
       "identity": "/wp-content/uploads/revslider/home-6/decor-slide-63.svg",
       "observed": {
-        "archivePresent": true,
         "bytes": 278,
+        "liveReferencedByCurrentStaticProduction": false,
         "sha256": "23cbfb89546406fcce650a561a47b300ca5f1f35d3f59a34b4093e5983a0bbbb"
       },
-      "resolution": "Preserve this verified public binary through object-storage migration; no attachment row or attachment alt metadata should be invented.",
+      "resolution": "Keep this verified public-only legacy binary isolated from current rendering. Removal is deferred until legacy visual/content coverage is separately retired.",
       "scope": "media",
       "severity": "explained"
     },
     {
-      "authority": "wordpress-backup-for-binary-presence; live-production-for-rendered-alt",
-      "code": "LIVE_MEDIA_VERIFIED_AS_UNINDEXED_ARCHIVE_FILE",
-      "expected": {
-        "renderedAlt": [
-          ""
-        ],
-        "routes": [
-          "/"
-        ]
-      },
-      "field": "attachment",
+      "authority": "wordpress-backup-for-legacy-public-binary; current-production-for-active-assets",
+      "code": "LEGACY_PUBLIC_MEDIA_RETAINED_FROM_ARCHIVE",
+      "expected": "Valid archive-present public binary evidence retained for legacy parity",
+      "field": "record",
       "identity": "/wp-content/uploads/revslider/home-6/decor-slide-64.svg",
       "observed": {
-        "archivePresent": true,
         "bytes": 280,
+        "liveReferencedByCurrentStaticProduction": false,
         "sha256": "f8b2b39d65e0c77579f7b07c436bf001e8ec7d2d7c435673e11aafb18a2aca13"
       },
-      "resolution": "Preserve this verified public binary through object-storage migration; no attachment row or attachment alt metadata should be invented.",
+      "resolution": "Keep this verified public-only legacy binary isolated from current rendering. Removal is deferred until legacy visual/content coverage is separately retired.",
       "scope": "media",
       "severity": "explained"
     },
     {
-      "authority": "wordpress-backup-for-binary-presence; live-production-for-rendered-alt",
-      "code": "LIVE_MEDIA_VERIFIED_AS_UNINDEXED_ARCHIVE_FILE",
-      "expected": {
-        "renderedAlt": [
-          ""
-        ],
-        "routes": [
-          "/"
-        ]
-      },
-      "field": "attachment",
+      "authority": "wordpress-backup-for-legacy-public-binary; current-production-for-active-assets",
+      "code": "LEGACY_PUBLIC_MEDIA_RETAINED_FROM_ARCHIVE",
+      "expected": "Valid archive-present public binary evidence retained for legacy parity",
+      "field": "record",
       "identity": "/wp-content/uploads/revslider/home-6/product-slide-63.png",
       "observed": {
-        "archivePresent": true,
         "bytes": 43554,
+        "liveReferencedByCurrentStaticProduction": false,
         "sha256": "3ce4fee66b6276bc192683bbbb27a3d0b2250f83c27f358bc619d9c83d7b0ef7"
       },
-      "resolution": "Preserve this verified public binary through object-storage migration; no attachment row or attachment alt metadata should be invented.",
+      "resolution": "Keep this verified public-only legacy binary isolated from current rendering. Removal is deferred until legacy visual/content coverage is separately retired.",
       "scope": "media",
       "severity": "explained"
     },
     {
-      "authority": "live-production-for-rendered-content; outside-wordpress-backup-boundary",
-      "code": "EXTERNAL_LIVE_MEDIA_REFERENCE",
+      "authority": "live-production",
+      "code": "CURRENT_PRODUCTION_PAGE_OUTSIDE_WORDPRESS_BACKUP",
       "expected": {
-        "routes": [
-          "/",
-          "/about-us"
-        ]
+        "path": "/checkout",
+        "status": 200
       },
-      "field": "source",
-      "identity": "https://pricom.harutheme.com/creative/wp-content/uploads/2022/02/testi-avatar-1.jpg",
-      "observed": "Third-party theme/demo media URL",
-      "resolution": "Preserve the captured reference for parity. Any localization or removal is a separately approved content/visual cleanup, not part of this framework migration.",
-      "scope": "media",
+      "field": "record",
+      "identity": "/checkout",
+      "observed": null,
+      "resolution": "Preserve the exact dated production page in the protected static renderer. Create a CMS record only in a separately approved data-source switch.",
+      "scope": "page",
       "severity": "explained"
     },
     {
-      "authority": "live-production-for-rendered-content; outside-wordpress-backup-boundary",
-      "code": "EXTERNAL_LIVE_MEDIA_REFERENCE",
+      "authority": "live-production",
+      "code": "CURRENT_PRODUCTION_PAGE_OUTSIDE_WORDPRESS_BACKUP",
       "expected": {
-        "routes": [
-          "/",
-          "/about-us"
-        ]
+        "path": "/industries",
+        "status": 200
       },
-      "field": "source",
-      "identity": "https://pricom.harutheme.com/creative/wp-content/uploads/2022/02/testi-avatar-2.jpg",
-      "observed": "Third-party theme/demo media URL",
-      "resolution": "Preserve the captured reference for parity. Any localization or removal is a separately approved content/visual cleanup, not part of this framework migration.",
-      "scope": "media",
+      "field": "record",
+      "identity": "/industries",
+      "observed": null,
+      "resolution": "Preserve the exact dated production page in the protected static renderer. Create a CMS record only in a separately approved data-source switch.",
+      "scope": "page",
       "severity": "explained"
     },
     {
-      "authority": "live-production-for-rendered-content; outside-wordpress-backup-boundary",
-      "code": "EXTERNAL_LIVE_MEDIA_REFERENCE",
+      "authority": "live-production",
+      "code": "CURRENT_PRODUCTION_PAGE_OUTSIDE_WORDPRESS_BACKUP",
       "expected": {
-        "routes": [
-          "/",
-          "/about-us"
-        ]
+        "path": "/payment-terms",
+        "status": 200
       },
-      "field": "source",
-      "identity": "https://pricom.harutheme.com/creative/wp-content/uploads/2022/02/testi-avatar-4.jpg",
-      "observed": "Third-party theme/demo media URL",
-      "resolution": "Preserve the captured reference for parity. Any localization or removal is a separately approved content/visual cleanup, not part of this framework migration.",
-      "scope": "media",
+      "field": "record",
+      "identity": "/payment-terms",
+      "observed": null,
+      "resolution": "Preserve the exact dated production page in the protected static renderer. Create a CMS record only in a separately approved data-source switch.",
+      "scope": "page",
       "severity": "explained"
     },
     {
-      "authority": "live-production-for-rendered-content; outside-wordpress-backup-boundary",
-      "code": "EXTERNAL_LIVE_MEDIA_REFERENCE",
+      "authority": "live-production",
+      "code": "CURRENT_PRODUCTION_PAGE_OUTSIDE_WORDPRESS_BACKUP",
       "expected": {
-        "routes": [
-          "/",
-          "/about-us"
-        ]
+        "path": "/shipping-policy",
+        "status": 200
       },
-      "field": "source",
-      "identity": "https://pricom.harutheme.com/creative/wp-content/uploads/2022/02/testi-avatar-5.jpg",
-      "observed": "Third-party theme/demo media URL",
-      "resolution": "Preserve the captured reference for parity. Any localization or removal is a separately approved content/visual cleanup, not part of this framework migration.",
-      "scope": "media",
+      "field": "record",
+      "identity": "/shipping-policy",
+      "observed": null,
+      "resolution": "Preserve the exact dated production page in the protected static renderer. Create a CMS record only in a separately approved data-source switch.",
+      "scope": "page",
       "severity": "explained"
     },
     {
-      "authority": "live-production-for-rendered-content; outside-wordpress-backup-boundary",
-      "code": "EXTERNAL_LIVE_MEDIA_REFERENCE",
+      "authority": "live-production",
+      "code": "CURRENT_PRODUCTION_PAGE_OUTSIDE_WORDPRESS_BACKUP",
       "expected": {
-        "routes": [
-          "/about-us"
-        ]
+        "path": "/shop",
+        "status": 200
       },
-      "field": "source",
-      "identity": "https://pricom.harutheme.com/creative/wp-content/uploads/2022/03/logo-company.png",
-      "observed": "Third-party theme/demo media URL",
-      "resolution": "Preserve the captured reference for parity. Any localization or removal is a separately approved content/visual cleanup, not part of this framework migration.",
-      "scope": "media",
+      "field": "record",
+      "identity": "/shop",
+      "observed": null,
+      "resolution": "Preserve the exact dated production page in the protected static renderer. Create a CMS record only in a separately approved data-source switch.",
+      "scope": "page",
       "severity": "explained"
     },
     {
-      "authority": "live-production-for-rendered-content; outside-wordpress-backup-boundary",
-      "code": "EXTERNAL_LIVE_MEDIA_REFERENCE",
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "LIVE_POST_AFTER_ARCHIVE_SNAPSHOT",
       "expected": {
-        "routes": [
-          "/about-us"
-        ]
+        "publishedAt": "2026-09-15T09:20:00+00:00"
       },
-      "field": "source",
-      "identity": "https://pricom.harutheme.com/creative/wp-content/uploads/2022/03/logo-cosmic.png",
-      "observed": "Third-party theme/demo media URL",
-      "resolution": "Preserve the captured reference for parity. Any localization or removal is a separately approved content/visual cleanup, not part of this framework migration.",
-      "scope": "media",
+      "field": "record",
+      "identity": "cbd-box-styles-tuck-end-sleeve-rigid",
+      "observed": null,
+      "resolution": "Keep the captured production article as authoritative static content. Create a CMS record only in a separately approved data-source switch; do not treat its absence from the older WordPress backup as data loss.",
+      "scope": "post",
       "severity": "explained"
     },
     {
-      "authority": "live-production-for-rendered-content; outside-wordpress-backup-boundary",
-      "code": "EXTERNAL_LIVE_MEDIA_REFERENCE",
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "LIVE_POST_AFTER_ARCHIVE_SNAPSHOT",
       "expected": {
-        "routes": [
-          "/about-us"
-        ]
+        "publishedAt": "2026-09-17T11:40:00+00:00"
       },
-      "field": "source",
-      "identity": "https://pricom.harutheme.com/creative/wp-content/uploads/2022/03/logo-cougar.png",
-      "observed": "Third-party theme/demo media URL",
-      "resolution": "Preserve the captured reference for parity. Any localization or removal is a separately approved content/visual cleanup, not part of this framework migration.",
-      "scope": "media",
+      "field": "record",
+      "identity": "cbd-packaging-on-a-dispensary-shelf",
+      "observed": null,
+      "resolution": "Keep the captured production article as authoritative static content. Create a CMS record only in a separately approved data-source switch; do not treat its absence from the older WordPress backup as data loss.",
+      "scope": "post",
       "severity": "explained"
     },
     {
-      "authority": "live-production-for-rendered-content; outside-wordpress-backup-boundary",
-      "code": "EXTERNAL_LIVE_MEDIA_REFERENCE",
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "LIVE_POST_AFTER_ARCHIVE_SNAPSHOT",
       "expected": {
-        "routes": [
-          "/about-us"
-        ]
+        "publishedAt": "2026-09-16T10:05:00+00:00"
       },
-      "field": "source",
-      "identity": "https://pricom.harutheme.com/creative/wp-content/uploads/2022/03/logo-design.png",
-      "observed": "Third-party theme/demo media URL",
-      "resolution": "Preserve the captured reference for parity. Any localization or removal is a separately approved content/visual cleanup, not part of this framework migration.",
-      "scope": "media",
+      "field": "record",
+      "identity": "child-resistant-cbd-boxes-how-they-work",
+      "observed": null,
+      "resolution": "Keep the captured production article as authoritative static content. Create a CMS record only in a separately approved data-source switch; do not treat its absence from the older WordPress backup as data loss.",
+      "scope": "post",
       "severity": "explained"
     },
     {
-      "authority": "live-production-for-rendered-content; outside-wordpress-backup-boundary",
-      "code": "EXTERNAL_LIVE_MEDIA_REFERENCE",
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "LIVE_POST_AFTER_ARCHIVE_SNAPSHOT",
       "expected": {
-        "routes": [
-          "/about-us"
-        ]
+        "publishedAt": "2026-09-03T22:18:08+00:00"
       },
-      "field": "source",
-      "identity": "https://pricom.harutheme.com/creative/wp-content/uploads/2022/03/logo-findr.png",
-      "observed": "Third-party theme/demo media URL",
-      "resolution": "Preserve the captured reference for parity. Any localization or removal is a separately approved content/visual cleanup, not part of this framework migration.",
-      "scope": "media",
+      "field": "record",
+      "identity": "custom-mylar-bags-guide",
+      "observed": null,
+      "resolution": "Keep the captured production article as authoritative static content. Create a CMS record only in a separately approved data-source switch; do not treat its absence from the older WordPress backup as data loss.",
+      "scope": "post",
       "severity": "explained"
     },
     {
-      "authority": "live-production-for-rendered-content; outside-wordpress-backup-boundary",
-      "code": "EXTERNAL_LIVE_MEDIA_REFERENCE",
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "LIVE_POST_AFTER_ARCHIVE_SNAPSHOT",
       "expected": {
-        "routes": [
-          "/about-us"
-        ]
+        "publishedAt": "2026-09-02T23:47:59+00:00"
       },
-      "field": "source",
-      "identity": "https://pricom.harutheme.com/creative/wp-content/uploads/2022/03/logo-intdeco.png",
-      "observed": "Third-party theme/demo media URL",
-      "resolution": "Preserve the captured reference for parity. Any localization or removal is a separately approved content/visual cleanup, not part of this framework migration.",
-      "scope": "media",
+      "field": "record",
+      "identity": "custom-puffy-stickers-christmas",
+      "observed": null,
+      "resolution": "Keep the captured production article as authoritative static content. Create a CMS record only in a separately approved data-source switch; do not treat its absence from the older WordPress backup as data loss.",
+      "scope": "post",
       "severity": "explained"
     },
     {
-      "authority": "live-production-for-rendered-content; outside-wordpress-backup-boundary",
-      "code": "EXTERNAL_LIVE_MEDIA_REFERENCE",
-      "expected": {
-        "routes": [
-          "/about-us"
-        ]
-      },
-      "field": "source",
-      "identity": "https://pricom.harutheme.com/creative/wp-content/uploads/2022/03/member-21.png",
-      "observed": "Third-party theme/demo media URL",
-      "resolution": "Preserve the captured reference for parity. Any localization or removal is a separately approved content/visual cleanup, not part of this framework migration.",
-      "scope": "media",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-for-rendered-content; outside-wordpress-backup-boundary",
-      "code": "EXTERNAL_LIVE_MEDIA_REFERENCE",
-      "expected": {
-        "routes": [
-          "/about-us"
-        ]
-      },
-      "field": "source",
-      "identity": "https://pricom.harutheme.com/creative/wp-content/uploads/2022/03/member-22.png",
-      "observed": "Third-party theme/demo media URL",
-      "resolution": "Preserve the captured reference for parity. Any localization or removal is a separately approved content/visual cleanup, not part of this framework migration.",
-      "scope": "media",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-for-rendered-content; outside-wordpress-backup-boundary",
-      "code": "EXTERNAL_LIVE_MEDIA_REFERENCE",
-      "expected": {
-        "routes": [
-          "/about-us"
-        ]
-      },
-      "field": "source",
-      "identity": "https://pricom.harutheme.com/creative/wp-content/uploads/2022/03/member-23.png",
-      "observed": "Third-party theme/demo media URL",
-      "resolution": "Preserve the captured reference for parity. Any localization or removal is a separately approved content/visual cleanup, not part of this framework migration.",
-      "scope": "media",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-for-rendered-content; outside-wordpress-backup-boundary",
-      "code": "EXTERNAL_LIVE_MEDIA_REFERENCE",
-      "expected": {
-        "routes": [
-          "/about-us"
-        ]
-      },
-      "field": "source",
-      "identity": "https://pricom.harutheme.com/creative/wp-content/uploads/2022/03/member-24.png",
-      "observed": "Third-party theme/demo media URL",
-      "resolution": "Preserve the captured reference for parity. Any localization or removal is a separately approved content/visual cleanup, not part of this framework migration.",
-      "scope": "media",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-for-rendered-content; outside-wordpress-backup-boundary",
-      "code": "EXTERNAL_LIVE_MEDIA_REFERENCE",
-      "expected": {
-        "routes": [
-          "/about-us"
-        ]
-      },
-      "field": "source",
-      "identity": "https://pricom.harutheme.com/creative/wp-content/uploads/2022/04/banner-about-1.png",
-      "observed": "Third-party theme/demo media URL",
-      "resolution": "Preserve the captured reference for parity. Any localization or removal is a separately approved content/visual cleanup, not part of this framework migration.",
-      "scope": "media",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-for-rendered-content; outside-wordpress-backup-boundary",
-      "code": "EXTERNAL_LIVE_MEDIA_REFERENCE",
-      "expected": {
-        "routes": [
-          "/about-us"
-        ]
-      },
-      "field": "source",
-      "identity": "https://pricom.harutheme.com/creative/wp-content/uploads/2022/04/banner-about-2.png",
-      "observed": "Third-party theme/demo media URL",
-      "resolution": "Preserve the captured reference for parity. Any localization or removal is a separately approved content/visual cleanup, not part of this framework migration.",
-      "scope": "media",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-after-archive",
+      "authority": "dated-live-production-and-protected-static-content",
       "code": "LIVE_POST_AFTER_ARCHIVE_SNAPSHOT",
       "expected": {
         "id": 19341,
@@ -1564,12 +523,77 @@
       "field": "record",
       "identity": "custom-puffy-stickers-guide",
       "observed": null,
-      "resolution": "Keep the captured production article as an authoritative live delta and inject it during normalization reconciliation; do not treat its absence from the older archive as data loss.",
+      "resolution": "Keep the captured production article as authoritative static content. Create a CMS record only in a separately approved data-source switch; do not treat its absence from the older WordPress backup as data loss.",
       "scope": "post",
       "severity": "explained"
     },
     {
-      "authority": "live-production-after-archive",
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "LIVE_POST_AFTER_ARCHIVE_SNAPSHOT",
+      "expected": {
+        "publishedAt": "2026-09-24T12:00:00+00:00"
+      },
+      "field": "record",
+      "identity": "kraft-look-packaging",
+      "observed": null,
+      "resolution": "Keep the captured production article as authoritative static content. Create a CMS record only in a separately approved data-source switch; do not treat its absence from the older WordPress backup as data loss.",
+      "scope": "post",
+      "severity": "explained"
+    },
+    {
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "LIVE_POST_AFTER_ARCHIVE_SNAPSHOT",
+      "expected": {
+        "publishedAt": "2026-09-17T16:08:55+00:00"
+      },
+      "field": "record",
+      "identity": "recyclable-compostable-biodegradable",
+      "observed": null,
+      "resolution": "Keep the captured production article as authoritative static content. Create a CMS record only in a separately approved data-source switch; do not treat its absence from the older WordPress backup as data loss.",
+      "scope": "post",
+      "severity": "explained"
+    },
+    {
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "LIVE_POST_AFTER_ARCHIVE_SNAPSHOT",
+      "expected": {
+        "publishedAt": "2026-09-08T19:17:58+00:00"
+      },
+      "field": "record",
+      "identity": "reflex-to-touch-raised-surface",
+      "observed": null,
+      "resolution": "Keep the captured production article as authoritative static content. Create a CMS record only in a separately approved data-source switch; do not treat its absence from the older WordPress backup as data loss.",
+      "scope": "post",
+      "severity": "explained"
+    },
+    {
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "LIVE_POST_AFTER_ARCHIVE_SNAPSHOT",
+      "expected": {
+        "publishedAt": "2026-09-15T19:49:36+00:00"
+      },
+      "field": "record",
+      "identity": "sticker-stops-feeling-flat",
+      "observed": null,
+      "resolution": "Keep the captured production article as authoritative static content. Create a CMS record only in a separately approved data-source switch; do not treat its absence from the older WordPress backup as data loss.",
+      "scope": "post",
+      "severity": "explained"
+    },
+    {
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "LIVE_POST_AFTER_ARCHIVE_SNAPSHOT",
+      "expected": {
+        "publishedAt": "2026-09-23T12:00:00+00:00"
+      },
+      "field": "record",
+      "identity": "sticker-thickness-personality",
+      "observed": null,
+      "resolution": "Keep the captured production article as authoritative static content. Create a CMS record only in a separately approved data-source switch; do not treat its absence from the older WordPress backup as data loss.",
+      "scope": "post",
+      "severity": "explained"
+    },
+    {
+      "authority": "dated-live-production-and-protected-static-content",
       "code": "LIVE_POST_AFTER_ARCHIVE_SNAPSHOT",
       "expected": {
         "id": 19368,
@@ -1578,14 +602,178 @@
       "field": "record",
       "identity": "why-custom-stickers-feel-like-objects",
       "observed": null,
-      "resolution": "Keep the captured production article as an authoritative live delta and inject it during normalization reconciliation; do not treat its absence from the older archive as data loss.",
+      "resolution": "Keep the captured production article as authoritative static content. Create a CMS record only in a separately approved data-source switch; do not treat its absence from the older WordPress backup as data loss.",
       "scope": "post",
+      "severity": "explained"
+    },
+    {
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "LIVE_POST_AFTER_ARCHIVE_SNAPSHOT",
+      "expected": {
+        "publishedAt": "2026-09-10T17:33:42+00:00"
+      },
+      "field": "record",
+      "identity": "why-paper-is-better-isnt-a-complete-packaging-argument",
+      "observed": null,
+      "resolution": "Keep the captured production article as authoritative static content. Create a CMS record only in a separately approved data-source switch; do not treat its absence from the older WordPress backup as data loss.",
+      "scope": "post",
+      "severity": "explained"
+    },
+    {
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "CURRENT_PRODUCTION_PRODUCT_OUTSIDE_WORDPRESS_BACKUP",
+      "expected": {
+        "id": 30001,
+        "status": "publish"
+      },
+      "field": "record",
+      "identity": "cbd-bottle-boxes",
+      "observed": null,
+      "resolution": "Preserve the exact dated production content in the protected static renderer. Create a CMS record only in a separately approved data-source switch; absence from the older WordPress backup is not public data loss.",
+      "scope": "product",
+      "severity": "explained"
+    },
+    {
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "CURRENT_PRODUCTION_PRODUCT_OUTSIDE_WORDPRESS_BACKUP",
+      "expected": {
+        "id": 30002,
+        "status": "publish"
+      },
+      "field": "record",
+      "identity": "cbd-display-boxes",
+      "observed": null,
+      "resolution": "Preserve the exact dated production content in the protected static renderer. Create a CMS record only in a separately approved data-source switch; absence from the older WordPress backup is not public data loss.",
+      "scope": "product",
+      "severity": "explained"
+    },
+    {
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "CURRENT_PRODUCTION_PRODUCT_OUTSIDE_WORDPRESS_BACKUP",
+      "expected": {
+        "id": 30003,
+        "status": "publish"
+      },
+      "field": "record",
+      "identity": "cbd-gummy-boxes",
+      "observed": null,
+      "resolution": "Preserve the exact dated production content in the protected static renderer. Create a CMS record only in a separately approved data-source switch; absence from the older WordPress backup is not public data loss.",
+      "scope": "product",
+      "severity": "explained"
+    },
+    {
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "CURRENT_PRODUCTION_PRODUCT_OUTSIDE_WORDPRESS_BACKUP",
+      "expected": {
+        "id": 30004,
+        "status": "publish"
+      },
+      "field": "record",
+      "identity": "cbd-kraft-boxes",
+      "observed": null,
+      "resolution": "Preserve the exact dated production content in the protected static renderer. Create a CMS record only in a separately approved data-source switch; absence from the older WordPress backup is not public data loss.",
+      "scope": "product",
+      "severity": "explained"
+    },
+    {
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "CURRENT_PRODUCTION_PRODUCT_OUTSIDE_WORDPRESS_BACKUP",
+      "expected": {
+        "id": 30005,
+        "status": "publish"
+      },
+      "field": "record",
+      "identity": "cbd-oil-packaging",
+      "observed": null,
+      "resolution": "Preserve the exact dated production content in the protected static renderer. Create a CMS record only in a separately approved data-source switch; absence from the older WordPress backup is not public data loss.",
+      "scope": "product",
+      "severity": "explained"
+    },
+    {
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "CURRENT_PRODUCTION_PRODUCT_OUTSIDE_WORDPRESS_BACKUP",
+      "expected": {
+        "id": 30006,
+        "status": "publish"
+      },
+      "field": "record",
+      "identity": "cbd-sleeve-tray-boxes",
+      "observed": null,
+      "resolution": "Preserve the exact dated production content in the protected static renderer. Create a CMS record only in a separately approved data-source switch; absence from the older WordPress backup is not public data loss.",
+      "scope": "product",
+      "severity": "explained"
+    },
+    {
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "CURRENT_PRODUCTION_PRODUCT_OUTSIDE_WORDPRESS_BACKUP",
+      "expected": {
+        "id": 30007,
+        "status": "publish"
+      },
+      "field": "record",
+      "identity": "cbd-tincture-boxes",
+      "observed": null,
+      "resolution": "Preserve the exact dated production content in the protected static renderer. Create a CMS record only in a separately approved data-source switch; absence from the older WordPress backup is not public data loss.",
+      "scope": "product",
+      "severity": "explained"
+    },
+    {
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "CURRENT_PRODUCTION_PRODUCT_OUTSIDE_WORDPRESS_BACKUP",
+      "expected": {
+        "id": 30008,
+        "status": "publish"
+      },
+      "field": "record",
+      "identity": "child-resistant-boxes",
+      "observed": null,
+      "resolution": "Preserve the exact dated production content in the protected static renderer. Create a CMS record only in a separately approved data-source switch; absence from the older WordPress backup is not public data loss.",
+      "scope": "product",
+      "severity": "explained"
+    },
+    {
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "CURRENT_PRODUCTION_PRODUCT_OUTSIDE_WORDPRESS_BACKUP",
+      "expected": {
+        "id": 30009,
+        "status": "publish"
+      },
+      "field": "record",
+      "identity": "custom-cbd-boxes",
+      "observed": null,
+      "resolution": "Preserve the exact dated production content in the protected static renderer. Create a CMS record only in a separately approved data-source switch; absence from the older WordPress backup is not public data loss.",
+      "scope": "product",
+      "severity": "explained"
+    },
+    {
+      "authority": "dated-live-production-and-protected-static-content",
+      "code": "CURRENT_PRODUCTION_PRODUCT_OUTSIDE_WORDPRESS_BACKUP",
+      "expected": {
+        "id": 30010,
+        "status": "publish"
+      },
+      "field": "record",
+      "identity": "custom-hemp-boxes",
+      "observed": null,
+      "resolution": "Preserve the exact dated production content in the protected static renderer. Create a CMS record only in a separately approved data-source switch; absence from the older WordPress backup is not public data loss.",
+      "scope": "product",
       "severity": "explained"
     },
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "Shop custom puffy stickers, flat labels & custom tote bags at PuffSticker.com. Fully customizable, with international shipping on request.",
+      "field": "description",
+      "identity": "/",
+      "observed": "Shop custom puffy stickers, flat labels & custom tote bags at PuffSticker.com. Fully customizable and shipped worldwide to boost your brand.",
+      "resolution": "Preserve the exact production SEO contract; do not let the older backup metadata override it during framework or data-source migration.",
+      "scope": "seo",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-seo",
+      "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
+      "expected": "",
       "field": "robots",
       "identity": "/",
       "observed": "index",
@@ -1596,7 +784,18 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "PuffSticker began in 2007 as an offline business and went online in 2025. Read our story, how orders are made, and what every custom order includes.",
+      "field": "description",
+      "identity": "/about-us",
+      "observed": "Learn about PuffSticker.com—founded in 2007 and pioneers in custom puffy stickers. Discover our story, mission, and why brands trust our quality printing.",
+      "resolution": "Preserve the exact production SEO contract; do not let the older backup metadata override it during framework or data-source migration.",
+      "scope": "seo",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-seo",
+      "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
+      "expected": "",
       "field": "robots",
       "identity": "/about-us",
       "observed": "index",
@@ -1607,7 +806,7 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "",
       "field": "robots",
       "identity": "/blog",
       "observed": "index",
@@ -1629,7 +828,18 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "Discover reusable, customizable jute tote bags. Branded packaging that boosts your brand visibility.",
+      "field": "description",
+      "identity": "/blog/custom-jute-tote-bags-the-perfect-blend-of-sustainability",
+      "observed": "Discover sustainable, reusable, and customizable jute tote bags. Eco-friendly packaging that boosts your brand visibility.",
+      "resolution": "Preserve the exact production SEO contract; do not let the older backup metadata override it during framework or data-source migration.",
+      "scope": "seo",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-seo",
+      "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
+      "expected": "",
       "field": "robots",
       "identity": "/blog/custom-jute-tote-bags-the-perfect-blend-of-sustainability",
       "observed": "index",
@@ -1640,7 +850,18 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "Custom Jute Tote Bags | Reusable & Stylish Shopping Bags",
+      "field": "title",
+      "identity": "/blog/custom-jute-tote-bags-the-perfect-blend-of-sustainability",
+      "observed": "Custom Jute Tote Bags | Eco-Friendly & Stylish Shopping Bags",
+      "resolution": "Preserve the exact production SEO contract; do not let the older backup metadata override it during framework or data-source migration.",
+      "scope": "seo",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-seo",
+      "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
+      "expected": "",
       "field": "robots",
       "identity": "/blog/custom-puffy-stickers-became-the-new-therapy",
       "observed": "index",
@@ -1662,7 +883,7 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "",
       "field": "robots",
       "identity": "/blog/holographic-stickers-color-perception",
       "observed": "index",
@@ -1684,7 +905,7 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "https://puffsticker.com/blog/puffy-stickers-are-trending-2025",
+      "expected": "https://puffsticker.com/blog/puffy-stickers-are-trending-2025/",
       "field": "canonical",
       "identity": "/blog/puffy-stickers-are-trending-2025",
       "observed": "https://puffsticker.com/puffy-stickers-are-trending-2025",
@@ -1695,7 +916,7 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "",
       "field": "robots",
       "identity": "/blog/puffy-stickers-are-trending-2025",
       "observed": "index",
@@ -1717,7 +938,7 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "",
       "field": "robots",
       "identity": "/blog/sound-of-packaging-mylar-bags",
       "observed": "index",
@@ -1761,7 +982,18 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "Have questions about custom puffy stickers, labels, or promotional items? Contact PuffSticker.com for expert advice and a reply within one business day.",
+      "field": "description",
+      "identity": "/contact-us",
+      "observed": "Have questions about custom puffy stickers, labels, or promotional items? Contact PuffSticker.com for quick support, expert advice, and fast responses.",
+      "resolution": "Preserve the exact production SEO contract; do not let the older backup metadata override it during framework or data-source migration.",
+      "scope": "seo",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-seo",
+      "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
+      "expected": "",
       "field": "robots",
       "identity": "/contact-us",
       "observed": "index",
@@ -1772,10 +1004,32 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "",
       "field": "robots",
       "identity": "/faqs",
       "observed": "index",
+      "resolution": "Preserve the exact production SEO contract; do not let the older backup metadata override it during framework or data-source migration.",
+      "scope": "seo",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-seo",
+      "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
+      "expected": "Order cost-effective custom stickers and labels with full customization. Ideal for promotions, packaging, and giveaways. Bulk discounts, made in 18–20 business days.",
+      "field": "description",
+      "identity": "/flat-labels-stickers",
+      "observed": "Order cost-effective custom stickers and labels with full customization. Ideal for promotions, packaging, and giveaways. Bulk discounts & fast shipping.",
+      "resolution": "Preserve the exact production SEO contract; do not let the older backup metadata override it during framework or data-source migration.",
+      "scope": "seo",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-seo",
+      "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
+      "expected": "Design custom stickers for business, gifts, or fun. Choose your shape, finish & size. High-quality vinyl, made in 18–20 business days at puffsticker.com.",
+      "field": "description",
+      "identity": "/flat-labels-stickers/custom-stickers",
+      "observed": "Design custom stickers for business, gifts, or fun. Choose your shape, finish & size. High-quality vinyl, fast delivery. Create yours at puffsticker.com!",
       "resolution": "Preserve the exact production SEO contract; do not let the older backup metadata override it during framework or data-source migration.",
       "scope": "seo",
       "severity": "explained"
@@ -1805,10 +1059,43 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "Design elegant foil stickers in gold, silver, bronze, or rose gold. Custom shapes, waterproof, made in 18–20 business days. Luxury branding starts at puffsticker.com.",
+      "field": "description",
+      "identity": "/flat-labels-stickers/metallic-foil-stickers",
+      "observed": "Design elegant foil stickers in gold, silver, bronze, or rose gold. Custom shapes, waterproof and fast delivery. Luxury branding starts at puffsticker.com.",
+      "resolution": "Preserve the exact production SEO contract; do not let the older backup metadata override it during framework or data-source migration.",
+      "scope": "seo",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-seo",
+      "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
+      "expected": "",
       "field": "robots",
       "identity": "/privacy-policy",
       "observed": "index",
+      "resolution": "Preserve the exact production SEO contract; do not let the older backup metadata override it during framework or data-source migration.",
+      "scope": "seo",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-seo",
+      "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
+      "expected": "Order custom promotional bags in paper, jute, or nylon. High-quality printing, full customization, and 18–20 business days from proof to delivery.",
+      "field": "description",
+      "identity": "/promotional-items",
+      "observed": "Order custom promotional bags in paper, jute, or nylon. High-quality printing, full customization, and fast delivery to boost your brand visibility.",
+      "resolution": "Preserve the exact production SEO contract; do not let the older backup metadata override it during framework or data-source migration.",
+      "scope": "seo",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-seo",
+      "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
+      "expected": "Custom Promotional Bags | Printed Bags at PuffSticker.com",
+      "field": "title",
+      "identity": "/promotional-items",
+      "observed": "Custom Promotional Bags | Eco-Friendly Bags at PuffSticker.com",
       "resolution": "Preserve the exact production SEO contract; do not let the older backup metadata override it during framework or data-source migration.",
       "scope": "seo",
       "severity": "explained"
@@ -1827,7 +1114,7 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "Eco-friendly kraft mylar bags with custom printing and high-barrier protection. Recyclable mono-PE, foil-free, or certified compostable—windows, zippers, valves",
+      "expected": "Kraft mylar bags with custom printing and high-barrier protection. Foil-free and mono-PE builds, windows, zippers and valves",
       "field": "description",
       "identity": "/promotional-items/eco-friendly-kraft-mylar-bags",
       "observed": "Order high-quality mylar bags customized with your logo and design. Durable, airtight pouches ideal for food, cosmetics, and pharmaceuticals.",
@@ -1838,7 +1125,7 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "Custom Mylar Bags | Eco-Friendly Kraft Mylar Bags",
+      "expected": "Custom Mylar Bags | Kraft Mylar Bags",
       "field": "title",
       "identity": "/promotional-items/eco-friendly-kraft-mylar-bags",
       "observed": "Custom Mylar Bags – Vacuum Seal Pouches | PuffSticker.com",
@@ -1849,7 +1136,18 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "Custom Jute Bags – Eco-Friendly Tote Bags | PuffSticker.com",
+      "expected": "Order custom jute bags with logos or slogans at PuffSticker.com. Reusable, durable, and stylish—perfect for branding, gifting, and packaging.",
+      "field": "description",
+      "identity": "/promotional-items/jute-bag",
+      "observed": "Order custom jute bags with logos or slogans at PuffSticker.com. Recyclable, biodegradable, and stylish—perfect for branding, gifting, and packaging.",
+      "resolution": "Preserve the exact production SEO contract; do not let the older backup metadata override it during framework or data-source migration.",
+      "scope": "seo",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-seo",
+      "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
+      "expected": "Custom Jute Bags – Reusable Tote Bags | PuffSticker.com",
       "field": "title",
       "identity": "/promotional-items/jute-bag",
       "observed": "Custom Jute Tote Bags – Eco-Friendly Carry Bag | PuffSticker.com",
@@ -1860,7 +1158,18 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "Promote your brand with custom non-woven polypropylene bags. Durable, reusable, and customizable tote bags from PuffSticker.com.",
+      "field": "description",
+      "identity": "/promotional-items/non-woven-bag",
+      "observed": "Promote your brand with custom non-woven bags made from recycled materials. Durable, reusable, and customizable tote bags from PuffSticker.com.",
+      "resolution": "Preserve the exact production SEO contract; do not let the older backup metadata override it during framework or data-source migration.",
+      "scope": "seo",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-seo",
+      "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
+      "expected": "",
       "field": "robots",
       "identity": "/promotional-items/non-woven-bag",
       "observed": "index",
@@ -1871,7 +1180,18 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "Custom Non-Woven Bags – Reusable Tote Bags | PuffSticker.com",
+      "field": "title",
+      "identity": "/promotional-items/non-woven-bag",
+      "observed": "Custom Non-Woven Bags – Eco-Friendly Bags | PuffSticker.com",
+      "resolution": "Preserve the exact production SEO contract; do not let the older backup metadata override it during framework or data-source migration.",
+      "scope": "seo",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-seo",
+      "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
+      "expected": "",
       "field": "robots",
       "identity": "/promotional-items/nylon-bag",
       "observed": "index",
@@ -1882,7 +1202,18 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "Promote your brand with custom paper bags made from durable Kraft paper. Recyclable, reusable, and stylish—perfect for retail, groceries & gifting.",
+      "field": "description",
+      "identity": "/promotional-items/paper-bag",
+      "observed": "Promote your brand with custom paper bags made from durable Kraft paper. Eco-friendly, reusable, and stylish—perfect for retail, groceries & gifting.",
+      "resolution": "Preserve the exact production SEO contract; do not let the older backup metadata override it during framework or data-source migration.",
+      "scope": "seo",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-seo",
+      "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
+      "expected": "",
       "field": "robots",
       "identity": "/promotional-items/paper-bag",
       "observed": "index",
@@ -1893,7 +1224,29 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "Custom Paper Bags | Kraft Paper Bags – PuffSticker.com",
+      "field": "title",
+      "identity": "/promotional-items/paper-bag",
+      "observed": "Custom Paper Bags | Eco-Friendly Kraft Bags – PuffSticker.com",
+      "resolution": "Preserve the exact production SEO contract; do not let the older backup metadata override it during framework or data-source migration.",
+      "scope": "seo",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-seo",
+      "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
+      "expected": "Shop water-resistant washable paper bags at PuffSticker.com. Customize with your brand logo and enjoy durable, vegan-friendly packaging.",
+      "field": "description",
+      "identity": "/promotional-items/washable-paper-bags",
+      "observed": "Shop eco-conscious, water-resistant washable paper bags at PuffSticker.com. Customize with your brand logo and enjoy durable, vegan-friendly packaging.",
+      "resolution": "Preserve the exact production SEO contract; do not let the older backup metadata override it during framework or data-source migration.",
+      "scope": "seo",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-seo",
+      "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
+      "expected": "",
       "field": "robots",
       "identity": "/promotional-items/washable-paper-bags",
       "observed": "index",
@@ -1904,7 +1257,7 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "",
       "field": "robots",
       "identity": "/promotional-items/woven-bags",
       "observed": "index",
@@ -1948,7 +1301,18 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "Create custom puffy sticker sheets with bold colors, 3D texture & up to 40 stickers per sheet. Perfect for gifts, branding, and crafts. Request a quote today at PuffSticker.com",
+      "field": "description",
+      "identity": "/puffy-labels-stickers/puffy-sticker-sheets",
+      "observed": "Create custom puffy sticker sheets with bold colors, 3D texture & up to 40 stickers per sheet. Perfect for gifts, branding, and crafts. Order online today at PuffSticker.com",
+      "resolution": "Preserve the exact production SEO contract; do not let the older backup metadata override it during framework or data-source migration.",
+      "scope": "seo",
+      "severity": "explained"
+    },
+    {
+      "authority": "live-production-for-seo",
+      "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
+      "expected": "",
       "field": "robots",
       "identity": "/puffy-labels-stickers/puffy-sticker-sheets",
       "observed": "index",
@@ -1970,7 +1334,7 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "",
       "field": "robots",
       "identity": "/puffy-labels-stickers/puffy-stickers",
       "observed": "index",
@@ -1992,7 +1356,7 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "",
       "field": "robots",
       "identity": "/reprint-policy",
       "observed": "index",
@@ -2003,7 +1367,7 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "",
       "field": "robots",
       "identity": "/request-a-quote",
       "observed": "index",
@@ -2014,7 +1378,7 @@
     {
       "authority": "live-production-for-seo",
       "code": "BACKUP_SEO_DIFFERS_FROM_LIVE",
-      "expected": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+      "expected": "",
       "field": "robots",
       "identity": "/terms-of-service",
       "observed": "index",
@@ -2026,59 +1390,14 @@
       "authority": "live-production-for-public-route; wordpress-backup-for-term-identity",
       "code": "LIVE_TAXONOMY_AFTER_ARCHIVE_SNAPSHOT",
       "expected": {
-        "path": "/blog/tag/dimensional-stickers",
-        "slug": "dimensional-stickers",
-        "taxonomy": "post_tag"
+        "path": "/cbd-packaging-boxes",
+        "slug": "cbd-packaging-boxes",
+        "taxonomy": "product_cat"
       },
       "field": "term",
-      "identity": "post_tag:dimensional-stickers",
+      "identity": "product_cat:cbd-packaging-boxes",
       "observed": null,
-      "resolution": "Create this audited live-after-backup tag during normalization reconciliation before data-source cutover.",
-      "scope": "taxonomy",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-for-public-route; wordpress-backup-for-term-identity",
-      "code": "LIVE_TAXONOMY_AFTER_ARCHIVE_SNAPSHOT",
-      "expected": {
-        "path": "/blog/tag/embossed-stickers",
-        "slug": "embossed-stickers",
-        "taxonomy": "post_tag"
-      },
-      "field": "term",
-      "identity": "post_tag:embossed-stickers",
-      "observed": null,
-      "resolution": "Create this audited live-after-backup tag during normalization reconciliation before data-source cutover.",
-      "scope": "taxonomy",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-for-public-route; wordpress-backup-for-term-identity",
-      "code": "LIVE_TAXONOMY_AFTER_ARCHIVE_SNAPSHOT",
-      "expected": {
-        "path": "/blog/tag/product-design",
-        "slug": "product-design",
-        "taxonomy": "post_tag"
-      },
-      "field": "term",
-      "identity": "post_tag:product-design",
-      "observed": null,
-      "resolution": "Create this audited live-after-backup tag during normalization reconciliation before data-source cutover.",
-      "scope": "taxonomy",
-      "severity": "explained"
-    },
-    {
-      "authority": "live-production-for-public-route; wordpress-backup-for-term-identity",
-      "code": "LIVE_TAXONOMY_AFTER_ARCHIVE_SNAPSHOT",
-      "expected": {
-        "path": "/blog/tag/raised-stickers",
-        "slug": "raised-stickers",
-        "taxonomy": "post_tag"
-      },
-      "field": "term",
-      "identity": "post_tag:raised-stickers",
-      "observed": null,
-      "resolution": "Create this audited live-after-backup tag during normalization reconciliation before data-source cutover.",
+      "resolution": "Preserve the audited live taxonomy route in the protected static renderer and create a CMS term only during a separately approved data-source switch.",
       "scope": "taxonomy",
       "severity": "explained"
     }
@@ -2119,17 +1438,19 @@
     "archiveDatabaseSnapshotAt": "2026-08-12T22:29:58.000Z",
     "archiveSha256": "9faae116d4723390636a53bb0834879aa998c21ba2c42bc3c466647a9108b21d",
     "databaseSha256": "c23d278a02a591d91e14ce77c82b9a878503f104e05901c11572866ed85dbc3d",
-    "liveSeoCapturedOn": "2026-09-01",
+    "liveSeoCapturedOn": "2026-10-01",
     "liveSeoEvidence": [
-      "src/lib/seo/fixtures/production-seo-2026-08-22.json",
-      "src/lib/seo/fixtures/production-seo-current-delta-2026-09-01.ts"
+      "src/lib/seo/fixtures/production-seo-capture-2026-09-30.json",
+      "src/lib/seo/fixtures/production-seo-capture-2026-10-01-checkout.json"
     ],
     "normalizedManifestSchemaVersion": 1,
     "protectedContentSources": [
       "src/content/catalog.ts",
       "src/content/editorial.ts",
       "src/content/productDetails.ts",
-      "src/content/productionDeltaContent.ts"
+      "src/content/productionDeltaContent.ts",
+      "src/content/fixtures/production-content-2026-09-30.json",
+      "src/content/fixtures/production-content-2026-10-01-checkout.json"
     ]
   },
   "status": "accepted"

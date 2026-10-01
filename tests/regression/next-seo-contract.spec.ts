@@ -10,6 +10,7 @@ import {
   LEGACY_SITEMAP_PATHS,
   PRIMARY_ROUTE_CONTRACTS,
   PRODUCTION_ROBOTS_TXT,
+  SITEMAP_ENTRIES,
   SITEMAP_GROUPS,
   SHOP_CANONICAL_QUERY_REDIRECT,
   SITE_ORIGIN,
@@ -40,6 +41,8 @@ import {
   stripPricomDemoImages,
 } from '../../src/content/publishedHtml'
 import { productionEndpointEvidence } from '../../src/lib/seo/production-evidence-fixture'
+import currentContentFixture from '../../src/content/fixtures/production-content-2026-09-30.json' with { type: 'json' }
+import checkoutContentFixture from '../../src/content/fixtures/production-content-2026-10-01-checkout.json' with { type: 'json' }
 import { regressionEnvironment } from './environment'
 import { gotoReady, installDeterministicBrowserState } from './helpers'
 
@@ -210,7 +213,7 @@ function xmlEntries(xml: string) {
 function expectedEntries(entries: readonly SitemapEntryContract[]) {
   return entries.map((entry) => ({
     url: entry.url,
-    lastModified: entry.lastModified,
+    lastModified: entry.lastModified ?? '',
     images: entry.images.state === 'captured'
       ? entry.images.value.map((image) => ({
         location: image.location,
@@ -235,34 +238,21 @@ async function expectMetadata(page: Page, route: PageRouteContract) {
     nextMetadata.description === undefined ? [] : [nextMetadata.description],
   )
   expect(await metaValues(page, 'link[rel="canonical"]', 'href')).toEqual([route.metadata.canonical])
-  expect(await metaValues(page, 'meta[name="robots"]')).toEqual([nextMetadata.robots])
-
-  expect(await metaValues(page, 'meta[property="og:title"]')).toEqual([nextMetadata.openGraph!.title])
-  expect(await metaValues(page, 'meta[property="og:description"]')).toEqual(
-    nextMetadata.openGraph!.description === undefined ? [] : [nextMetadata.openGraph!.description],
-  )
-  expect(await metaValues(page, 'meta[property="og:url"]')).toEqual([nextMetadata.openGraph!.url])
-  expect(await metaValues(page, 'meta[property="og:type"]')).toEqual([nextMetadata.openGraph!.type])
-  expect(await metaValues(page, 'meta[property="og:image"]')).toEqual(
-    (nextMetadata.openGraph!.images ?? []).map((image) => image.url),
-  )
-  expect(await metaValues(page, 'meta[property="og:image:alt"]')).toEqual(
-    (nextMetadata.openGraph!.images ?? []).flatMap((image) => image.alt ? [image.alt] : []),
-  )
-
-  expect(await metaValues(page, 'meta[name="twitter:card"]')).toEqual([nextMetadata.twitter!.card])
-  expect(await metaValues(page, 'meta[name="twitter:title"]')).toEqual([nextMetadata.twitter!.title])
-  expect(await metaValues(page, 'meta[name="twitter:description"]')).toEqual(
-    nextMetadata.twitter!.description === undefined ? [] : [nextMetadata.twitter!.description],
-  )
-  expect(await metaValues(page, 'meta[name="twitter:image"]')).toEqual(
-    (nextMetadata.twitter!.images ?? []).map((image) => image.url),
-  )
-  expect(await metaValues(page, 'meta[name="twitter:image:alt"]')).toEqual(
-    (nextMetadata.twitter!.images ?? []).flatMap((image) => image.alt ? [image.alt] : []),
+  expect(await metaValues(page, 'meta[name="robots"]')).toEqual(
+    nextMetadata.robots === undefined ? [] : [nextMetadata.robots],
   )
 
   const exactTags = exactSocialMetaTags(route)
+  const expectedTagValues = (attribute: 'property' | 'name', key: string) => exactTags
+    .filter((tag) => tag.attribute === attribute && tag.key === key)
+    .map((tag) => tag.content)
+  for (const key of ['og:title', 'og:description', 'og:url', 'og:type', 'og:image', 'og:image:alt']) {
+    expect(await metaValues(page, `meta[property="${key}"]`), key).toEqual(expectedTagValues('property', key))
+  }
+  for (const key of ['twitter:card', 'twitter:title', 'twitter:description', 'twitter:image', 'twitter:image:alt']) {
+    expect(await metaValues(page, `meta[name="${key}"]`), key).toEqual(expectedTagValues('name', key))
+  }
+
   const tagKeys = new Set(exactTags.map((tag) => `${tag.attribute}\u0000${tag.key}`))
   for (const compoundKey of tagKeys) {
     const [attribute, key] = compoundKey.split('\u0000')
@@ -396,7 +386,9 @@ async function assertRenderedPage(page: Page, route: PageRouteContract) {
     route.metadata.description === null ? [] : [route.metadata.description],
   )
   expect(rawLinkValues(rawHtml, 'canonical'), `${route.path}: raw canonical`).toEqual([route.metadata.canonical])
-  expect(rawMetaValues(rawHtml, 'name', 'robots'), `${route.path}: raw robots`).toEqual([route.metadata.robots])
+  expect(rawMetaValues(rawHtml, 'name', 'robots'), `${route.path}: raw robots`).toEqual(
+    route.metadata.robots === null ? [] : [route.metadata.robots],
+  )
   expect(rawJsonLdGraphs(rawHtml), `${route.path}: raw exact JSON-LD graphs`).toEqual(route.structuredData)
   expect(wordCount(rawMainText(rawHtml)), `${route.path}: raw meaningful server content`).toBeGreaterThanOrEqual(
     route.audit.minimumMeaningfulWordCount,
@@ -492,9 +484,16 @@ test.describe('Next rendered SEO contract', () => {
   test.skip(regressionEnvironment.profile !== 'next', 'Runs against the Next server after the implementation layer exists.')
 
   test.beforeAll(() => {
-    expect(PRIMARY_ROUTE_CONTRACTS).toHaveLength(96)
-    expect(CANONICALIZING_ALIAS_CONTRACTS).toHaveLength(34)
-    expect(TRAILING_SLASH_REDIRECTS).toHaveLength(129)
+    expect(PRIMARY_ROUTE_CONTRACTS).toHaveLength(77)
+    expect(CANONICALIZING_ALIAS_CONTRACTS).toHaveLength(79)
+    expect(TRAILING_SLASH_REDIRECTS).toHaveLength(155)
+    expect(currentContentFixture.routeCount).toBe(72)
+    expect(currentContentFixture.assetCount).toBe(230)
+    expect(checkoutContentFixture.routeCount).toBe(1)
+    expect(checkoutContentFixture.assetCount).toBe(0)
+    expect(Object.keys(currentContentFixture.pages).sort()).toEqual(
+      CANONICAL_SITEMAP_ROUTES.map((route) => route.path).sort(),
+    )
     expect(archiveRendererManifest).toHaveLength(40)
     expect(new Set(legacyArchivePaths).size).toBe(40)
     const relationshipSnapshot = archiveRendererManifest.map((archive) => ({
@@ -509,7 +508,8 @@ test.describe('Next rendered SEO contract', () => {
       .filter((route) => route.kind === 'blog-tag' || route.kind === 'product-tag' || route.kind === 'pagination')
       .map((route) => route.path)
       .sort()
-    expect([...legacyArchivePaths].sort()).toEqual(contractedArchivePaths)
+    expect(contractedArchivePaths).toEqual(['/product-tag/embossed-stickers', '/product-tag/pu-labels'])
+    expect(contractedArchivePaths.every((path) => legacyArchivePaths.includes(path))).toBe(true)
     for (const archive of archiveRendererManifest) {
       expect(archive.relationshipSource).toBe(ARCHIVE_RELATIONSHIP_SOURCE)
       expect(archive.renderer === 'published-blog-archive' || archive.renderer === 'published-product-tag').toBe(true)
@@ -523,26 +523,27 @@ test.describe('Next rendered SEO contract', () => {
     })
   }
 
-  for (const [slug, published] of Object.entries({ ...liveBlogContent, ...productionDeltaBlogContent })) {
-    test(`published article ${slug} renders its complete committed body`, async ({ page }) => {
-      const response = await gotoReady(page, `/blog/${slug}/`)
+  const currentArticleSources = Object.entries(currentContentFixture.pages)
+    .filter(([path]) => path.startsWith('/blog/') && path.split('/').filter(Boolean).length === 2)
+  for (const [path, published] of currentArticleSources) {
+    test(`current article ${path} renders its complete dated semantic source`, async ({ page }) => {
+      const response = await gotoReady(page, `${path}/`)
       expect(response.status()).toBe(200)
-      await expectExactPublishedFragment(page, '[data-live-loaded="blog-article"]', published.html)
+      await expectExactPublishedFragment(page, '[data-live-loaded="blog-article"]', published.semanticHtml)
     })
   }
 
-  for (const [slug, published] of Object.entries(liveProductContent)) {
-    const route = PRIMARY_ROUTE_CONTRACTS.find((candidate) =>
-      candidate.kind === 'product' && candidate.path.endsWith(`/${slug}`),
-    )
-    if (!route) throw new Error(`Missing product route for published source ${slug}`)
-    test(`published product ${slug} renders complete copy, FAQ, and gallery sources`, async ({ page }) => {
+  const currentProductSources = Object.entries(currentContentFixture.pages)
+    .filter(([path]) => CANONICAL_SITEMAP_ROUTES.some((route) => route.path === path && route.kind === 'product'))
+  for (const [path, published] of currentProductSources) {
+    const route = PRIMARY_ROUTE_CONTRACTS.find((candidate) => candidate.path === path)
+    if (!route) throw new Error(`Missing product route for current source ${path}`)
+    test(`current product ${path} renders complete dated copy and FAQ sources`, async ({ page }) => {
       const response = await gotoReady(page, route.publicPath)
       expect(response.status()).toBe(200)
-      const split = splitPublishedProductFaqs(published.descriptionHtml)
-      await expectExactPublishedFragment(page, '.product-live-copy__short', published.shortDescriptionHtml)
-      await expectExactPublishedFragment(page, '.product-live-copy__long', split.guideHtml)
+      await expectExactPublishedFragment(page, '.product-live-copy__long', published.semanticHtml)
 
+      const expectedFaqs = extractPublishedFaqs(published.semanticHtml)
       const observedFaqs = await page.locator('.product-page-faq .faq-item').evaluateAll((items) => items.map((item) => {
         const semanticText = (root: Element | null) => {
           if (!root) return ''
@@ -562,46 +563,68 @@ test.describe('Next rendered SEO contract', () => {
           answer: semanticText(item.querySelector('.faq-answer-rich')),
         }
       }))
-      expect(observedFaqs.map((faq) => faq.question), `${slug}: FAQ questions`).toEqual(
-        split.faqs.map((faq) => faq.question),
+      expect(observedFaqs.map((faq) => faq.question), `${path}: FAQ questions`).toEqual(
+        expectedFaqs.map((faq) => faq.question),
       )
-      expect(observedFaqs.map((faq) => publishedContentTokens(faq.answer)), `${slug}: FAQ answers`).toEqual(
-        split.faqs.map((faq) => publishedContentTokens(publishedPlainText(faq.answerHtml))),
-      )
-
-      const gallery = await page.locator('[data-live-loaded="product-gallery"] img').evaluateAll((images) => images.map((image) => ({
-        src: image.getAttribute('src') ?? '',
-        alt: image.getAttribute('alt') ?? '',
-      })))
-      expect(gallery, `${slug}: gallery image and alt inventory`).toEqual(
-        published.gallery.map((image) => ({ src: image.src, alt: image.alt })),
+      expect(observedFaqs.map((faq) => publishedContentTokens(faq.answer)), `${path}: FAQ answers`).toEqual(
+        expectedFaqs.map((faq) => publishedContentTokens(publishedPlainText(faq.answerHtml))),
       )
     })
   }
 
   const directPageSources = [
-    { slug: 'about-us', path: '/about-us/', selector: '[data-live-loaded="page-about-us"] .official-page-source__content', transform: stripPricomDemoImages },
-    { slug: 'contact-us', path: '/contact-us/', selector: '[data-live-loaded="page-contact-us"] .official-page-source__content' },
-    { slug: 'request-a-quote', path: '/request-a-quote/', selector: '[data-live-loaded="page-request-a-quote"] .official-page-source__content' },
-    { slug: 'terms-of-service', path: '/terms-of-service/', selector: '[data-live-loaded="policy"]' },
-    { slug: 'reprint-policy', path: '/reprint-policy/', selector: '[data-live-loaded="policy"]' },
-    { slug: 'privacy-policy', path: '/privacy-policy/', selector: '[data-live-loaded="policy"]' },
+    { path: '/', selector: '[data-live-loaded="page-home"] .official-page-source__content' },
+    { path: '/about-us', selector: '[data-live-loaded="page-about-us"] .official-page-source__content' },
+    { path: '/contact-us', selector: '[data-live-loaded="page-contact-us"] .official-page-source__content' },
+    { path: '/request-a-quote', selector: '[data-live-loaded="page-request-a-quote"] .official-page-source__content' },
+    { path: '/terms-of-service', selector: '[data-live-loaded="policy"]' },
+    { path: '/reprint-policy', selector: '[data-live-loaded="policy"]' },
+    { path: '/privacy-policy', selector: '[data-live-loaded="policy"]' },
+    { path: '/payment-terms', selector: '[data-live-loaded="policy"]' },
+    { path: '/shipping-policy', selector: '[data-live-loaded="policy"]' },
+    { path: '/industries', selector: '[data-live-loaded="policy"]' },
+    { path: '/puffy-labels-stickers', selector: '[data-live-loaded="category-description"] .official-page-source__content' },
+    { path: '/flat-labels-stickers', selector: '[data-live-loaded="category-description"] .official-page-source__content' },
+    { path: '/promotional-items', selector: '[data-live-loaded="category-description"] .official-page-source__content' },
+    { path: '/cbd-packaging-boxes', selector: '[data-live-loaded="category-description"] .official-page-source__content' },
   ] as const
   for (const definition of directPageSources) {
-    test(`published page ${definition.slug} renders its complete committed source`, async ({ page }) => {
-      const published = livePageContent[definition.slug]
-      const response = await gotoReady(page, definition.path)
+    test(`current page ${definition.path} renders its complete dated semantic source`, async ({ page }) => {
+      const published = currentContentFixture.pages[definition.path]
+      const response = await gotoReady(page, definition.path === '/' ? '/' : `${definition.path}/`)
       expect(response.status()).toBe(200)
-      await expectExactPublishedFragment(
-        page,
-        definition.selector,
-        'transform' in definition ? definition.transform(published.html) : published.html,
-      )
+      await expectExactPublishedFragment(page, definition.selector, published.semanticHtml)
     })
   }
 
+  test('current checkout renders its complete dated noindex semantic source', async ({ page }) => {
+    const response = await gotoReady(page, '/checkout/')
+    expect(response.status()).toBe(200)
+    await expectExactPublishedFragment(
+      page,
+      '[data-live-loaded="policy"]',
+      checkoutContentFixture.pages['/checkout'].semanticHtml,
+    )
+    await expect(page.locator('[data-live-loaded="policy"] form')).toHaveAttribute('aria-disabled', 'true')
+  })
+
+  test('current checkout query variants remain 200 with the exact noindex canonical contract', async ({ request }) => {
+    for (const query of [
+      '?product=sample-pack',
+      '?product=foam-stickers&qty=250&finish=matte',
+      '?product=puffy-stickers&qty=250&finish=matte',
+    ]) {
+      const response = await request.get(`/checkout/${query}`)
+      expect(response.status(), query).toBe(200)
+      const html = await response.text()
+      expect(rawTitle(html), query).toBe('Checkout | Puff Sticker')
+      expect(rawLinkValues(html, 'canonical'), query).toEqual(['https://puffsticker.com/checkout/'])
+      expect(rawMetaValues(html, 'name', 'robots'), query).toEqual(['noindex'])
+    }
+  })
+
   test('published FAQ page renders every committed question and answer exactly', async ({ page }) => {
-    const expectedFaqs = extractPublishedFaqs(livePageContent.faqs.html)
+    const expectedFaqs = extractPublishedFaqs(currentContentFixture.pages['/faqs'].semanticHtml)
     const response = await gotoReady(page, '/faqs/')
     expect(response.status()).toBe(200)
     const observedFaqs = await page.locator('[data-live-loaded="page-faqs"] .faq-item').evaluateAll((items) => items.map((item) => {
@@ -631,17 +654,26 @@ test.describe('Next rendered SEO contract', () => {
 
   test('current production article renders its exact committed published body', async ({ page }) => {
     const slug = 'why-custom-stickers-feel-like-objects'
-    const published = productionDeltaBlogContent[slug]
+    const published = currentContentFixture.pages[`/blog/${slug}`]
     const response = await gotoReady(page, `/blog/${slug}/`)
     expect(response.status()).toBe(200)
     const rawHtml = await response.text()
     expect(rawMainHtml(rawHtml)).toContain('data-live-loaded="blog-article"')
-    expect(rawMainHtml(rawHtml)).toContain('/assets/live/blog/why-custom-stickers-feel-like-objects/image-1-1024x683.jpg')
+    expect(rawMainHtml(rawHtml)).toContain('/assets/production-2026-09-30/')
 
     const source = page.locator('[data-live-loaded="blog-article"]')
     await expect(source).toHaveCount(1)
     const observed = await source.evaluate((element) => ({
-      text: (element.textContent ?? '').replace(/\s+/g, ' ').trim(),
+      text: (() => {
+        const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT)
+        const segments: string[] = []
+        let node: Node | null
+        while ((node = walker.nextNode())) {
+          const value = (node.textContent ?? '').replace(/\s+/g, ' ').trim()
+          if (value) segments.push(value)
+        }
+        return segments.join(' ')
+      })(),
       headings: [...element.querySelectorAll('h1,h2,h3,h4,h5,h6')].map((heading) => ({
         level: Number(heading.tagName.slice(1)),
         text: (heading.textContent ?? '').replace(/\s+/g, ' ').trim(),
@@ -652,24 +684,24 @@ test.describe('Next rendered SEO contract', () => {
       })),
       links: [...element.querySelectorAll('a[href]')].map((anchor) => anchor.getAttribute('href') ?? ''),
     }))
-    const expectedHeadings = [...published.html.matchAll(/<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/gi)].map((match) => ({
+    const expectedHeadings = [...published.semanticHtml.matchAll(/<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/gi)].map((match) => ({
       level: Number(match[1]),
       text: publishedPlainText(match[2]),
     }))
-    const expectedImages = [...published.html.matchAll(/<img\b[^>]*>/gi)].map((match) => {
+    const expectedImages = [...published.semanticHtml.matchAll(/<img\b[^>]*>/gi)].map((match) => {
       const attributes = tagAttributes(match[0])
       return { src: attributes.src ?? '', alt: attributes.alt ?? '' }
     })
-    const expectedLinks = [...published.html.matchAll(/<a\b[^>]*>/gi)].map((match) => tagAttributes(match[0]).href ?? '')
+    const expectedLinks = [...published.semanticHtml.matchAll(/<a\b[^>]*>/gi)].map((match) => tagAttributes(match[0]).href ?? '')
     // HTML parsing can move insignificant whitespace around inline anchors.
     // Compare the complete ordered word-and-punctuation stream so every piece
     // of published copy remains exact while presentation whitespace is inert.
-    expect(publishedContentTokens(observed.text)).toEqual(publishedContentTokens(publishedPlainText(published.html)))
+    expect(publishedContentTokens(observed.text)).toEqual(publishedContentTokens(publishedPlainText(published.semanticHtml)))
     expect(observed.headings).toEqual(expectedHeadings)
     expect(observed.images).toEqual(expectedImages)
     expect(observed.links).toEqual(expectedLinks)
-    expect(observed.images).toHaveLength(6)
-    expect(observed.images.every((image) => image.src.startsWith('/assets/live/blog/why-custom-stickers-feel-like-objects/'))).toBe(true)
+    expect(observed.images).toHaveLength(expectedImages.length)
+    expect(observed.images.every((image) => image.src.startsWith('/assets/production-2026-09-30/'))).toBe(true)
 
     await expect(page.locator('.article-page__hero img')).toHaveAttribute(
       'alt',
@@ -678,7 +710,7 @@ test.describe('Next rendered SEO contract', () => {
     await page.setViewportSize({ width: 390, height: 844 })
     const responsiveGeometry = await source.evaluate((element) => {
       const sourceRect = element.getBoundingClientRect()
-      const captions = [...element.querySelectorAll<HTMLElement>('.wp-caption')].map((caption) => {
+      const captions = [...element.querySelectorAll<HTMLElement>('figcaption')].map((caption) => {
         const rect = caption.getBoundingClientRect()
         return { left: rect.left, right: rect.right, width: rect.width }
       })
@@ -690,7 +722,7 @@ test.describe('Next rendered SEO contract', () => {
       }
     })
     expect(responsiveGeometry.documentWidth - responsiveGeometry.viewportWidth).toBeLessThanOrEqual(1)
-    expect(responsiveGeometry.captions).toHaveLength(6)
+    expect(responsiveGeometry.captions).toHaveLength((published.semanticHtml.match(/<figcaption\b/g) ?? []).length)
     for (const caption of responsiveGeometry.captions) {
       expect(caption.left).toBeGreaterThanOrEqual(responsiveGeometry.source.left - 1)
       expect(caption.right).toBeLessThanOrEqual(responsiveGeometry.source.right + 1)
@@ -698,58 +730,58 @@ test.describe('Next rendered SEO contract', () => {
     }
   })
 
-  test('current blog and Sticker Psychology archive expose exact live article order', async ({ page }) => {
+  test('current blog and canonicalizing archive alias expose exact live article order', async ({ page }) => {
     const observedPaths = async () => page.locator('.blog-feature a[href^="/blog/"], .blog-grid .blog-card a[href^="/blog/"]').evaluateAll((anchors) => {
       const paths = anchors.map((anchor) => anchor.getAttribute('href') ?? '').filter(Boolean)
       return paths.filter((path, index) => paths.indexOf(path) === index)
     })
+    const currentArticlePathSet = new Set(currentArticleSources.map(([path]) => path))
+    const expectedPaths = [...currentContentFixture.pages['/blog'].semanticHtml.matchAll(/<a\b[^>]*href="(\/blog\/[^"?#]+)\/?"/gi)]
+      .map((match) => match[1].replace(/\/$/, ''))
+      .filter((path, index, paths) => currentArticlePathSet.has(path) && paths.indexOf(path) === index)
     await gotoReady(page, '/blog/')
-    expect(await observedPaths()).toEqual([
-      '/blog/why-custom-stickers-feel-like-objects',
-      '/blog/custom-puffy-stickers-guide',
-      '/blog/when-3d-stickers-become-collectibles',
-      '/blog/why-sticker-books-never-really-disappeared',
-      '/blog/why-we-save-stickers-we-never-use',
-      '/blog/matte-vs-gloss-psychology',
-      '/blog/soft-depth-vs-smooth-depth',
-      '/blog/why-foil-stickers-feel-valuable',
-      '/blog/holographic-stickers-color-perception',
-      '/blog/sound-of-packaging-mylar-bags',
-    ])
+    expect(await observedPaths()).toEqual(expectedPaths)
     await gotoReady(page, '/blog/category/sticker-psychology/')
-    expect(await observedPaths()).toEqual([
-      '/blog/why-custom-stickers-feel-like-objects',
-      '/blog/custom-puffy-stickers-guide',
-      '/blog/when-3d-stickers-become-collectibles',
-      '/blog/why-sticker-books-never-really-disappeared',
-      '/blog/why-we-save-stickers-we-never-use',
-    ])
+    expect(await observedPaths()).toEqual(expectedPaths)
+  })
+
+  test('current shop exposes every product in the dated production source', async ({ page }) => {
+    const expectedPaths = [...currentContentFixture.pages['/shop'].semanticHtml.matchAll(/<a\b[^>]*href="(\/(?:puffy-labels-stickers|flat-labels-stickers|promotional-items|cbd-packaging-boxes)\/[^"?#]+)\/?"/gi)]
+      .map((match) => match[1].replace(/\/$/, ''))
+      .filter((path, index, paths) => paths.indexOf(path) === index)
+    await gotoReady(page, '/shop/')
+    const observedPaths = await page.locator('.catalog-grid a[href]').evaluateAll((anchors) => anchors
+      .map((anchor) => (anchor.getAttribute('href') ?? '').replace(/\/$/, ''))
+      .filter((path, index, paths) => path.split('/').filter(Boolean).length === 2 && paths.indexOf(path) === index))
+    expect([...observedPaths].sort()).toEqual([...expectedPaths].sort())
+    expect(observedPaths).toHaveLength(31)
   })
 
   test('live-delta visible image alts and caption geometry preserve the audited documents', async ({ page }) => {
     const expected = [
-      ['why-custom-stickers-feel-like-objects', 'Why Some Custom Stickers Feel Like Objects', 6],
-      ['custom-puffy-stickers-guide', 'The Complete Guide to Custom Puffy Stickers', 5],
+      ['why-custom-stickers-feel-like-objects', 'Why Some Custom Stickers Feel Like Objects'],
+      ['custom-puffy-stickers-guide', 'The Complete Guide to Custom Puffy Stickers'],
     ] as const
 
     await page.setViewportSize({ width: 390, height: 844 })
-    for (const [slug, alt, captionCount] of expected) {
+    for (const [slug, alt] of expected) {
       await gotoReady(page, `/blog/${slug}/`)
       await expect(page.locator('.article-page__hero img')).toHaveAttribute('alt', alt)
+      const source = currentContentFixture.pages[`/blog/${slug}`]
       const geometry = await page.locator('[data-live-loaded="blog-article"]').evaluate((element) => {
         const sourceRect = element.getBoundingClientRect()
         return {
           documentWidth: document.documentElement.scrollWidth,
           viewportWidth: document.documentElement.clientWidth,
           source: { left: sourceRect.left, right: sourceRect.right, width: sourceRect.width },
-          captions: [...element.querySelectorAll<HTMLElement>('.wp-caption')].map((caption) => {
+          captions: [...element.querySelectorAll<HTMLElement>('figure')].map((caption) => {
             const rect = caption.getBoundingClientRect()
             return { left: rect.left, right: rect.right, width: rect.width }
           }),
         }
       })
       expect(geometry.documentWidth - geometry.viewportWidth, `${slug}: horizontal overflow`).toBeLessThanOrEqual(1)
-      expect(geometry.captions, `${slug}: caption inventory`).toHaveLength(captionCount)
+      expect(geometry.captions, `${slug}: figure inventory`).toHaveLength((source.semanticHtml.match(/<figure\b/g) ?? []).length)
       for (const caption of geometry.captions) {
         expect(caption.left, `${slug}: caption left edge`).toBeGreaterThanOrEqual(geometry.source.left - 1)
         expect(caption.right, `${slug}: caption right edge`).toBeLessThanOrEqual(geometry.source.right + 1)
@@ -833,47 +865,27 @@ test.describe('Next rendered SEO contract', () => {
     })
   }
 
-  test('/sitemap.xml is the exact empty-body one-hop production 301', async ({ request }) => {
+  test('/sitemap.xml is the exact current flat 200 sitemap', async ({ request }) => {
     const evidence = productionEndpointEvidence(LEGACY_SITEMAP_PATHS.compatibilityIndex)
-    expect(evidence.redirectChain).toHaveLength(2)
-    const redirect = evidence.redirectChain![0]
-    const target = evidence.redirectChain![1]
-    expect(redirect).toMatchObject({
-      url: `${SITE_ORIGIN}${LEGACY_SITEMAP_PATHS.compatibilityIndex}`,
-      status: 301,
-      location: 'https://puffsticker.com/sitemap_index.xml',
-      bodyLength: 0,
-    })
-    expect(target).toMatchObject({
-      url: `${SITE_ORIGIN}${LEGACY_SITEMAP_PATHS.index}`,
-      status: 200,
-      location: null,
-    })
-
+    expect(evidence.redirectChain).toBeUndefined()
     const response = await request.get(LEGACY_SITEMAP_PATHS.compatibilityIndex, { maxRedirects: 0 })
-    expect(response.status()).toBe(redirect.status)
-    expect(response.headers()['content-type']).toBe(redirect.contentType)
-    expect(response.headers().location).toBe('https://puffsticker.com/sitemap_index.xml')
-    expect(await response.body()).toHaveLength(0)
-
-    const directTarget = await request.get(LEGACY_SITEMAP_PATHS.index, { maxRedirects: 0 })
-    expect(directTarget.status()).toBe(target.status)
-    expect(directTarget.headers().location).toBeUndefined()
-    expect(directTarget.headers()['content-type']).toBe(target.contentType)
-    expect(await directTarget.text()).toBe(productionEndpointEvidence(LEGACY_SITEMAP_PATHS.index).body)
+    expect(response.status()).toBe(200)
+    expect(response.headers()['content-type']).toBe(evidence.contentType)
+    expect(response.headers().location).toBeUndefined()
+    const body = await response.text()
+    expect(body).toBe(evidence.body)
+    const byUrl = <T extends { url: string }>(left: T, right: T) => left.url.localeCompare(right.url)
+    expect(xmlEntries(body).sort(byUrl)).toEqual(expectedEntries(SITEMAP_ENTRIES).sort(byUrl))
   })
 
-  test('/sitemap_index.xml exposes the exact five-child production surface', async ({ request }) => {
-    const expectedLocations = [
-      LEGACY_SITEMAP_PATHS.post,
-      LEGACY_SITEMAP_PATHS.page,
-      LEGACY_SITEMAP_PATHS.product,
-      LEGACY_SITEMAP_PATHS.productCategory,
-      LEGACY_SITEMAP_PATHS.local,
-    ].map((path) => `${SITE_ORIGIN}${path}`)
-    const xml = await getXml(request, LEGACY_SITEMAP_PATHS.index)
-    expect(xmlValues(xml, 'loc')).toEqual(expectedLocations)
-    expect(xmlValues(xml, 'lastmod')).toHaveLength(5)
+  test('/sitemap_index.xml preserves the current one-hop 301 to /sitemap.xml', async ({ request }) => {
+    const evidence = productionEndpointEvidence(LEGACY_SITEMAP_PATHS.index)
+    const redirect = evidence.redirectChain![0]
+    expect(redirect.status).toBe(301)
+    expect(redirect.location).toBe(`${SITE_ORIGIN}/sitemap.xml`)
+    const response = await request.get(LEGACY_SITEMAP_PATHS.index, { maxRedirects: 0 })
+    expect(response.status()).toBe(301)
+    expect(response.headers().location).toBe(`${SITE_ORIGIN}/sitemap.xml`)
   })
 
   test('all public SEO discovery endpoints match captured response bytes and MIME types', async ({ request }) => {
@@ -886,7 +898,7 @@ test.describe('Next rendered SEO contract', () => {
         expect(response.status(), path).toBe(redirect.status)
         expect(response.headers()['content-type'], path).toBe(redirect.contentType)
         expect(response.headers().location, path).toBe(redirect.location)
-        expect(await response.body(), path).toHaveLength(redirect.bodyLength)
+        expect(await response.body(), path).toHaveLength(0)
         continue
       }
       expect(response.status(), path).toBe(expected.status)
@@ -895,7 +907,7 @@ test.describe('Next rendered SEO contract', () => {
       expect(body, path).toBe(expected.body)
       if (path.endsWith('-sitemap.xml')) imageRows += body.match(/<image:image>/g)?.length ?? 0
     }
-    expect(imageRows, 'captured child-sitemap image row count').toBe(180)
+    expect(imageRows, 'current flat sitemap image row count').toBe(0)
   })
 
   test('internal compatibility handlers do not create a duplicate crawl surface', async ({ request }) => {
@@ -922,19 +934,24 @@ test.describe('Next rendered SEO contract', () => {
     { path: LEGACY_SITEMAP_PATHS.productCategory, group: 'product-category' },
   ]
   for (const sitemap of childSitemaps) {
-    test(`${sitemap.path} exposes its exact canonical URLs and last-modified values`, async ({ request }) => {
-      const xml = await getXml(request, sitemap.path)
-      expect(xmlEntries(xml)).toEqual(expectedEntries(SITEMAP_GROUPS[sitemap.group]))
+    test(`${sitemap.path} preserves the current one-hop redirect to the flat sitemap`, async ({ request }) => {
+      expect(SITEMAP_GROUPS[sitemap.group].length).toBeGreaterThan(0)
+      const response = await request.get(sitemap.path, { maxRedirects: 0 })
+      expect(response.status()).toBe(301)
+      expect(response.headers().location).toBe(`${SITE_ORIGIN}/sitemap.xml`)
+      expect(await response.body()).toHaveLength(0)
     })
   }
 
-  test('local sitemap and KML preserve the production discovery endpoints', async ({ request }) => {
-    const xml = await getXml(request, LEGACY_SITEMAP_PATHS.local)
-    expect(xmlValues(xml, 'loc')).toEqual([`${SITE_ORIGIN}${LEGACY_SITEMAP_PATHS.locations}`])
-    const kml = await request.get(LEGACY_SITEMAP_PATHS.locations)
-    expect(kml.status()).toBe(200)
-    expect(kml.headers()['content-type']).toMatch(/(?:application|text)\/(?:vnd\.google-earth\.kml\+xml|xml)/i)
-    expect(await kml.text()).toContain('<kml')
+  test('local sitemap redirects to the flat sitemap and KML preserves the current 404', async ({ request }) => {
+    const local = await request.get(LEGACY_SITEMAP_PATHS.local, { maxRedirects: 0 })
+    expect(local.status()).toBe(301)
+    expect(local.headers().location).toBe(`${SITE_ORIGIN}/sitemap.xml`)
+    const kmlEvidence = productionEndpointEvidence(LEGACY_SITEMAP_PATHS.locations)
+    const kml = await request.get(LEGACY_SITEMAP_PATHS.locations, { maxRedirects: 0 })
+    expect(kml.status()).toBe(404)
+    expect(kml.headers()['content-type']).toBe(kmlEvidence.contentType)
+    expect(await kml.text()).toBe(kmlEvidence.body)
   })
 
   test('robots preserves the exact captured production directives', async ({ request }) => {

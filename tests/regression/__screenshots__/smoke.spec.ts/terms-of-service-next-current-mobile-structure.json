@@ -1,0 +1,44 @@
+{
+  "headings": [
+    {
+      "text": "The terms governing site use and custom orders.",
+      "x": 20,
+      "y": 196,
+      "width": 351,
+      "height": 240
+    },
+    {
+      "text": "Terms and conditions",
+      "x": 20,
+      "y": 1120,
+      "width": 351,
+      "height": 44
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "page-hero ",
+      "y": 0,
+      "width": 390,
+      "height": 757
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "policy-page",
+      "y": 757,
+      "width": 390,
+      "height": 4929
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 5686,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

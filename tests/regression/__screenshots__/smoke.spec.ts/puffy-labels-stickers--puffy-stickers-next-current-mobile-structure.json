@@ -1,0 +1,92 @@
+{
+  "headings": [
+    {
+      "text": "Puffy Stickers",
+      "x": 20,
+      "y": 657,
+      "width": 351,
+      "height": 47
+    },
+    {
+      "text": "Puffy Stickers",
+      "x": 20,
+      "y": 5729,
+      "width": 351,
+      "height": 44
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-detail",
+      "y": 0,
+      "width": 390,
+      "height": 1857
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-proof",
+      "y": 1857,
+      "width": 390,
+      "height": 1263
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-content",
+      "y": 3121,
+      "width": 390,
+      "height": 13833
+    },
+    {
+      "element": "section",
+      "id": "product-specifications",
+      "className": "product-specs",
+      "y": 16954,
+      "width": 390,
+      "height": 1496
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "product-applications",
+      "y": 18450,
+      "width": 390,
+      "height": 989
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "faq product-page-faq",
+      "y": 19439,
+      "width": 390,
+      "height": 1259
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "related-products",
+      "y": 20698,
+      "width": 390,
+      "height": 1716
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "inline-quote",
+      "y": 22414,
+      "width": 390,
+      "height": 465
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 22879,
+      "width": 390,
+      "height": 1087
+    }
+  ]
+}

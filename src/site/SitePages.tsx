@@ -32,7 +32,7 @@ import {
   type CatalogProduct,
   type CategorySlug,
 } from '../content/catalog'
-import { getProductDetails } from '../content/productDetails'
+import { getProductDetails, type ProductDetails } from '../content/productDetails'
 import { liveProductContent } from '../content/liveProductContent'
 import { liveBlogContent } from '../content/liveBlogContent'
 import { livePageContent } from '../content/livePageContent'
@@ -42,16 +42,19 @@ import { productionCurrentDeltaFeaturedImage, productionDeltaBlogContent, produc
 import { extractPublishedFaqs, publishedPlainText, splitPublishedProductFaqs as splitProductFaqsWithoutDom, stripPricomDemoImages } from '../content/publishedHtml'
 import { faqs as homeFaqs } from '../data'
 import { SiteLink, useRouter } from '../router'
+import { useCurrentProductionContent } from '../next/CurrentProductionContentContext'
 import { NotFoundPage } from './NotFoundPage'
 import { SiteFooter } from './SiteFooter'
 
 export { NotFoundPage, SiteFooter }
 
-const categoryOrder: CategorySlug[] = ['puffy-labels-stickers', 'flat-labels-stickers', 'promotional-items']
+const baselineCategoryOrder: CategorySlug[] = ['puffy-labels-stickers', 'flat-labels-stickers', 'promotional-items']
+const currentCategoryOrder: CategorySlug[] = [...baselineCategoryOrder, 'cbd-packaging-boxes']
 const categoryProductOrder: Record<CategorySlug, string[]> = {
   'puffy-labels-stickers': ['puffy-stickers', 'dome-decals', 'epoxy-stickers', 'pu-embossed-stickers', 'puffy-sticker-sheets', '3d-labels', 'foam-stickers'],
   'flat-labels-stickers': ['holographic-stickers', 'bottle-labels', 'bumper-stickers', 'cheap-stickers', 'clear-vinyl-labels', 'custom-stickers', 'metallic-foil-stickers'],
   'promotional-items': ['nylon-bag', 'washable-paper-bags', 'woven-bags', 'paper-bag', 'non-woven-bag', 'jute-bag', 'eco-friendly-kraft-mylar-bags'],
+  'cbd-packaging-boxes': ['cbd-bottle-boxes', 'cbd-display-boxes', 'cbd-gummy-boxes', 'cbd-kraft-boxes', 'cbd-oil-packaging', 'cbd-sleeve-tray-boxes', 'cbd-tincture-boxes', 'child-resistant-boxes', 'custom-cbd-boxes', 'custom-hemp-boxes'],
 }
 
 const categoryGuides: Record<CategorySlug, { title: string; body: string[]; points: string[] }> = {
@@ -73,6 +76,11 @@ const categoryGuides: Record<CategorySlug, { title: string; body: string[]; poin
     body: ['Custom promotional bags printed on eco-friendly materials like kraft paper, jute, and nylon. Fully customizable, durable, and ideal for giveaways, events, and marketing. Boost your brand visibility with high-quality prints from PuffSticker.com.'],
     points: ['Paper, jute and nylon options', 'Event and giveaway programs', 'Retail and gifting', 'Custom print and construction'],
   },
+  'cbd-packaging-boxes': {
+    title: 'Custom CBD Packaging Boxes Built Around the Product',
+    body: ['Custom CBD and hemp packaging in tuck-end, sleeve-and-tray, rigid and child-resistant formats, produced around the product dimensions, artwork and retail requirements.'],
+    points: ['Custom structures and dimensions', 'Free digital proof', 'Premium print finishes', 'Wholesale production from 250 pieces'],
+  },
 }
 
 function getLiveProductEntry(slug: string) {
@@ -91,8 +99,10 @@ function getLivePageEntry(slug: string) {
 
 function OfficialPageSection({ slug, label }: { slug: string; label: string }) {
   const { nextMode } = useRouter()
+  const currentContent = useCurrentProductionContent()
   const page = getLivePageEntry(slug)
-  const publishedHtml = page && nextMode && slug === 'about-us' ? stripPricomDemoImages(page.html) : page?.html
+  const fallbackHtml = page && nextMode && slug === 'about-us' ? stripPricomDemoImages(page.html) : page?.html
+  const publishedHtml = currentContent?.semanticHtml ?? fallbackHtml
   return (
     <section className="official-page-source">
       <div className="page-shell official-page-source__grid">
@@ -101,7 +111,7 @@ function OfficialPageSection({ slug, label }: { slug: string; label: string }) {
           <h2>{label}</h2>
           <p>Explore the full story, practical details and ordering information in one place.</p>
         </aside>
-        {page
+        {publishedHtml
           ? <details className="official-page-source__disclosure reveal-block" data-live-loaded={`page-${slug}`}>
             <summary><span><small>More information</small><strong>Open the complete guide</strong></span><i><ChevronDown /></i></summary>
             <div className="official-page-source__content" dangerouslySetInnerHTML={{ __html: publishedHtml ?? '' }} />
@@ -113,6 +123,17 @@ function OfficialPageSection({ slug, label }: { slug: string; label: string }) {
 }
 
 const blogPosts = [
+  { slug: 'kraft-look-packaging', title: 'What a Kraft Look Actually Tells Us About a Package', date: 'September 24, 2026', category: 'Packaging Psychology', categories: ['Packaging Psychology'], excerpt: "Kraft brown packaging looks natural and honest, but the look and the material aren't always the same thing. Here's what a kraft finish can really promise.", image: '/assets/production-2026-09-30/img/products/kraft-paper-fiber-texture-close-up.webp', imageAlt: 'Kraft paper fiber texture' },
+  { slug: 'sticker-thickness-personality', title: "The Personality Hidden in a Custom Sticker's Thickness", date: 'September 23, 2026', category: 'Sticker Psychology', categories: ['Sticker Psychology'], excerpt: "Custom sticker thickness quietly shapes a brand's personality, shifting from confident and thin to playful and puffy long before anyone reads the label on it.", image: '/assets/production-2026-09-30/img/products/custom-sticker-thickness-flat-to-puffy-comparison.webp', imageAlt: 'Custom sticker thickness comparison' },
+  { slug: 'recyclable-compostable-biodegradable', title: "Recyclable, Compostable, Biodegradable: Why These Words Aren't Interchangeable", date: 'September 17, 2026', category: 'Custom Mylar Bags', categories: ['Custom Mylar Bags'], excerpt: 'Recyclable, compostable, and biodegradable are not interchangeable claims. See what each one actually promises, and why stacking all three can work against you.', image: '/assets/production-2026-09-30/img/products/recyclable-compostable-biodegradable-1.webp', imageAlt: 'Recyclable, compostable and biodegradable packaging comparison' },
+  { slug: 'cbd-packaging-on-a-dispensary-shelf', title: 'CBD Packaging on a Dispensary Shelf', date: 'September 17, 2026', category: 'CBD Packaging', categories: ['CBD Packaging'], excerpt: 'What a dispensary shelf does to CBD and hemp packaging: overhead lighting, weeks of handling, and the few inches of facing a customer actually sees.', image: '/assets/catalog/mylar-bags.webp', imageAlt: 'Custom CBD retail packaging' },
+  { slug: 'child-resistant-cbd-boxes-how-they-work', title: 'Child-Resistant CBD Boxes: How They Work', date: 'September 16, 2026', category: 'CBD Packaging', categories: ['CBD Packaging'], excerpt: 'Child-resistant packaging is a mechanism built into the box, not a label added to it. See how push-and-turn, sliding interlock and snap-lock closures differ.', image: '/assets/catalog/mylar-bags.webp', imageAlt: 'Child-resistant CBD packaging boxes' },
+  { slug: 'sticker-stops-feeling-flat', title: 'When Does a Custom Sticker Stop Feeling Flat?', date: 'September 15, 2026', category: 'Sticker Psychology', categories: ['Sticker Psychology'], excerpt: "A raised sticker crosses from flat to dimensional at one precise point, not a gradual slide. Here's the perception science behind dimensional custom stickers.", image: '/assets/production-2026-09-30/img/products/sticker-stops-feeling-flat-1.webp', imageAlt: 'Dimensional custom sticker profile' },
+  { slug: 'cbd-box-styles-tuck-end-sleeve-rigid', title: 'CBD Box Styles: Tuck End, Sleeve, Rigid', date: 'September 15, 2026', category: 'CBD Packaging', categories: ['CBD Packaging'], excerpt: 'Tuck end, sleeve and tray, or rigid: how the three CBD box styles differ in cost, handling and shelf presence, and which one fits your product.', image: '/assets/catalog/mylar-bags.webp', imageAlt: 'Custom CBD box styles' },
+  { slug: 'why-paper-is-better-isnt-a-complete-packaging-argument', title: "Why Paper Is Better Isn't a Complete Packaging Argument", date: 'September 10, 2026', category: 'Custom Mylar Bags', categories: ['Custom Mylar Bags'], excerpt: "Kraft paper feels honest, but a package's real job is protecting what's inside. A closer look at why paper is better skips half the sustainability math.", image: '/assets/production-2026-09-30/img/products/why-paper-is-better-isnt-a-complete-packaging-argument-1.webp', imageAlt: 'Paper and barrier packaging comparison' },
+  { slug: 'reflex-to-touch-raised-surface', title: 'The Reflex to Touch a Raised Surface', date: 'September 8, 2026', category: 'Custom Puffy Stickers', categories: ['Custom Puffy Stickers', 'Sticker Psychology'], excerpt: 'Why does a hand reach for a raised custom sticker before the mind even decides to? A look at the psychology behind touch, trust, and involuntary reflex.', image: '/assets/production-2026-09-30/img/products/reflex-to-touch-raised-surface-1.webp', imageAlt: 'Hand touching a raised custom sticker' },
+  { slug: 'custom-mylar-bags-guide', title: 'The Complete Guide to Custom Mylar Bags', date: 'September 3, 2026', category: 'Custom Mylar Bags', categories: ['Custom Mylar Bags'], excerpt: 'A look at where custom mylar bags come from, why their shine reads as trustworthy before a label gets read, and how to choose the right finish for your brand.', image: '/assets/production-2026-09-30/img/products/custom-mylar-bags-guide-1.webp', imageAlt: 'Custom kraft and Mylar stand-up pouches' },
+  { slug: 'custom-puffy-stickers-christmas', title: 'Custom Puffy Stickers for Christmas Launches', date: 'September 2, 2026', category: 'Custom Puffy Stickers', categories: ['Custom Puffy Stickers'], excerpt: 'Give your Christmas launch some depth. Custom puffy stickers for gift tags, box seals, and holiday promotions.', image: '/assets/production-2026-09-30/img/products/custom-puffy-stickers-christmas-1.webp', imageAlt: 'Custom puffy stickers for Christmas launches' },
   { slug: 'why-custom-stickers-feel-like-objects', title: 'Why Some Custom Stickers Feel Like Objects', date: 'August 31, 2026', category: 'Sticker Psychology', categories: ['Sticker Psychology'], excerpt: 'A sticker outlives its adhesive. Pull one off a water bottle a year later and it comes away in a curl, not a scrap — the edges stay clean, the color faded evenly, like a stone worn by a river. This piece explores why some custom stickers stop behaving like flat pictures and start behaving like things a person owns.', image: productionCurrentDeltaFeaturedImage, imageAlt: 'Why Some Custom Stickers Feel Like Objects' },
   { slug: 'custom-puffy-stickers-guide', title: 'The Complete Guide to Custom Puffy Stickers', date: 'August 20, 2026', category: 'Custom Puffy Stickers', categories: ['Custom Puffy Stickers', 'Sticker Psychology'], excerpt: 'A complete guide to custom puffy stickers, covering material choice, ideal dome thickness, waterproof versus water resistant, die cut versus kiss cut, and printing methods.', image: productionDeltaFeaturedImage, imageAlt: 'The Complete Guide to Custom Puffy Stickers' },
   { slug: 'when-3d-stickers-become-collectibles', title: 'When 3D Stickers Become Collectibles', date: 'July 29, 2026', category: 'Custom Puffy Stickers', categories: ['Custom Puffy Stickers', 'Sticker Psychology'], excerpt: 'How texture, context and the feeling of an object can move a sticker from decoration into something people keep.', image: '/assets/blog-collectibles.webp' },
@@ -131,7 +152,13 @@ const blogPosts = [
 // The new production-delta article has its own canonical route and captured
 // archive relationships. The protected framework-migration baseline keeps the
 // existing blog index composition until content-source reconciliation.
-const productionDeltaBlogSlugs = new Set(['custom-puffy-stickers-guide', 'why-custom-stickers-feel-like-objects'])
+const productionDeltaBlogSlugs = new Set([
+  'kraft-look-packaging', 'sticker-thickness-personality', 'recyclable-compostable-biodegradable',
+  'cbd-packaging-on-a-dispensary-shelf', 'child-resistant-cbd-boxes-how-they-work', 'sticker-stops-feeling-flat',
+  'cbd-box-styles-tuck-end-sleeve-rigid', 'why-paper-is-better-isnt-a-complete-packaging-argument',
+  'reflex-to-touch-raised-surface', 'custom-mylar-bags-guide', 'custom-puffy-stickers-christmas',
+  'custom-puffy-stickers-guide', 'why-custom-stickers-feel-like-objects',
+])
 const baselineBlogPosts = blogPosts.filter((post) => !productionDeltaBlogSlugs.has(post.slug))
 
 const articleSections: Record<string, Array<{ title: string; body: string }>> = {
@@ -296,10 +323,13 @@ function ProductGridCard({ product, index, publishedArchiveCopy }: { product: Ca
 }
 
 function CategoryNav({ active }: { active?: CategorySlug | 'all' }) {
+  const { nextMode } = useRouter()
+  const productSet = nextMode ? catalogProducts : catalogProducts.filter((product) => product.category !== 'cbd-packaging-boxes')
+  const visibleCategories = nextMode ? currentCategoryOrder : baselineCategoryOrder
   return (
     <nav className="category-nav" aria-label="Product categories">
-      <SiteLink to="/shop" className={!active || active === 'all' ? 'is-active' : ''}>All <span>{catalogProducts.length}</span></SiteLink>
-      {categoryOrder.map((slug) => (
+      <SiteLink to="/shop" className={!active || active === 'all' ? 'is-active' : ''}>All <span>{productSet.length}</span></SiteLink>
+      {visibleCategories.map((slug) => (
         <SiteLink to={categories[slug].href} className={active === slug ? 'is-active' : ''} key={slug}>
           {categories[slug].shortName}<span>{getProductsByCategory(slug).length}</span>
         </SiteLink>
@@ -326,12 +356,14 @@ function ProcurementBand() {
 }
 
 export function ShopPage() {
+  const { nextMode } = useRouter()
   const [query, setQuery] = useState('')
+  const availableProducts = useMemo(() => nextMode ? catalogProducts : catalogProducts.filter((product) => product.category !== 'cbd-packaging-boxes'), [nextMode])
   const results = useMemo(() => {
     const normalized = query.trim().toLowerCase()
-    if (!normalized) return catalogProducts
-    return catalogProducts.filter((product) => `${product.name} ${product.summary} ${categories[product.category].name}`.toLowerCase().includes(normalized))
-  }, [query])
+    if (!normalized) return availableProducts
+    return availableProducts.filter((product) => `${product.name} ${product.summary} ${categories[product.category].name}`.toLowerCase().includes(normalized))
+  }, [availableProducts, query])
 
   return (
     <>
@@ -339,7 +371,7 @@ export function ShopPage() {
         eyebrow="Manufacturer-direct catalog"
         title={<>Custom products,<br /><em>clearly organized.</em></>}
         text="Explore the complete PuffSticker range across tactile labels, flat formats and custom promotional packaging. Base prices are shown; final B2B pricing depends on quantity and specification."
-        meta={formatProductCount()}
+        meta={`${String(availableProducts.length).padStart(2, '0')} products`}
       />
       <section className="catalog-section">
         <div className="page-shell catalog-tools">
@@ -358,6 +390,7 @@ export function ShopPage() {
 }
 
 export function CategoryPage({ slug }: { slug: string }) {
+  const currentContent = useCurrentProductionContent()
   const category = categories[slug as CategorySlug]
   if (!category) return <NotFoundPage />
   const productOrder = categoryProductOrder[slug as CategorySlug]
@@ -379,7 +412,11 @@ export function CategoryPage({ slug }: { slug: string }) {
       <section className="category-guide">
         <div className="page-shell category-guide__grid">
           <div className="reveal-block"><span className="eyebrow">Category guide</span><h2>{guide.title}</h2></div>
-          <div className="reveal-block">{guide.body.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}<ul>{guide.points.map((point) => <li key={point}><Check size={14} />{point}</li>)}</ul></div>
+          <div className="reveal-block">
+            {currentContent
+              ? <details className="official-page-source__disclosure" data-live-loaded="category-description"><summary><span><small>Category information</small><strong>Open the complete category guide</strong></span><i><ChevronDown /></i></summary><div className="official-page-source__content" dangerouslySetInnerHTML={{ __html: currentContent.semanticHtml }} /></details>
+              : <>{guide.body.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}<ul>{guide.points.map((point) => <li key={point}><Check size={14} />{point}</li>)}</ul></>}
+          </div>
         </div>
       </section>
       <section className="catalog-section catalog-section--category">
@@ -393,15 +430,38 @@ export function CategoryPage({ slug }: { slug: string }) {
 }
 
 export function ProductPage({ slug, category }: { slug: string; category?: string }) {
+  const currentContent = useCurrentProductionContent()
   const product = getProduct(slug)
-  const details = getProductDetails(slug)
+  const details: ProductDetails | undefined = getProductDetails(slug) ?? (product?.category === 'cbd-packaging-boxes' ? {
+    productId: product.id,
+    slug: product.slug,
+    canonicalCategory: product.category,
+    canonicalPath: `/${product.category}/${product.slug}`,
+    canonicalUrl: product.sourceUrl,
+    seo: { title: product.name, metaDescription: product.summary },
+    contentSections: [{ title: `About ${product.name}`, body: product.overview }],
+    faq: [
+      { question: `What is the minimum order for ${product.name}?`, answer: 'Current production starts at 250 pieces.' },
+      { question: 'Will I receive a proof?', answer: 'Yes. A free digital proof is supplied before production.' },
+    ],
+    commerce: {
+      productType: 'simple',
+      currency: 'USD',
+      displayedPrice: product.price,
+      attributes: product.specifications.map((specification) => ({ name: specification.label, values: [specification.value] })),
+      notes: ['Production and delivery are quoted against the final size, stock, structure, finish and destination.'],
+    },
+    galleryCount: 0,
+  } : undefined)
   const liveProduct = getLiveProductEntry(slug)
   const media = useRef<HTMLDivElement>(null)
   const mediaImage = useRef<HTMLImageElement>(null)
   const mediaBounds = useRef<DOMRect | null>(null)
   const mediaMotion = useRef<Array<ReturnType<typeof gsap.quickTo>>>([])
   const [openFaq, setOpenFaq] = useState(0)
-  const publishedProductContent = useMemo(() => splitProductFaqsWithoutDom(liveProduct?.descriptionHtml), [liveProduct?.descriptionHtml])
+  const publishedProductContent = useMemo(() => currentContent
+    ? { guideHtml: currentContent.semanticHtml, faqs: extractPublishedFaqs(currentContent.semanticHtml) }
+    : splitProductFaqsWithoutDom(liveProduct?.descriptionHtml), [currentContent, liveProduct?.descriptionHtml])
   if (!product || !details || (category && product.category !== category)) return <NotFoundPage />
   const related = catalogProducts.filter((item) => item.category === product.category && item.slug !== product.slug).slice(0, 3)
   const heroImage = liveProduct?.gallery[0]?.src ?? product.image
@@ -490,8 +550,8 @@ export function ProductPage({ slug, category }: { slug: string; category?: strin
             <h2>Everything to know about {product.name.toLowerCase()}.</h2>
             <p>Materials, construction, applications, care and ordering details for planning the right custom run.</p>
           </aside>
-          {liveProduct ? <div className="product-live-copy reveal-block" data-live-loaded="product-description">
-            <div className="product-live-copy__short" dangerouslySetInnerHTML={{ __html: liveProduct.shortDescriptionHtml }} />
+          {(currentContent || liveProduct) ? <div className="product-live-copy reveal-block" data-live-loaded="product-description">
+            {liveProduct && !currentContent && <div className="product-live-copy__short" dangerouslySetInnerHTML={{ __html: liveProduct.shortDescriptionHtml }} />}
             <div className="product-live-copy__long" dangerouslySetInnerHTML={{ __html: publishedProductContent.guideHtml }} />
           </div> : <div className="product-content__sections" data-live-pending="product-description">
             {details.contentSections.map((section, index) => <article key={section.title}><span>{String(index + 1).padStart(2, '0')}</span><h3>{section.title}</h3><p>{section.body}</p>{section.bullets && <ul>{section.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>}</article>)}
@@ -653,8 +713,10 @@ const extendedFaqs = [
 
 export function FullFaqPage() {
   const [open, setOpen] = useState(0)
+  const currentContent = useCurrentProductionContent()
   const liveFaq = getLivePageEntry('faqs')
-  const publishedFaqs = useMemo(() => extractPublishedFaqs(liveFaq?.html), [liveFaq?.html])
+  const faqHtml = currentContent?.semanticHtml ?? liveFaq?.html
+  const publishedFaqs = useMemo(() => extractPublishedFaqs(faqHtml), [faqHtml])
   const faqEntries = publishedFaqs.length
     ? publishedFaqs
     : (exactFaqByPath['/faqs'] ?? extendedFaqs).map(({ question, answer }) => ({ question, answerHtml: `<p>${answer}</p>` }))
@@ -677,7 +739,7 @@ export function FullFaqPage() {
             <p>From artwork files and order quantities to sticker construction, finishes, shipping and aftercare.</p>
             <SiteLink to="/contact-us" className="text-link text-link--dark">Ask the team <ArrowRight /></SiteLink>
           </div>
-          <div className="faq-list" data-live-loaded={liveFaq ? 'page-faqs' : undefined} data-live-pending={liveFaq ? undefined : 'page-faqs'}>
+          <div className="faq-list" data-live-loaded={faqHtml ? 'page-faqs' : undefined} data-live-pending={faqHtml ? undefined : 'page-faqs'}>
             {faqEntries.map((item, index) => {
               const isOpen = open === index
               return (
@@ -909,7 +971,7 @@ export function QuotePage() {
 export function BlogPage({ categorySlug }: { categorySlug?: string } = {}) {
   const { nextMode } = useRouter()
   const allAvailableBlogPosts = nextMode ? blogPosts : baselineBlogPosts
-  const listedBlogPosts = nextMode && !categorySlug ? allAvailableBlogPosts.slice(0, 10) : allAvailableBlogPosts
+  const listedBlogPosts = allAvailableBlogPosts
   const filters = ['All', ...Array.from(new Set(allAvailableBlogPosts.flatMap((post) => post.categories)))]
   const requestedFilter = filters.find((filter) => filter.toLowerCase().replaceAll(/[^a-z0-9]+/g, '-') === categorySlug) ?? 'All'
   const [active, setActive] = useState(requestedFilter)
@@ -1027,11 +1089,14 @@ export function ArchivePage({ pathname }: { pathname: string }) {
 }
 
 export function BlogArticlePage({ slug }: { slug: string }) {
+  const { nextMode } = useRouter()
+  const currentContent = useCurrentProductionContent()
   const post = blogPosts.find((item) => item.slug === slug)
   const liveArticle = getLiveBlogEntry(slug)
   if (!post) return <NotFoundPage />
-  const related = baselineBlogPosts.filter((item) => item.slug !== slug).slice(0, 3)
+  const related = (nextMode ? blogPosts : baselineBlogPosts).filter((item) => item.slug !== slug).slice(0, 3)
   const fallbackSections = articleSections[post.slug] ?? []
+  const publishedArticleHtml = currentContent?.semanticHtml ?? liveArticle?.html
   return (
     <>
       <article className="article-page">
@@ -1041,8 +1106,8 @@ export function BlogArticlePage({ slug }: { slug: string }) {
           <aside><span>In this note</span><p>{post.categories.join(' · ')}</p><SiteLink to="/blog">All field notes <ArrowLeft /></SiteLink></aside>
           <div className="reveal-block">
             <p className="article-page__lead">{post.excerpt}</p>
-            {liveArticle
-              ? <div className="article-page__source-html" data-live-loaded="blog-article" dangerouslySetInnerHTML={{ __html: liveArticle.html }} />
+            {publishedArticleHtml
+              ? <div className="article-page__source-html" data-live-loaded="blog-article" dangerouslySetInnerHTML={{ __html: publishedArticleHtml }} />
               : <div data-live-pending="blog-article">{fallbackSections.map((section, index) => <section className="article-page__section" key={section.title}><span>{String(index + 1).padStart(2, '0')}</span><h2>{section.title}</h2><p>{section.body}</p></section>)}</div>}
           </div>
         </div>
@@ -1111,6 +1176,30 @@ const policyPages: Record<string, { eyebrow: string; title: string; intro: strin
       { title: 'Changes and transit issues', body: 'Order changes may only be possible before production starts. Transit damage should be reported with photos and order details within seven days of delivery.' },
     ],
   },
+  'shipping-policy': {
+    eyebrow: 'Shipping policy',
+    title: 'Production and delivery terms.',
+    intro: 'Current shipping terms for custom-made orders, proof approval, delivery windows and destination coverage.',
+    sections: [{ title: 'Shipping terms', body: 'The complete current shipping policy is provided below.' }],
+  },
+  'payment-terms': {
+    eyebrow: 'Payment terms',
+    title: 'Clear terms before production begins.',
+    intro: 'Payment timing, accepted methods, proof approval, cancellations and refunds for standard and custom orders.',
+    sections: [{ title: 'Payment terms', body: 'The complete current payment terms are provided below.' }],
+  },
+  industries: {
+    eyebrow: 'Industries we serve',
+    title: 'Custom products for the brands people touch.',
+    intro: 'Product and material recommendations across cosmetics, beverage, toys, apparel, stationery, events, CBD and food.',
+    sections: [{ title: 'Industries', body: 'The complete current industry guide is provided below.' }],
+  },
+  checkout: {
+    eyebrow: 'Standard order checkout',
+    title: 'Place a standard order.',
+    intro: 'Choose a standard puffy or foam sticker package, then provide artwork, contact and US shipping details.',
+    sections: [{ title: 'Checkout', body: 'The current standard-order checkout details are provided below.' }],
+  },
 }
 
 export function ResourcesPage() {
@@ -1141,17 +1230,19 @@ export function ResourcesPage() {
 }
 
 export function PolicyPage({ slug }: { slug: string }) {
+  const currentContent = useCurrentProductionContent()
   const policy = policyPages[slug]
   const livePage = getLivePageEntry(slug)
+  const publishedHtml = currentContent?.semanticHtml ?? livePage?.html
   if (!policy) return <NotFoundPage />
   return (
     <>
       <PageHero eyebrow={policy.eyebrow} title={policy.title} text={policy.intro} meta="PuffSticker resource" />
       <section className="policy-page">
         <div className="page-shell policy-page__grid">
-          <aside><span>{livePage ? 'Policy details' : 'On this page'}</span>{!livePage && policy.sections.map((section, index) => <a href={`#policy-${index}`} key={section.title}>{String(index + 1).padStart(2, '0')} · {section.title}</a>)}<a href="mailto:sales@puffsticker.com">Questions <ArrowUpRight /></a></aside>
-          {livePage
-            ? <div className="policy-live-copy reveal-block" data-live-loaded="policy" dangerouslySetInnerHTML={{ __html: livePage.html }} />
+          <aside><span>{publishedHtml ? 'Policy details' : 'On this page'}</span>{!publishedHtml && policy.sections.map((section, index) => <a href={`#policy-${index}`} key={section.title}>{String(index + 1).padStart(2, '0')} · {section.title}</a>)}<a href="mailto:sales@puffsticker.com">Questions <ArrowUpRight /></a></aside>
+          {publishedHtml
+            ? <div className="policy-live-copy reveal-block" data-live-loaded="policy" dangerouslySetInnerHTML={{ __html: publishedHtml }} />
             : <div data-live-pending={slug === 'shipping-delivery' ? undefined : 'policy'}>{policy.sections.map((section, index) => <section id={`policy-${index}`} className="reveal-block" key={section.title}><span>{String(index + 1).padStart(2, '0')}</span><h2>{section.title}</h2><p>{section.body}</p>{section.bullets && <ul>{section.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>}</section>)}</div>}
         </div>
       </section>

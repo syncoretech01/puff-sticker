@@ -1,0 +1,60 @@
+{
+  "headings": [
+    {
+      "text": "Puffy Labels & Stickers",
+      "x": 38,
+      "y": 196,
+      "width": 691,
+      "height": 52
+    },
+    {
+      "text": "Puffy stickers",
+      "x": 422,
+      "y": 1527,
+      "width": 307,
+      "height": 32
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "category-hero",
+      "y": 0,
+      "width": 768,
+      "height": 1026
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "category-guide",
+      "y": 1026,
+      "width": 768,
+      "height": 401
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "catalog-section catalog-section--category",
+      "y": 1427,
+      "width": 768,
+      "height": 2209
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "procurement-band",
+      "y": 3636,
+      "width": 768,
+      "height": 606
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 4243,
+      "width": 768,
+      "height": 968
+    }
+  ]
+}

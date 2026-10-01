@@ -1,0 +1,44 @@
+{
+  "headings": [
+    {
+      "text": "Why Shine Feels Valuable: The Psychology Behind Foil Stickers",
+      "x": 38,
+      "y": 282,
+      "width": 691,
+      "height": 151
+    },
+    {
+      "text": "Why Shine Feels Valuable in Foil Stickers",
+      "x": 38,
+      "y": 1745,
+      "width": 691,
+      "height": 44
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "article",
+      "id": null,
+      "className": "article-page",
+      "y": 0,
+      "width": 768,
+      "height": 12707
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "more-notes",
+      "y": 12707,
+      "width": 768,
+      "height": 1221
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 13928,
+      "width": 768,
+      "height": 968
+    }
+  ]
+}

@@ -11,8 +11,9 @@ for (const breakpoint of breakpoints) {
     test.use({ viewport: { width: breakpoint.width, height: breakpoint.height } })
 
     for (const visualCase of visualCases) {
-      const currentBlogContent = regressionEnvironment.profile === 'next' && visualCase.name === 'blog'
-      test(`${visualCase.name} matches the ${currentBlogContent ? 'current production-content' : 'Vite'} baseline`, async ({ page }) => {
+      const currentProductionContent = regressionEnvironment.profile === 'next'
+        && (visualCase.name === 'blog' || visualCase.name === 'faq')
+      test(`${visualCase.name} matches the ${currentProductionContent ? 'current production-content' : 'Vite'} baseline`, async ({ page }) => {
         const target = await prepareVisual(page, visualCase.path, visualCase.selector)
         const screenshotOptions = {
           animations: 'disabled' as const,
@@ -26,9 +27,9 @@ for (const breakpoint of breakpoints) {
           scale: 'css' as const,
         }
         // The framework remains compared to Vite everywhere except the blog
-        // surface whose published production inventory advanced after the
-        // protected snapshot. Keep that content-only delta in its own strict,
-        // same-browser baseline without replacing the Vite source of truth.
+        // and FAQ surfaces whose published inventories advanced after the
+        // protected snapshot. Keep those content-only deltas in strict,
+        // same-browser baselines without replacing the Vite source of truth.
         const sameRunnerFinishLab = visualCase.name === 'home-finish-lab'
           && regressionEnvironment.captureViteFinishLab
         const sameRunnerSnapshotName = `${visualCase.name}-${breakpoint.name}-ci-vite.png`
@@ -44,8 +45,8 @@ for (const breakpoint of breakpoints) {
         }
         const snapshotName = sameRunnerFinishLab
           ? sameRunnerSnapshotName
-          : currentBlogContent
-          ? `blog-next-current-${breakpoint.name}.png`
+          : currentProductionContent
+          ? `${visualCase.name}-next-current-${breakpoint.name}.png`
           : `${visualCase.name}-${breakpoint.name}.png`
         await expect(target).toHaveScreenshot(snapshotName, screenshotOptions)
       })

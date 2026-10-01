@@ -1,0 +1,44 @@
+{
+  "headings": [
+    {
+      "text": "How customer and order information is handled.",
+      "x": 38,
+      "y": 196,
+      "width": 691,
+      "height": 222
+    },
+    {
+      "text": "Privacy policy",
+      "x": 38,
+      "y": 1101,
+      "width": 691,
+      "height": 44
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "page-hero ",
+      "y": 0,
+      "width": 768,
+      "height": 704
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "policy-page",
+      "y": 704,
+      "width": 768,
+      "height": 3742
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 4446,
+      "width": 768,
+      "height": 968
+    }
+  ]
+}

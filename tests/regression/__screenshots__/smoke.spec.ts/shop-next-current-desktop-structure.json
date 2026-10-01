@@ -1,0 +1,45 @@
+{
+  "headings": [
+    {
+      "text": "Custom products,clearly organized.",
+      "x": 58,
+      "y": 246,
+      "width": 1130,
+      "height": 205
+    }
+  ],
+  "landmarks": [
+    {
+      "element": "section",
+      "id": null,
+      "className": "page-hero ",
+      "y": 0,
+      "width": 1440,
+      "height": 780
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "catalog-section",
+      "y": 780,
+      "width": 1440,
+      "height": 6678
+    },
+    {
+      "element": "section",
+      "id": null,
+      "className": "procurement-band",
+      "y": 7458,
+      "width": 1440,
+      "height": 517
+    },
+    {
+      "element": "footer",
+      "id": null,
+      "className": "site-footer",
+      "y": 7975,
+      "width": 1440,
+      "height": 754
+    }
+  ]
+}
